@@ -16,6 +16,9 @@ public class BasicStarfield implements IScreen {
     
     private final Node _rootNode;
     private final IPlayer _player;
+    private final Iterable<IPlayer> _enemyWaveOne;
+    private final Iterable<IPlayer> _enemyWaveTwo;
+    private final Iterable<IPlayer> _enemyWaveThree;
 
     public BasicStarfield(
             IPlayer player, 
@@ -29,6 +32,9 @@ public class BasicStarfield implements IScreen {
       
         _rootNode = new Node();
         _player = player;
+        _enemyWaveOne = enemyWaveOne;
+        _enemyWaveTwo = enemyWaveTwo;
+        _enemyWaveThree = enemyWaveThree;
         
         Sphere sphere = new Sphere(100, 100, 100);
         sphere.scaleTextureCoordinates(new Vector2f(10,10));
@@ -51,9 +57,8 @@ public class BasicStarfield implements IScreen {
     
     private void attachRootNodes(Iterable<IPlayer> players){
         if(players == null) return;
-        Iterator<IPlayer> iterator = players.iterator();
-        while(iterator.hasNext()){
-            _rootNode.attachChild(iterator.next().getRootNode());
+        for(IPlayer player : players){
+            _rootNode.attachChild(player.getRootNode());
         }
     }
     
@@ -62,7 +67,17 @@ public class BasicStarfield implements IScreen {
     }
 
     public void update(float tpf) {
-        // Update here
+        _player.update(tpf);
+        updatePlayers(_enemyWaveOne, tpf);
+        updatePlayers(_enemyWaveTwo, tpf);
+        updatePlayers(_enemyWaveThree, tpf);
+    }
+    
+    private void updatePlayers(Iterable<IPlayer> players, float tpf){
+        if (players == null) return;
+        for(IPlayer player : players){
+            player.update(tpf);
+        }
     }
 
     public void onAnalog(String name, float keyPressed, float tpf) {
