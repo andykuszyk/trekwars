@@ -8,6 +8,9 @@ import com.jme3.scene.Spatial;
 public class Voyager extends AbstractPlayer {
     
     private final Spatial _voyager;
+    private final float _rollRightLimit = -0.6f;
+    private final float _rollLeftLimit = 0.6f;
+    private final float _rollMultiplier = 1f;
     
     public Voyager(AssetManager assetManager){
         _voyager = assetManager.loadModel("Models/Voyager.obj");
@@ -49,70 +52,22 @@ public class Voyager extends AbstractPlayer {
         
         switch(turnDirection){
             case Right:
-                if(localRotation.getZ() > -0.5) {
-                    _voyager.rotate(0,0,-getRotationalSpeed() * tpf);
-                    //decreaseZRotation(localRotation, tpf);
+                if(localRotation.getZ() > _rollRightLimit) {
+                    _voyager.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
                 } 
-//                else {
-//                    setZRotation(localRotation, (float)(0.9 * Math.PI));
-//                }
                 break;
             case Left:
-                if(localRotation.getZ() < 0.5){
-                    _voyager.rotate(0,0,getRotationalSpeed() * tpf);
-                    //increaseZRotation(localRotation, tpf);
+                if(localRotation.getZ() < _rollLeftLimit){
+                    _voyager.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
                 } 
-//                else {
-//                    setZRotation(localRotation, (float)(Math.PI * 3 / 4));
-//                }
                 break;
             default:
-//                if(localRotation.getZ() > 0 && localRotation.getZ() < Math.PI){
-//                    decreaseZRotation(localRotation, tpf);
-//                } else if(localRotation.getZ() > Math.PI) {
-//                    increaseZRotation(localRotation, tpf);
-//                }
-//                setZRotation(localRotation, 0);
+                if(localRotation.getZ() > 0){
+                    _voyager.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
+                } else if (localRotation.getZ() < 0) {
+                    _voyager.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
+                }
                 break;
         }
-    }
-    
-    private void setZRotation(Quaternion localRotation, float z) {
-        System.out.println(String.format("Setting Z rotation to %1$f", z));
-        _voyager.rotate(localRotation.getX(), localRotation.getY(), z);
-//        _voyager.setLocalRotation(new Quaternion(
-//                localRotation.getX(),
-//                localRotation.getY(),
-//                z,
-//                localRotation.getW()));
-    }
-    
-    private void increaseZRotation(Quaternion localRotation, float tpf){
-        _voyager.rotate(
-        //_voyager.setLocalRotation(new Quaternion(
-                localRotation.getX(),
-                localRotation.getY(),
-                wrapRadians(localRotation.getZ() + getRotationalSpeed() * tpf));
-          //      localRotation.getW()));
-    }
-    
-    private void decreaseZRotation(Quaternion localRotation, float tpf){
-        _voyager.rotate(
-        //_voyager.setLocalRotation(new Quaternion(
-                localRotation.getX(),
-                localRotation.getY(),
-                wrapRadians(localRotation.getZ() - getRotationalSpeed() * tpf));
-          //      localRotation.getW()));
-    }
-    
-    private float wrapRadians(float radians) {
-        return radians;
-//        if(radians > Math.PI * 2){
-//            return (float)(radians - (Math.PI * 2));
-//        } else if (radians < 0){
-//            return (float)(radians + (Math.PI * 2));
-//        } else {
-//            return radians;
-//        }
     }
 }
