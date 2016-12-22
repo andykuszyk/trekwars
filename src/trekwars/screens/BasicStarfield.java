@@ -3,6 +3,8 @@ package trekwars.screens;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -19,17 +21,22 @@ public class BasicStarfield implements IScreen {
     private final Iterable<IPlayer> _enemyWaveOne;
     private final Iterable<IPlayer> _enemyWaveTwo;
     private final Iterable<IPlayer> _enemyWaveThree;
+    private final Camera _camera;
+    private final float _cameraZDistance = 10f;
+    private final float _cameraYDistance = 3f;
 
     public BasicStarfield(
             IPlayer player, 
             Iterable<IPlayer> enemyWaveOne,
             Iterable<IPlayer> enemyWaveTwo,
             Iterable<IPlayer> enemyWaveThree,
-            AssetManager assetManager){
-        if(player == null){
+            AssetManager assetManager,
+            Camera camera){
+        if(player == null || camera == null) {
             //TODO: throw new ArgumentNullException();
         }
-      
+        
+        _camera = camera;
         _rootNode = new Node();
         _player = player;
         _enemyWaveOne = enemyWaveOne;
@@ -71,6 +78,25 @@ public class BasicStarfield implements IScreen {
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
         updatePlayers(_enemyWaveThree, tpf);
+        
+        positionCamera();
+    }
+    
+    private void positionCamera(){
+        
+        _camera.setLocation(calculateCameraVector());
+        _camera.lookAt(_player.getRootNode().getWorldTranslation(), Vector3f.UNIT_Y);
+    }
+    
+    private Vector3f calculateCameraVector() {
+        float playerYRotation = _player.getRootNode().getWorldRotation().toAngles(null)[1];
+        System.out.println(String.format("Player Y rotation: %1$f", _player.getRootNode().getWorldRotation().toAngles(null)[2]));
+        Vector3f playerLocation = _player.getRootNode().getWorldTranslation();
+        
+        double cameraZ = playerLocation.getZ() + (_cameraZDistance * Math.cos(playerYRotation));
+        double cameraX = playerLocation.getX() + (_cameraZDistance * Math.sin(playerYRotation));
+        
+        return new Vector3f((float)cameraX, (float)_cameraYDistance, (float)cameraZ);
     }
     
     private void updatePlayers(Iterable<IPlayer> players, float tpf){

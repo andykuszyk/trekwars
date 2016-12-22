@@ -16,7 +16,6 @@ public class Voyager extends AbstractPlayer {
         _voyager.setLocalScale(1);
         
         attachChild(_voyager);
-        getRootNode().setLocalTranslation(0, 0, -10);
     }
 
     protected void onUpdate(float tpf) {

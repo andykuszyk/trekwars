@@ -37,7 +37,7 @@ public class Main extends SimpleApplication {
                 InputMappings.select,
                 InputMappings.fire);
         
-        setScreen(new BasicStarfield(new Voyager(assetManager), null, null, null, assetManager));
+        setScreen(new BasicStarfield(new Voyager(assetManager), null, null, null, assetManager, cam));
     }
     
     private AnalogListener actionListener = new AnalogListener() {
