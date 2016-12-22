@@ -16,6 +16,7 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollRightLimit = -0.6f;
     private final float _rollLeftLimit = 0.6f;
     private final float _rollMultiplier = 1f;
+    private TurnDirection _turningDirection = TurnDirection.None;
     
     protected enum TurnDirection {
         Right, Left, None
@@ -53,38 +54,68 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void turn(float tpf) {
-        TurnDirection turnDirection = getTurnDirection();
-        _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationalMultiplier(turnDirection), 0);
+        TurnDirection userTurnDirection = getTurnDirection();
         
         for(Spatial child : _rootNode.getChildren()){
             Quaternion localRotation = child.getLocalRotation();
             
-            switch(turnDirection){
-                case Right:
-                    if(localRotation.getZ() > _rollRightLimit) {
-                        child.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
-                    } 
-                    break;
-                case Left:
-                    if(localRotation.getZ() < _rollLeftLimit){
-                        child.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
-                    } 
-                    break;
-                default:
-                    if(localRotation.getZ() > 0){
-                        child.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
-                    } else if (localRotation.getZ() < 0) {
-                        child.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
-                    }
-                    break;
+            float rotationalMultiplier = getRotationalSpeed() * tpf;
+            float rollAmount = rotationalMultiplier * _rollMultiplier;
+            
+            if(isNotTurning(localRotation) && _turningDirection == TurnDirection.None) {
+                _turningDirection = userTurnDirection;
             }
+            
+            roll(child, localRotation, rollAmount, _turningDirection);
+            
+            if(userTurnDirection == TurnDirection.None)    {
+                _turningDirection = TurnDirection.None;
+            }
+            
+            if(_turningDirection == TurnDirection.None){
+                restoreRotation(child, rotationalMultiplier, localRotation);
+            }
+        }
+        
+        if(_turningDirection != TurnDirection.None){
+            _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationSign(userTurnDirection), 0);
         }
         
         _turnLeftCount = 0;
         _turnRightCount = 0;
     }
     
-    private int getRotationalMultiplier(TurnDirection turnDirection){
+    private void roll(Spatial spatial, Quaternion localRotation, float rollAmount, TurnDirection turnDirection){
+        switch(turnDirection){
+            case Right:
+                if(localRotation.getZ() > _rollRightLimit) {
+                    spatial.rotate(rollAmount/5,-rollAmount/2,-rollAmount);
+                } 
+                break;
+            case Left:
+                if(localRotation.getZ() < _rollLeftLimit){
+                    spatial.rotate(rollAmount/5,rollAmount/2,rollAmount);
+                } 
+                break;
+            default: return;
+        }
+    }
+    
+    private boolean isNotTurning(Quaternion localRotation){
+        return
+                Math.abs(localRotation.getX() - 0) < 0.1 &&
+                Math.abs(localRotation.getY() - 0) < 0.1 &&
+                Math.abs(localRotation.getZ() - 0) < 0.1;
+    }
+    
+    private void restoreRotation(Spatial spatial, float rotationalMultiplier, Quaternion localRotation) {
+        spatial.rotate(
+            -localRotation.getX() * rotationalMultiplier * 2,
+            -localRotation.getY() * rotationalMultiplier * 2,
+            -localRotation.getZ() * rotationalMultiplier * 2); 
+    }
+    
+    private int getRotationSign(TurnDirection turnDirection){
         switch(turnDirection){
             case Left:
                 return 1;

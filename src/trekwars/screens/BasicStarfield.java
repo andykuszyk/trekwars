@@ -83,20 +83,13 @@ public class BasicStarfield implements IScreen {
     }
     
     private void positionCamera(){
+        float playerYRadians = _player.getRootNode().getWorldRotation().toAngles(null)[1];
+        Vector3f playerWorldTranslation = _player.getRootNode().getWorldTranslation();
+        double cameraZ = playerWorldTranslation.getZ() + (_cameraZDistance * Math.cos(playerYRadians));
+        double cameraX = playerWorldTranslation.getX() + (_cameraZDistance * Math.sin(playerYRadians));
         
-        _camera.setLocation(calculateCameraVector());
-        _camera.lookAt(_player.getRootNode().getWorldTranslation(), Vector3f.UNIT_Y);
-    }
-    
-    private Vector3f calculateCameraVector() {
-        float playerYRotation = _player.getRootNode().getWorldRotation().toAngles(null)[1];
-        System.out.println(String.format("Player Y rotation: %1$f", _player.getRootNode().getWorldRotation().toAngles(null)[2]));
-        Vector3f playerLocation = _player.getRootNode().getWorldTranslation();
-        
-        double cameraZ = playerLocation.getZ() + (_cameraZDistance * Math.cos(playerYRotation));
-        double cameraX = playerLocation.getX() + (_cameraZDistance * Math.sin(playerYRotation));
-        
-        return new Vector3f((float)cameraX, (float)_cameraYDistance, (float)cameraZ);
+        _camera.setLocation(new Vector3f((float)cameraX, (float)_cameraYDistance, (float)cameraZ));
+        _camera.lookAt(playerWorldTranslation, Vector3f.UNIT_Y);
     }
     
     private void updatePlayers(Iterable<IPlayer> players, float tpf){
