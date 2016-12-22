@@ -13,6 +13,10 @@ public abstract class AbstractPlayer implements IPlayer {
     protected int _fireCount = 0;
     private Node _rootNode;   
     
+    protected enum TurnDirection {
+        Right, Left, None
+    }
+    
     protected void attachChild(Spatial child) {
         if(_rootNode == null) _rootNode = new Node();
         _rootNode.attachChild(child);
@@ -45,11 +49,36 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void turn(float tpf) {
-        int rightOrLeft = _turnRightCount + _turnLeftCount == 0 ? 0 : _turnRightCount - _turnLeftCount > 0 ? -1 : 1;
-        _rootNode.rotate(0, getRotationalSpeed() * tpf * rightOrLeft, 0);
+        TurnDirection turnDirection = getTurnDirection();
+        _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationalMultiplier(turnDirection), 0);
+        
+        onTurn(turnDirection, tpf);
         
         _turnLeftCount = 0;
         _turnRightCount = 0;
+    }
+    
+    protected abstract void onTurn(TurnDirection turnDirection, float tpf);
+    
+    private int getRotationalMultiplier(TurnDirection turnDirection){
+        switch(turnDirection){
+            case Left:
+                return 1;
+            case Right:
+                return -1;
+            default:
+                return 0;
+        }
+    }
+    
+    private TurnDirection getTurnDirection() {
+        if( _turnRightCount + _turnLeftCount == 0){
+            return TurnDirection.None;
+        } else if(_turnRightCount - _turnLeftCount > 0){
+            return TurnDirection.Right;
+        } else {
+            return TurnDirection.Left;
+        }
     }
     
     private void move(float tpf) {
