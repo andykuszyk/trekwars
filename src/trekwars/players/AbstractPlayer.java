@@ -1,5 +1,6 @@
 package trekwars.players;
 
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -12,6 +13,9 @@ public abstract class AbstractPlayer implements IPlayer {
     protected Date _lastBoostTime = null;
     protected int _fireCount = 0;
     private Node _rootNode;   
+    private final float _rollRightLimit = -0.6f;
+    private final float _rollLeftLimit = 0.6f;
+    private final float _rollMultiplier = 1f;
     
     protected enum TurnDirection {
         Right, Left, None
@@ -52,13 +56,33 @@ public abstract class AbstractPlayer implements IPlayer {
         TurnDirection turnDirection = getTurnDirection();
         _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationalMultiplier(turnDirection), 0);
         
-        onTurn(turnDirection, tpf);
+        for(Spatial child : _rootNode.getChildren()){
+            Quaternion localRotation = child.getLocalRotation();
+            
+            switch(turnDirection){
+                case Right:
+                    if(localRotation.getZ() > _rollRightLimit) {
+                        child.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
+                    } 
+                    break;
+                case Left:
+                    if(localRotation.getZ() < _rollLeftLimit){
+                        child.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
+                    } 
+                    break;
+                default:
+                    if(localRotation.getZ() > 0){
+                        child.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
+                    } else if (localRotation.getZ() < 0) {
+                        child.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
+                    }
+                    break;
+            }
+        }
         
         _turnLeftCount = 0;
         _turnRightCount = 0;
     }
-    
-    protected abstract void onTurn(TurnDirection turnDirection, float tpf);
     
     private int getRotationalMultiplier(TurnDirection turnDirection){
         switch(turnDirection){

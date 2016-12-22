@@ -8,9 +8,6 @@ import com.jme3.scene.Spatial;
 public class Voyager extends AbstractPlayer {
     
     private final Spatial _voyager;
-    private final float _rollRightLimit = -0.6f;
-    private final float _rollLeftLimit = 0.6f;
-    private final float _rollMultiplier = 1f;
     
     public Voyager(AssetManager assetManager){
         _voyager = assetManager.loadModel("Models/Voyager.obj");
@@ -39,35 +36,5 @@ public class Voyager extends AbstractPlayer {
     @Override
     protected float getBoostCapacity() {
         return 1;
-    }
-
-    @Override
-    protected void onTurn(TurnDirection turnDirection, float tpf) {
-        Quaternion localRotation = _voyager.getLocalRotation();
-        System.out.println(String.format(
-                "Local rotation is XYZ (%1$f, %2$f, %3$f)", 
-                localRotation.getX(), 
-                localRotation.getY(), 
-                localRotation.getZ()));
-        
-        switch(turnDirection){
-            case Right:
-                if(localRotation.getZ() > _rollRightLimit) {
-                    _voyager.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
-                } 
-                break;
-            case Left:
-                if(localRotation.getZ() < _rollLeftLimit){
-                    _voyager.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
-                } 
-                break;
-            default:
-                if(localRotation.getZ() > 0){
-                    _voyager.rotate(0,0,-getRotationalSpeed() * tpf * _rollMultiplier);
-                } else if (localRotation.getZ() < 0) {
-                    _voyager.rotate(0,0,getRotationalSpeed() * tpf * _rollMultiplier);
-                }
-                break;
-        }
     }
 }
