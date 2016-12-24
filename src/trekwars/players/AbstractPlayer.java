@@ -16,7 +16,6 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollRightLimit = -0.6f;
     private final float _rollLeftLimit = 0.6f;
     private final float _rollMultiplier = 1f;
-    private TurnDirection _turningDirection = TurnDirection.None;
     
     protected enum TurnDirection {
         Right, Left, None
@@ -54,35 +53,46 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void turn(float tpf) {
-        TurnDirection userTurnDirection = getTurnDirection();
+        TurnDirection currentTurnDirection = getTurnDirection();
+        float rotationalMultiplier = getRotationalSpeed() * tpf;
+        float rollAmount = rotationalMultiplier * _rollMultiplier;
+        boolean shouldTurn = false;
         
         for(Spatial child : _rootNode.getChildren()){
             Quaternion localRotation = child.getLocalRotation();
-            
-            float rotationalMultiplier = getRotationalSpeed() * tpf;
-            float rollAmount = rotationalMultiplier * _rollMultiplier;
-            
-            if(isNotTurning(localRotation) && _turningDirection == TurnDirection.None) {
-                _turningDirection = userTurnDirection;
-            }
-            
-            roll(child, localRotation, rollAmount, _turningDirection);
-            
-            if(userTurnDirection == TurnDirection.None)    {
-                _turningDirection = TurnDirection.None;
-            }
-            
-            if(_turningDirection == TurnDirection.None){
-                restoreRotation(child, rotationalMultiplier, localRotation);
+
+            // If we are turning and were previously turning, then roll if we're
+            // still turning in the same direction, or restore if we've changed 
+            // directions.
+            if(shouldTurn(currentTurnDirection, localRotation)) {
+                roll(child, localRotation, rollAmount, currentTurnDirection);
+                shouldTurn = true;
+            } else {
+                int turningMultiplier = 
+                        currentTurnDirection == TurnDirection.None ?
+                        1 :
+                        2;
+                restoreRotation(child, rotationalMultiplier * turningMultiplier, localRotation);
             }
         }
         
-        if(_turningDirection != TurnDirection.None){
-            _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationSign(userTurnDirection), 0);
+        if(shouldTurn){
+            _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationSign(currentTurnDirection), 0);
         }
         
         _turnLeftCount = 0;
         _turnRightCount = 0;
+    }
+    
+    private boolean shouldTurn(TurnDirection currentTurnDirection, Quaternion localRotation){
+        return 
+                isTurning(currentTurnDirection) && 
+                (currentRollDirection(localRotation) == currentTurnDirection || 
+                currentRollDirection(localRotation) == TurnDirection.None);
+    }
+    
+    private boolean isTurning(TurnDirection turnDirection) {
+        return turnDirection != TurnDirection.None;
     }
     
     private void roll(Spatial spatial, Quaternion localRotation, float rollAmount, TurnDirection turnDirection){
@@ -101,11 +111,14 @@ public abstract class AbstractPlayer implements IPlayer {
         }
     }
     
-    private boolean isNotTurning(Quaternion localRotation){
-        return
-                Math.abs(localRotation.getX() - 0) < 0.1 &&
-                Math.abs(localRotation.getY() - 0) < 0.1 &&
-                Math.abs(localRotation.getZ() - 0) < 0.1;
+    private TurnDirection currentRollDirection(Quaternion localRotation){
+        if(Math.abs(localRotation.getZ() - 0) < 0.05) {
+            return TurnDirection.None;
+        } else if(localRotation.getZ() < 0) {
+            return TurnDirection.Right;
+        } else {
+            return TurnDirection.Left;
+        }
     }
     
     private void restoreRotation(Spatial spatial, float rotationalMultiplier, Quaternion localRotation) {
