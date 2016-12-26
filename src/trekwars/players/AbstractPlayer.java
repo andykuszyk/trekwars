@@ -16,6 +16,7 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollRightLimit = -0.6f;
     private final float _rollLeftLimit = 0.6f;
     private final float _rollMultiplier = 1f;
+    private float _previousRotationAmount = 0f;
     
     protected enum TurnDirection {
         Right, Left, None
@@ -61,24 +62,41 @@ public abstract class AbstractPlayer implements IPlayer {
         for(Spatial child : _rootNode.getChildren()){
             Quaternion localRotation = child.getLocalRotation();
 
-            // If we are turning and were previously turning, then roll if we're
-            // still turning in the same direction, or restore if we've changed 
-            // directions.
             if(shouldTurn(currentTurnDirection, localRotation)) {
                 roll(child, localRotation, rollAmount, currentTurnDirection);
                 shouldTurn = true;
             } else {
-                int turningMultiplier = 
-                        currentTurnDirection == TurnDirection.None ?
-                        1 :
-                        2;
+                int turningMultiplier = currentTurnDirection == TurnDirection.None ? 1 : 2;
                 restoreRotation(child, rotationalMultiplier * turningMultiplier, localRotation);
             }
         }
         
+        float rotationAmount;
         if(shouldTurn){
-            _rootNode.rotate(0, getRotationalSpeed() * tpf * getRotationSign(currentTurnDirection), 0);
+            float targetRotationAmount = getRotationalSpeed() * tpf * getRotationSign(currentTurnDirection);
+            boolean achievedTargetRotation = 
+                    targetRotationAmount > 0 ?
+                    _previousRotationAmount >= targetRotationAmount :
+                    _previousRotationAmount <= targetRotationAmount;
+            if(achievedTargetRotation) {
+                rotationAmount = targetRotationAmount;
+            } else {
+                if(getRotationSign(currentTurnDirection) != Math.round(_previousRotationAmount / Math.abs(_previousRotationAmount))) {
+                    _previousRotationAmount = _previousRotationAmount * -1;
+                }
+                rotationAmount = 
+                        _previousRotationAmount == 0f ?
+                        targetRotationAmount * tpf :
+                        _previousRotationAmount * (1 + 2 * tpf / getRotationalSpeed());
+                if(Math.abs(rotationAmount) > Math.abs(targetRotationAmount)) {
+                    rotationAmount = targetRotationAmount;
+                }
+            }
+        } else {
+            rotationAmount = _previousRotationAmount * (1 - tpf / getRotationalSpeed());
         }
+        _rootNode.rotate(0,rotationAmount,0);
+        _previousRotationAmount = rotationAmount;
         
         _turnLeftCount = 0;
         _turnRightCount = 0;
@@ -168,11 +186,11 @@ public abstract class AbstractPlayer implements IPlayer {
     protected abstract void onUpdate(float tpf);
     
     /**
-     * Gets the rotational speed of the player in radians per second.
+     * Gets the rotational speed of the player in units per second.
      * This represents the rate at which a player can turn.
-     * e.g. a value of 2 Pi would indicate that the player can turn all
+     * e.g. a value of 1 would indicate that the player can turn all
      * the way round in one second.
-     * @return A float that indicates the number of radians the player can turn through in a second.
+     * @return A float that indicates the number of units the player can turn through in a second.
      */
     protected abstract float getRotationalSpeed();
     
