@@ -33,4 +33,9 @@ public class Voyager extends AbstractPlayer {
     protected float getBoostCapacity() {
         return 1;
     }
+
+    @Override
+    protected void autopilot(float tpf) {
+        return;
+    }
 }

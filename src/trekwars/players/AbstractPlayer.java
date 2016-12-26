@@ -55,18 +55,20 @@ public abstract class AbstractPlayer implements IPlayer {
     
     public void update(float tpf) {
         turn(tpf);
+        fire(tpf);
         
         switch(_playerType){
             default:
             case Player:
                 move(tpf);
-                fire(tpf);
                 break;
             case Enemy:
-                
+                autopilot(tpf);
                 break;
         } 
     }
+    
+    protected abstract void autopilot(float tpf);
     
     private void fire(float tpf) {
         //TODO
