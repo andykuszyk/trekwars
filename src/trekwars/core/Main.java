@@ -8,6 +8,7 @@ import com.jme3.renderer.RenderManager;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import trekwars.players.IPlayer;
+import trekwars.players.PlayerType;
 import trekwars.players.Voyager;
 import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
@@ -41,16 +42,16 @@ public class Main extends SimpleApplication {
                 InputMappings.fire);
 
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(new Voyager(assetManager));
-        waveOne.add(new Voyager(assetManager));
-        waveOne.add(new Voyager(assetManager));
+        waveOne.add(new Voyager(assetManager, PlayerType.Enemy));
+        waveOne.add(new Voyager(assetManager, PlayerType.Enemy));
+        waveOne.add(new Voyager(assetManager, PlayerType.Enemy));
         ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(new Voyager(assetManager));
-        waveTwo.add(new Voyager(assetManager));
+        waveTwo.add(new Voyager(assetManager, PlayerType.Enemy));
+        waveTwo.add(new Voyager(assetManager, PlayerType.Enemy));
         ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(new Voyager(assetManager));
+        waveThree.add(new Voyager(assetManager, PlayerType.Enemy));
         setScreen(new BasicStarfield(
-                new Voyager(assetManager), 
+                new Voyager(assetManager, PlayerType.Player), 
                 waveOne, 
                 waveTwo, 
                 waveThree, 

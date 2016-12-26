@@ -7,6 +7,7 @@ public interface IPlayer {
     void turnLeft(float tpf);
     void boost(float tpf);
     void fire(float tpf);
-    void update(float tpf, UpdateMode updateMode);
+    void update(float tpf);
     Node getRootNode();
+    PlayerType getPlayerType();
 }

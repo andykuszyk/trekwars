@@ -17,6 +17,15 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollLeftLimit = 0.6f;
     private final float _rollMultiplier = 1f;
     private float _previousRotationAmount = 0f;
+    private final PlayerType _playerType;
+    
+    protected AbstractPlayer(PlayerType playerType) {
+        _playerType = playerType;
+    }
+    
+    public PlayerType getPlayerType() {
+        return _playerType;
+    }
     
     protected enum TurnDirection {
         Right, Left, None
@@ -44,9 +53,9 @@ public abstract class AbstractPlayer implements IPlayer {
         _fireCount++;
     }
     
-    public void update(float tpf, UpdateMode updateMode) {
+    public void update(float tpf) {
         turn(tpf);
-        if(updateMode == UpdateMode.Player) {
+        if(_playerType == PlayerType.Player) {
             move(tpf);
         }
         

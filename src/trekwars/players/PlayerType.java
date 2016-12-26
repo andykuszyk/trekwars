@@ -1,5 +1,5 @@
 package trekwars.players;
 
-public enum UpdateMode {
+public enum PlayerType {
     Player, Enemy
 }

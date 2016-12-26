@@ -22,7 +22,7 @@ import java.util.Random;
 import trekwars.core.Distance;
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
-import trekwars.players.UpdateMode;
+import trekwars.players.PlayerType;
 
 public class BasicStarfield implements IScreen {
     
@@ -125,7 +125,7 @@ public class BasicStarfield implements IScreen {
     }
 
     public void update(float tpf) {
-        _player.update(tpf, UpdateMode.Player);
+        _player.update(tpf);
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
         updatePlayers(_enemyWaveThree, tpf);
@@ -153,7 +153,7 @@ public class BasicStarfield implements IScreen {
     private void updatePlayers(Iterable<IPlayer> players, float tpf){
         if (players == null) return;
         for(IPlayer player : players){
-            player.update(tpf, UpdateMode.Enemy);
+            player.update(tpf);
         }
     }
 

@@ -9,7 +9,8 @@ public class Voyager extends AbstractPlayer {
     
     private final Spatial _voyager;
     
-    public Voyager(AssetManager assetManager){
+    public Voyager(AssetManager assetManager, PlayerType playerType){
+        super(playerType);
         _voyager = assetManager.loadModel("Models/Voyager.obj");
         Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
         _voyager.setMaterial(mat_default);
