@@ -85,7 +85,7 @@ public abstract class AbstractPlayer implements IPlayer {
                     _previousRotationAmount = _previousRotationAmount * -1;
                 }
                 rotationAmount = 
-                        _previousRotationAmount == 0f ?
+                        Math.abs(_previousRotationAmount) < Math.abs(targetRotationAmount * tpf) ?
                         targetRotationAmount * tpf :
                         _previousRotationAmount * (1 + 2 * tpf / getRotationalSpeed());
                 if(Math.abs(rotationAmount) > Math.abs(targetRotationAmount)) {
