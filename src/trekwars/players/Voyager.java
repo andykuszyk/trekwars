@@ -19,10 +19,6 @@ public class Voyager extends AbstractPlayer {
         attachChild(_voyager);
     }
 
-    protected void onUpdate(float tpf) {
-        // voyager specific update logic here.
-    }
-
     @Override
     protected float getRotationalSpeed() {
         return (float)(Math.PI / 4);

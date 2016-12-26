@@ -161,16 +161,16 @@ public class BasicStarfield implements IScreen {
         if(name == null) return;
         
         if (name.equals(InputMappings.left)) {
-            _player.turnLeft(tpf);
+            _player.turnLeft();
         }
         else if (name.equals(InputMappings.right)) {
-            _player.turnRight(tpf);
+            _player.turnRight();
         }
         else if (name.equals(InputMappings.boost)) {
-            _player.boost(tpf);
+            _player.boost();
         }
         else if (name.equals(InputMappings.fire)){
-            _player.fire(tpf);
+            _player.fire();
         }
     }
 

@@ -36,31 +36,40 @@ public abstract class AbstractPlayer implements IPlayer {
         _rootNode.attachChild(child);
     }
     
-    public void turnRight(float tpf) {
+    public void turnRight() {
         _turnRightCount++;
     }
     
-    public void turnLeft(float tpf){
+    public void turnLeft(){
         _turnLeftCount++;
     }
     
-    public void boost(float tpf){
+    public void boost(){
         if(_lastBoostTime != null) return;
         _lastBoostTime = new Date();
     }
     
-    public void fire(float tpf) {
+    public void fire() {
         _fireCount++;
     }
     
     public void update(float tpf) {
         turn(tpf);
-        if(_playerType == PlayerType.Player) {
-            move(tpf);
-        }
         
-        onUpdate(tpf);
-        
+        switch(_playerType){
+            default:
+            case Player:
+                move(tpf);
+                fire(tpf);
+                break;
+            case Enemy:
+                
+                break;
+        } 
+    }
+    
+    private void fire(float tpf) {
+        //TODO
         _fireCount = 0;
     }
     
@@ -193,8 +202,6 @@ public abstract class AbstractPlayer implements IPlayer {
         Vector3f worldMove = _rootNode.localToWorld(m, m);
         _rootNode.setLocalTranslation(worldMove);
     }
-    
-    protected abstract void onUpdate(float tpf);
     
     /**
      * Gets the rotational speed of the player in units per second.
