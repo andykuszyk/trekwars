@@ -15,20 +15,22 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import trekwars.core.Distance;
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
+import trekwars.players.UpdateMode;
 
 public class BasicStarfield implements IScreen {
     
     private final Node _rootNode;
     private final IPlayer _player;
-    private final Iterable<IPlayer> _enemyWaveOne;
-    private final Iterable<IPlayer> _enemyWaveTwo;
-    private final Iterable<IPlayer> _enemyWaveThree;
+    private final ArrayList<IPlayer> _enemyWaveOne;
+    private final ArrayList<IPlayer> _enemyWaveTwo;
+    private final ArrayList<IPlayer> _enemyWaveThree;
     private final Camera _camera;
     private final float _cameraZDistance = 10f;
     private final float _cameraYDistance = 3f;
@@ -37,6 +39,9 @@ public class BasicStarfield implements IScreen {
     private final float _minStarDistance = 50;
     private final int _numberOfStars = 1000;
     private List<Spatial> _stars = new ArrayList<Spatial>();
+    private final float _enemyWaveOneZ = -25f;
+    private final float _enemyWaveTwoZ = -50f;
+    private final float _enemyWaveThreeZ = -75f;
 
     public BasicStarfield(
             IPlayer player, 
@@ -52,29 +57,49 @@ public class BasicStarfield implements IScreen {
         _camera = camera;
         _rootNode = new Node();
         _player = player;
-        _enemyWaveOne = enemyWaveOne;
-        _enemyWaveTwo = enemyWaveTwo;
-        _enemyWaveThree = enemyWaveThree;
+        _enemyWaveOne = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveOne);
+        _enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);;
+        _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);;
         
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.White);
-        for(int i = 0; i < _numberOfStars; i++) {
-            Quad quad = new Quad(1,1);
-            Geometry geom = new Geometry("star", quad);
-            geom.setMaterial(material);
-            _rootNode.attachChild(geom);
-            positionStar(geom);
-            _stars.add(geom);
+        createStarfield(assetManager);
+        createLighting();
+        attachChildren(player, enemyWaveOne, enemyWaveTwo, enemyWaveThree);
+        arrangeEnemyWave(_enemyWaveOne, _enemyWaveOneZ);
+        arrangeEnemyWave(_enemyWaveTwo, _enemyWaveTwoZ);
+        arrangeEnemyWave(_enemyWaveThree, _enemyWaveThreeZ);
+    }
+    
+    private void arrangeEnemyWave(ArrayList<IPlayer> enemyWave, float z) {
+        if(enemyWave == null) return;
+        
+        int shipCount = enemyWave.size();
+        float averageWidth = getAverageWidth(_enemyWaveOne);
+        int shipIndex = 0;
+        for(IPlayer ship : enemyWave) {
+            float x = -(shipCount - 1) * averageWidth + shipIndex * averageWidth * 2;
+            ship.getRootNode().setLocalTranslation(x,0,z);
+            shipIndex++;
         }
+    }
+    
+    private float getAverageWidth(Iterable<IPlayer> players) {
+        float sumOfWidths = 0f;
+        float numberOfWidths = 0;
+  
+        //TODO
+        sumOfWidths = 10;
+        numberOfWidths = 1;
+//        for (IPlayer player : players) {
+//            for(Spatial         for (IPlayer player : players) {
+//            for(Spatial child : player.getRootNode().getChildren()) {
+//                child.getWorldBound().
+//            }
+//        }child : player.getRootNode().getChildren()) {
+//                child.getWorldBound().
+//            }
+//        }
         
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(1.3f));
-        _rootNode.addLight(al);
-        
-        _rootNode.attachChild(player.getRootNode());
-        attachRootNodes(enemyWaveOne);
-        attachRootNodes(enemyWaveTwo);
-        attachRootNodes(enemyWaveThree);
+        return sumOfWidths / numberOfWidths;
     }
     
     private void positionStar(Spatial star) {
@@ -100,7 +125,7 @@ public class BasicStarfield implements IScreen {
     }
 
     public void update(float tpf) {
-        _player.update(tpf);
+        _player.update(tpf, UpdateMode.Player);
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
         updatePlayers(_enemyWaveThree, tpf);
@@ -128,7 +153,7 @@ public class BasicStarfield implements IScreen {
     private void updatePlayers(Iterable<IPlayer> players, float tpf){
         if (players == null) return;
         for(IPlayer player : players){
-            player.update(tpf);
+            player.update(tpf, UpdateMode.Enemy);
         }
     }
 
@@ -147,5 +172,31 @@ public class BasicStarfield implements IScreen {
         else if (name.equals(InputMappings.fire)){
             _player.fire(tpf);
         }
+    }
+
+    private void createStarfield(AssetManager assetManager) {
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.White);
+        for(int i = 0; i < _numberOfStars; i++) {
+            Quad quad = new Quad(1,1);
+            Geometry geom = new Geometry("star", quad);
+            geom.setMaterial(material);
+            _rootNode.attachChild(geom);
+            positionStar(geom);
+            _stars.add(geom);
+        }
+    }
+
+    private void attachChildren(IPlayer player, Iterable<IPlayer> enemyWaveOne, Iterable<IPlayer> enemyWaveTwo, Iterable<IPlayer> enemyWaveThree) {
+        _rootNode.attachChild(player.getRootNode());
+        attachRootNodes(enemyWaveOne);
+        attachRootNodes(enemyWaveTwo);
+        attachRootNodes(enemyWaveThree);
+    }
+
+    private void createLighting() {
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(1.3f));
+        _rootNode.addLight(al);
     }
 }
