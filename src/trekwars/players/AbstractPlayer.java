@@ -44,9 +44,11 @@ public abstract class AbstractPlayer implements IPlayer {
         _fireCount++;
     }
     
-    public void update(float tpf) {
+    public void update(float tpf, UpdateMode updateMode) {
         turn(tpf);
-        move(tpf);
+        if(updateMode == UpdateMode.Player) {
+            move(tpf);
+        }
         
         onUpdate(tpf);
         
