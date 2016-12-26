@@ -1,16 +1,24 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import trekwars.core.Distance;
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
 
@@ -24,6 +32,11 @@ public class BasicStarfield implements IScreen {
     private final Camera _camera;
     private final float _cameraZDistance = 10f;
     private final float _cameraYDistance = 3f;
+    private final Random _random = new Random();
+    private final float _starRadius = 100;
+    private final float _minStarDistance = 50;
+    private final int _numberOfStars = 1000;
+    private List<Spatial> _stars = new ArrayList<Spatial>();
 
     public BasicStarfield(
             IPlayer player, 
@@ -43,23 +56,36 @@ public class BasicStarfield implements IScreen {
         _enemyWaveTwo = enemyWaveTwo;
         _enemyWaveThree = enemyWaveThree;
         
-        Sphere sphere = new Sphere(100, 100, 100);
-        sphere.scaleTextureCoordinates(new Vector2f(10,10));
-        Geometry starSphere = new Geometry("StarSphere", sphere);
-        starSphere.scale(-1);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture starTexture = assetManager.loadTexture("Textures/starscape.jpg");
-        starTexture.setWrap(Texture.WrapMode.Repeat);
-        mat.setTexture("ColorMap", starTexture);
-        starSphere.setMaterial(mat);
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.White);
+        for(int i = 0; i < _numberOfStars; i++) {
+            Quad quad = new Quad(1,1);
+            Geometry geom = new Geometry("star", quad);
+            geom.setMaterial(material);
+            _rootNode.attachChild(geom);
+            positionStar(geom);
+            _stars.add(geom);
+        }
         
-        _rootNode.attachChild(starSphere);
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(1.3f));
+        _rootNode.addLight(al);
+        
         _rootNode.attachChild(player.getRootNode());
         attachRootNodes(enemyWaveOne);
         attachRootNodes(enemyWaveTwo);
         attachRootNodes(enemyWaveThree);
-        
-        player.getRootNode().setLocalTranslation(0, 0, -10);
+    }
+    
+    private void positionStar(Spatial star) {
+        star.setLocalTranslation(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
+    }
+    
+    private float generateStarCoordinate() {
+        return
+                (_random.nextFloat() - 0.5f) * 
+                ((_starRadius + _minStarDistance) / _minStarDistance) * 
+                _starRadius;
     }
     
     private void attachRootNodes(Iterable<IPlayer> players){
@@ -80,6 +106,13 @@ public class BasicStarfield implements IScreen {
         updatePlayers(_enemyWaveThree, tpf);
         
         positionCamera();
+        
+        for(Spatial star : _stars) {
+            star.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
+            if(new Distance(star, _player.getRootNode()).getLocal() < _minStarDistance) {
+                positionStar(star);
+            }
+        }
     }
     
     private void positionCamera(){
