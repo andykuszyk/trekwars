@@ -11,7 +11,7 @@ public class Voyager extends AbstractPlayer {
     
     public Voyager(AssetManager assetManager, PlayerType playerType){
         super(playerType);
-        _voyager = assetManager.loadModel("Models/Voyager.obj");
+        _voyager = assetManager.loadModel("Models/Voyager.j3o");
         Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
         _voyager.setMaterial(mat_default);
         _voyager.setLocalScale(1);
