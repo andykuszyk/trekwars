@@ -1,28 +1,23 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import trekwars.core.Distance;
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
-import trekwars.players.PlayerType;
 
 public class BasicStarfield implements IScreen {
     
@@ -78,6 +73,13 @@ public class BasicStarfield implements IScreen {
         for(IPlayer ship : enemyWave) {
             float x = -(shipCount - 1) * averageWidth + shipIndex * averageWidth * 2;
             ship.getRootNode().setLocalTranslation(x,0,z);
+            Vector3f target = _player.getRootNode().getWorldTranslation();
+            //TODO
+//                    new Vector3f(
+//                    ship.getRootNode().getWorldTranslation().getX(),
+//                    ship.getRootNode().getWorldTranslation().getY(),
+//                    10);
+            ship.getRootNode().lookAt(target, Vector3f.UNIT_Y);
             shipIndex++;
         }
     }
@@ -198,5 +200,13 @@ public class BasicStarfield implements IScreen {
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.3f));
         _rootNode.addLight(al);
+    }
+
+    public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
+        if(evt.getX() < screenWidth / 2) {
+            _player.turnLeft();
+        } else {
+            _player.turnRight();
+        }
     }
 }
