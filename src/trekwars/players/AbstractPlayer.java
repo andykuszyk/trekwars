@@ -70,10 +70,14 @@ public abstract class AbstractPlayer implements IPlayer {
     
     protected abstract void autopilot(float tpf);
     
+    protected abstract Node getSpatialNode();
+    
     private void fire(float tpf) {
         //TODO
         _fireCount = 0;
     }
+    
+    protected abstract void onFire(float tpf);
     
     private void turn(float tpf) {
         TurnDirection currentTurnDirection = getTurnDirection();
@@ -81,16 +85,15 @@ public abstract class AbstractPlayer implements IPlayer {
         float rollAmount = rotationalMultiplier * _rollMultiplier;
         boolean shouldTurn = false;
         
-        for(Spatial child : _rootNode.getChildren()){
-            Quaternion localRotation = child.getLocalRotation();
+        Node child = getSpatialNode();
+        Quaternion localRotation = child.getLocalRotation();
 
-            if(shouldTurn(currentTurnDirection, localRotation)) {
-                roll(child, localRotation, rollAmount, currentTurnDirection);
-                shouldTurn = true;
-            } else {
-                int turningMultiplier = currentTurnDirection == TurnDirection.None ? 1 : 2;
-                restoreRotation(child, rotationalMultiplier * turningMultiplier, localRotation);
-            }
+        if(shouldTurn(currentTurnDirection, localRotation)) {
+            roll(child, localRotation, rollAmount, currentTurnDirection);
+            shouldTurn = true;
+        } else {
+            int turningMultiplier = currentTurnDirection == TurnDirection.None ? 1 : 2;
+            restoreRotation(child, rotationalMultiplier * turningMultiplier, localRotation);
         }
         
         float rotationAmount;
