@@ -65,7 +65,12 @@ public class Voyager extends AbstractPlayer {
     }
 
     @Override
-    protected void onFire(float tpf) {
-        _phaser.setLocalRotation(new Quaternion(0.5f, 0f, 0f, 0f));
+    protected void onFireStart(float tpf) {
+        _spatialNode.attachChild(_phaser);
+    }
+    
+    @Override
+    protected void onFireStop(float tpf) {
+        _spatialNode.detachChild(_phaser);
     }
 }

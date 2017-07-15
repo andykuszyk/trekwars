@@ -73,11 +73,17 @@ public abstract class AbstractPlayer implements IPlayer {
     protected abstract Node getSpatialNode();
     
     private void fire(float tpf) {
-        //TODO
+        if(_fireCount > 0){
+            onFireStart(tpf);
+        } else {
+            onFireStop(tpf);
+        }
         _fireCount = 0;
     }
     
-    protected abstract void onFire(float tpf);
+    protected abstract void onFireStart(float tpf);
+    
+    protected abstract void onFireStop(float tpf);
     
     private void turn(float tpf) {
         TurnDirection currentTurnDirection = getTurnDirection();
