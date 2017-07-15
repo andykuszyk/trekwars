@@ -6,4 +6,5 @@ public class InputMappings {
     public static final String boost = "BOOST";
     public static final String fire = "FIRE";
     public static final String select = "SELECT";
+    public static final String stop = "STOP";
 }

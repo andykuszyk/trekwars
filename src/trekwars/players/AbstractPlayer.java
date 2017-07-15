@@ -4,14 +4,14 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.Date;
 
 public abstract class AbstractPlayer implements IPlayer {
     
     protected int _turnLeftCount = 0;
     protected int _turnRightCount = 0;
-    protected Date _lastBoostTime = null;
+    protected int _boostCount = 0;
     protected int _fireCount = 0;
+    protected int _stopCount = 0;
     private Node _rootNode;   
     private final float _rollRightLimit = -0.6f;
     private final float _rollLeftLimit = 0.6f;
@@ -45,12 +45,15 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     public void boost(){
-        if(_lastBoostTime != null) return;
-        _lastBoostTime = new Date();
+        _boostCount++;
     }
     
     public void fire() {
         _fireCount++;
+    }
+    
+    public void stop() {
+        _stopCount++;
     }
     
     public void update(float tpf) {
@@ -199,15 +202,15 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void move(float tpf) {
-        int boostMultiplier = 1;
-        if(_lastBoostTime != null){
-            float timeSinceLastBoost = new Date().getTime() - _lastBoostTime.getTime();
-            if(timeSinceLastBoost > getBoostCapacity()){
-                _lastBoostTime = null;
-            } else {
-                boostMultiplier = 2;
-            }
+        float boostMultiplier = 1;
+        if(_boostCount > 0) {
+            boostMultiplier = getBoostMultiplier();
         }
+        _boostCount = 0;
+        if(_stopCount > 0) {
+            boostMultiplier = 0f;
+        }
+        _stopCount = 0;
         
         Vector3f m = new Vector3f(0, 0, -(boostMultiplier * (getTranslationalSpeed() * tpf)));
         Vector3f worldMove = _rootNode.localToWorld(m, m);
@@ -234,6 +237,13 @@ public abstract class AbstractPlayer implements IPlayer {
      * @return 
      */
     protected abstract float getBoostCapacity();
+    
+    /**
+     * Gets the amount by which the translational speed should be multiplied
+     * when boosting.
+     * @return 
+     */
+    protected abstract float getBoostMultiplier();
     
     public Node getRootNode() {
         if(_rootNode == null){

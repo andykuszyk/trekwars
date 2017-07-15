@@ -46,7 +46,12 @@ public class Voyager extends AbstractPlayer {
 
     @Override
     protected float getTranslationalSpeed() {
-        return (float) 0.5;
+        return (float) 1.0;
+    }
+    
+    @Override
+    protected float getBoostMultiplier() {
+        return (float)3.0f;
     }
 
     @Override

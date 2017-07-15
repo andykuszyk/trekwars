@@ -174,6 +174,9 @@ public class BasicStarfield implements IScreen {
         else if (name.equals(InputMappings.fire)){
             _player.fire();
         }
+        else if(name.equals(InputMappings.stop)) {
+            _player.stop();
+        }
     }
 
     private void createStarfield(AssetManager assetManager) {
