@@ -60,7 +60,7 @@ public class Main extends SimpleApplication implements TouchListener {
         ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
         waveThree.add(new Brel(assetManager, PlayerType.Enemy));
         setScreen(new BasicStarfield(
-                new Voyager(assetManager, PlayerType.Player), 
+                new Brel(assetManager, PlayerType.Player), 
                 waveOne, 
                 waveTwo, 
                 waveThree, 

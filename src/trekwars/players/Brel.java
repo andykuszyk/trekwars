@@ -1,14 +1,20 @@
 package trekwars.players;
-
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 public class Brel extends AbstractPlayer {
     
     private final Spatial _brel;
     private final Node _spatialNode;
+    private final DisrupterPulseList _pulses;
+    private Date _lastPulseTime = new Date();
+    private final float _secondsBetweenPulses = 1;
+    private final Node _disrupterNode;
     
     public Brel(AssetManager assetManager, PlayerType playerType){
         super(playerType);
@@ -20,8 +26,24 @@ public class Brel extends AbstractPlayer {
         
         _spatialNode = new Node();
         _spatialNode.attachChild(_brel);
+        _disrupterNode = new Node();
+        _pulses = new DisrupterPulseList(
+                assetManager,
+                _disrupterNode,
+                10,
+                100,
+                1,
+                5
+        );
         
         attachChild(_spatialNode);
+    }
+    
+    @Override
+    protected Collection<Node> getOtherNodes() {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        nodes.add(_disrupterNode);
+        return nodes;
     }
 
     @Override
@@ -55,12 +77,20 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void onFireStart(float tpf) {
-        
+        if(((new Date().getTime() - _lastPulseTime.getTime()) / 1000f) > _secondsBetweenPulses){
+            _lastPulseTime = new Date();
+            _pulses.addPulse();
+        }
     }
 
     @Override
     protected void onFireStop(float tpf) {
         
+    }
+    
+    @Override
+    protected void onUpdate(float tpf) {
+        _pulses.update(tpf);
     }
 }
 

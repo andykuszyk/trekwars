@@ -74,11 +74,6 @@ public class BasicStarfield implements IScreen {
             float x = -(shipCount - 1) * averageWidth + shipIndex * averageWidth * 2;
             ship.getRootNode().setLocalTranslation(x,0,z);
             Vector3f target = _player.getRootNode().getWorldTranslation();
-            //TODO
-//                    new Vector3f(
-//                    ship.getRootNode().getWorldTranslation().getX(),
-//                    ship.getRootNode().getWorldTranslation().getY(),
-//                    10);
             ship.getRootNode().rotate(0f, (float) Math.PI, 0f);
             shipIndex++;
         }
@@ -118,7 +113,9 @@ public class BasicStarfield implements IScreen {
     private void attachRootNodes(Iterable<IPlayer> players){
         if(players == null) return;
         for(IPlayer player : players){
-            _rootNode.attachChild(player.getRootNode());
+            for(Node node : player.getRootNodes()){
+                _rootNode.attachChild(node);
+            }
         }
     }
     
@@ -192,8 +189,14 @@ public class BasicStarfield implements IScreen {
         }
     }
 
-    private void attachChildren(IPlayer player, Iterable<IPlayer> enemyWaveOne, Iterable<IPlayer> enemyWaveTwo, Iterable<IPlayer> enemyWaveThree) {
-        _rootNode.attachChild(player.getRootNode());
+    private void attachChildren(
+            IPlayer player, 
+            Iterable<IPlayer> enemyWaveOne, 
+            Iterable<IPlayer> enemyWaveTwo, 
+            Iterable<IPlayer> enemyWaveThree) {
+        for(Node node : player.getRootNodes()) {
+            _rootNode.attachChild(node);
+        }
         attachRootNodes(enemyWaveOne);
         attachRootNodes(enemyWaveTwo);
         attachRootNodes(enemyWaveThree);

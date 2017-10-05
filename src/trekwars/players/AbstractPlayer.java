@@ -4,6 +4,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class AbstractPlayer implements IPlayer {
     
@@ -69,7 +71,11 @@ public abstract class AbstractPlayer implements IPlayer {
                 autopilot(tpf);
                 break;
         } 
+        
+        onUpdate(tpf);
     }
+    
+    protected void onUpdate(float tpf) { }
     
     protected abstract void autopilot(float tpf);
     
@@ -250,5 +256,16 @@ public abstract class AbstractPlayer implements IPlayer {
             _rootNode = new Node();
         }
         return _rootNode;
+    }
+    
+    public Iterable<Node> getRootNodes() {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        nodes.add(getRootNode());
+        nodes.addAll(getOtherNodes());
+        return nodes;
+    }
+    
+    protected Collection<Node> getOtherNodes() {
+        return new ArrayList<Node>();
     }
 }

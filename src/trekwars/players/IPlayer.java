@@ -10,5 +10,6 @@ public interface IPlayer {
     void stop();
     void update(float tpf);
     Node getRootNode();
+    Iterable<Node> getRootNodes();
     PlayerType getPlayerType();
 }
