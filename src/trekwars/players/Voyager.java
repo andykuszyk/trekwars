@@ -19,11 +19,16 @@ public class Voyager extends AbstractPlayer {
     
     public Voyager(AssetManager assetManager, PlayerType playerType){
         super(playerType);
-        _voyager = assetManager.loadModel("Models/Voyager.j3o");
-        Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
-        _voyager.setMaterial(mat_default);
-        _voyager.setLocalScale(1);
         
+        // Voyager
+        _voyager = assetManager.loadModel("Models/voyager.j3o");
+        Material voyager_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        voyager_material.setTexture("ColorMap", assetManager.loadTexture("Textures/voyager.png"));
+        _voyager.setMaterial(voyager_material);
+        _voyager.setLocalScale(0.5f);
+        
+        
+        // Phaser
         Quad quad = new Quad(0.5f,50);
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         material.setColor("Color", ColorRGBA.White);
