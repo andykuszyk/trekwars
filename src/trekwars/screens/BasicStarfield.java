@@ -79,7 +79,7 @@ public class BasicStarfield implements IScreen {
 //                    ship.getRootNode().getWorldTranslation().getX(),
 //                    ship.getRootNode().getWorldTranslation().getY(),
 //                    10);
-            ship.getRootNode().lookAt(target, Vector3f.UNIT_Y);
+            ship.getRootNode().rotate(0f, (float) Math.PI, 0f);
             shipIndex++;
         }
     }
