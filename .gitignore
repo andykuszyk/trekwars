@@ -16,3 +16,4 @@ dist/
 
 nbproject/private
 mobile/bin*
+mobile/assets/*
