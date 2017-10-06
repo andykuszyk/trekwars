@@ -27,16 +27,17 @@ public class DisrupterPulse {
         material.setColor("Color", ColorRGBA.Red);
         _spatial = new Geometry("disrupter", quad);
         _spatial.rotate(-(float)Math.PI / 2, 0f, 0f);
-        _spatial.setLocalTranslation(-0.25f, -1f, -1f);
+        _spatial.setLocalTranslation(0, 0, 0);
         _spatial.setMaterial(material);
     }
     
     public boolean getIsAlive() {
-        return _distance > _range;
+        return _distance <= _range;
     }
     
     public void update(float tpf) {
         _distance += tpf * _speedPerSecond;
+        _spatial.move(0f, 0f, tpf * _speedPerSecond);
         
     }
     

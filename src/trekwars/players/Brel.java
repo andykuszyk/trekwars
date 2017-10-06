@@ -30,10 +30,10 @@ public class Brel extends AbstractPlayer {
         _pulses = new DisrupterPulseList(
                 assetManager,
                 _disrupterNode,
-                10,
-                100,
-                1,
-                5
+                50,
+                500,
+                0.5f,
+                2
         );
         
         attachChild(_spatialNode);
@@ -77,7 +77,7 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void onFireStart(float tpf) {
-        if(((new Date().getTime() - _lastPulseTime.getTime()) / 1000f) > _secondsBetweenPulses){
+         if(((new Date().getTime() - _lastPulseTime.getTime()) / 1000f) > _secondsBetweenPulses){
             _lastPulseTime = new Date();
             _pulses.addPulse();
         }

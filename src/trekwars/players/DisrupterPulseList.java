@@ -51,6 +51,9 @@ public class DisrupterPulseList {
         }
         
         _pulses.removeAll(deadPulses);
+        for(DisrupterPulse pulse : deadPulses) {
+            _rootNode.detachChild(pulse.getSpatial());
+        }
     }
     
 }
