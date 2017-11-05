@@ -1,6 +1,7 @@
 package trekwars.players;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class Brel extends AbstractPlayer {
                 50,
                 500,
                 0.5f,
-                2
+                2,
+                new Vector3f()
         );
         
         attachChild(_spatialNode);
@@ -79,7 +81,16 @@ public class Brel extends AbstractPlayer {
     protected void onFireStart(float tpf) {
          if(((new Date().getTime() - _lastPulseTime.getTime()) / 1000f) > _secondsBetweenPulses){
             _lastPulseTime = new Date();
-            _pulses.addPulse();
+            _pulses.addPulse(
+                _spatialNode.getWorldTranslation(),
+                _spatialNode.getWorldRotation(),
+                new Vector3f(-2f, -0.5f, 0f)
+            );
+            _pulses.addPulse(
+                _spatialNode.getWorldTranslation(),
+                _spatialNode.getWorldRotation(),
+                new Vector3f(2f, -0.5f, 0f)
+            );
         }
     }
 

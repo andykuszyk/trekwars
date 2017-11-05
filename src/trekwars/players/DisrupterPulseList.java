@@ -1,6 +1,8 @@
 package trekwars.players;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 
@@ -12,6 +14,7 @@ public class DisrupterPulseList {
     private final float _range;
     private final float _width;
     private final float _depth;
+    private final Vector3f _gunOffset;
     
     public DisrupterPulseList(
             AssetManager assetManager, 
@@ -19,22 +22,27 @@ public class DisrupterPulseList {
             float speedPerSecond, 
             float range, 
             float width, 
-            float depth) {
+            float depth,
+            Vector3f gunOffset) {
         _rootNode = rootNode;
         _assetManager = assetManager;
         _speedPerSecond = speedPerSecond;
         _range = range;
         _width = width;
         _depth = depth;
+        _gunOffset = gunOffset;
     }
     
-    public void addPulse(){
+    public void addPulse(Vector3f start, Quaternion direction, Vector3f offset){
         DisrupterPulse pulse = new DisrupterPulse(
                 _assetManager, 
                 _speedPerSecond,
                 _range,
                 _width,
-                _depth
+                _depth,
+                start,
+                direction,
+                offset
         );
         _pulses.add(pulse);
         _rootNode.attachChild(pulse.getSpatial());
