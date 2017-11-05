@@ -70,6 +70,7 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void autopilot(float tpf) {
+        this.fire();
     }
 
     @Override
