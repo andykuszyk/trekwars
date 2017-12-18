@@ -3,16 +3,12 @@ package trekwars.core;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.input.controls.TouchListener;
 import com.jme3.input.controls.TouchTrigger;
-import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import trekwars.players.Brel;
 import trekwars.players.IPlayer;
@@ -21,7 +17,7 @@ import trekwars.players.Voyager;
 import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
 
-public class Main extends SimpleApplication implements TouchListener {
+public class Main extends SimpleApplication {
 
     private IScreen _screen;
     
@@ -44,7 +40,6 @@ public class Main extends SimpleApplication implements TouchListener {
         inputManager.addMapping(InputMappings.fire, new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping(InputMappings.left_click, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         
-        inputManager.addListener(this, new String[] {"Touch"});
         inputManager.addListener(
                 actionListener, 
                 InputMappings.left,
@@ -74,12 +69,6 @@ public class Main extends SimpleApplication implements TouchListener {
                 inputManager,
                 new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
         
-    }
-    
-    @Override
-    public void onTouch(String binding, TouchEvent evt, float tpf) {
-        _screen.onTouch(evt, tpf, this.settings.getWidth(), this.settings.getHeight());
-        evt.setConsumed();
     }
     
     private AnalogListener actionListener = new AnalogListener() {

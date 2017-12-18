@@ -223,12 +223,4 @@ public class BasicStarfield implements IScreen {
         al.setColor(ColorRGBA.White.mult(1.3f));
         _rootNode.addLight(al);
     }
-
-    public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
-        if(evt.getX() < screenWidth / 2) {
-            _player.turnLeft();
-        } else {
-            _player.turnRight();
-        }
-    }
 }
