@@ -2,12 +2,15 @@ package trekwars.core;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.TouchListener;
 import com.jme3.input.controls.TouchTrigger;
 import com.jme3.input.event.TouchEvent;
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class Main extends SimpleApplication implements TouchListener {
         inputManager.addMapping(InputMappings.stop, new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping(InputMappings.select, new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addMapping(InputMappings.fire, new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping(InputMappings.left_click, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         
         inputManager.addListener(this, new String[] {"Touch"});
         inputManager.addListener(
@@ -48,7 +52,8 @@ public class Main extends SimpleApplication implements TouchListener {
                 InputMappings.boost,
                 InputMappings.stop,
                 InputMappings.select,
-                InputMappings.fire);
+                InputMappings.fire,
+                InputMappings.left_click);
 
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
         waveOne.add(new Brel(assetManager, PlayerType.Enemy));
@@ -65,7 +70,10 @@ public class Main extends SimpleApplication implements TouchListener {
                 waveTwo, 
                 waveThree, 
                 assetManager, 
-                cam));
+                cam,
+                inputManager,
+                new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
+        
     }
     
     @Override

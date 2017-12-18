@@ -7,4 +7,5 @@ public class InputMappings {
     public static final String fire = "FIRE";
     public static final String select = "SELECT";
     public static final String stop = "STOP";
+    public static final String left_click = "LEFT_CLICK";
 }

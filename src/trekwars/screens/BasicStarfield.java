@@ -1,10 +1,12 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.input.InputManager;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
@@ -37,6 +39,8 @@ public class BasicStarfield implements IScreen {
     private final float _enemyWaveOneZ = -25f;
     private final float _enemyWaveTwoZ = -50f;
     private final float _enemyWaveThreeZ = -75f;
+    private final InputManager _inputManager;
+    private final Vector2f _screenSize;
 
     public BasicStarfield(
             IPlayer player, 
@@ -44,7 +48,9 @@ public class BasicStarfield implements IScreen {
             Iterable<IPlayer> enemyWaveTwo,
             Iterable<IPlayer> enemyWaveThree,
             AssetManager assetManager,
-            Camera camera){
+            Camera camera,
+            InputManager inputManager,
+            Vector2f screenSize){
         if(player == null || camera == null) {
             //TODO: throw new ArgumentNullException();
         }
@@ -55,6 +61,8 @@ public class BasicStarfield implements IScreen {
         _enemyWaveOne = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveOne);
         _enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);;
         _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);;
+        _inputManager = inputManager;
+        _screenSize = screenSize;
         
         createStarfield(assetManager);
         createLighting();
@@ -173,6 +181,14 @@ public class BasicStarfield implements IScreen {
         }
         else if(name.equals(InputMappings.stop)) {
             _player.stop();
+        }
+        else if(name.equals(InputMappings.left_click)) {
+            float x = _inputManager.getCursorPosition().getX();
+            if(x < _screenSize.getX() / 2) {
+                _player.turnLeft();
+            } else {
+                _player.turnRight();
+            }
         }
     }
 
