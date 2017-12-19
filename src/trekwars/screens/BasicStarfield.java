@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
+import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,8 @@ public class BasicStarfield implements IScreen {
     private final float _enemyWaveThreeZ = -75f;
     private final InputManager _inputManager;
     private final Vector2f _screenSize;
+    private final Node _guiNode;
+    private final AssetManager _assetManager;
 
     public BasicStarfield(
             IPlayer player, 
@@ -48,6 +51,7 @@ public class BasicStarfield implements IScreen {
             Iterable<IPlayer> enemyWaveTwo,
             Iterable<IPlayer> enemyWaveThree,
             AssetManager assetManager,
+            Node guiNode,
             Camera camera,
             InputManager inputManager,
             Vector2f screenSize){
@@ -63,6 +67,8 @@ public class BasicStarfield implements IScreen {
         _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);;
         _inputManager = inputManager;
         _screenSize = screenSize;
+        _guiNode = guiNode;
+        _assetManager = assetManager;
         
         createStarfield(assetManager);
         createLighting();
@@ -70,6 +76,55 @@ public class BasicStarfield implements IScreen {
         arrangeEnemyWave(_enemyWaveOne, _enemyWaveOneZ);
         arrangeEnemyWave(_enemyWaveTwo, _enemyWaveTwoZ);
         arrangeEnemyWave(_enemyWaveThree, _enemyWaveThreeZ);
+        buildHud();
+    }
+    
+    private void buildHud() {
+        Picture topLeft = new Picture();
+        topLeft.setImage(_assetManager, "Interface/lcars-top-left.png", true);
+        positionPicture(topLeft, new Vector2f(0f, 0.75f), new Vector2f(0.25f, 1f));
+        _guiNode.attachChild(topLeft);
+        
+        Picture topRight = new Picture();
+        topRight.setImage(_assetManager, "Interface/lcars-top-right.png", true);
+        positionPicture(topRight, new Vector2f(0.75f, 0.75f), new Vector2f(1f, 1f));
+        _guiNode.attachChild(topRight);
+        
+        Picture topMiddle = new Picture();
+        topMiddle.setImage(_assetManager, "Interface/lcars-top-middle.png", true);
+        positionPicture(topMiddle, new Vector2f(0.3f, 0.9f), new Vector2f(0.7f, 1f));
+        _guiNode.attachChild(topMiddle);
+        
+        Picture bottomLeft = new Picture();
+        bottomLeft.setImage(_assetManager, "Interface/lcars-bottom-left.png", true);
+        positionPicture(bottomLeft, new Vector2f(0f, 0f), new Vector2f(0.25f, 0.25f));
+        _guiNode.attachChild(bottomLeft);
+        
+        Picture bottomRight = new Picture();
+        bottomRight.setImage(_assetManager, "Interface/lcars-bottom-right.png", true);
+        positionPicture(bottomRight, new Vector2f(0.75f, 0f), new Vector2f(1f, 0.25f));
+        _guiNode.attachChild(bottomRight);
+        
+        Picture leftButton = new Picture();
+        leftButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
+        positionPicture(leftButton, new Vector2f(0f, 0.3f), new Vector2f(0.25f, 0.7f));
+        _guiNode.attachChild(leftButton);
+        
+        Picture rightButton = new Picture();
+        rightButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
+        positionPicture(rightButton, new Vector2f(0.75f, 0.3f), new Vector2f(1f, 0.7f));
+        _guiNode.attachChild(rightButton);
+    }
+    
+    private void positionPicture(Picture pic, Vector2f bottomLeft, Vector2f topRight) {
+        float width = ((topRight.getX() - bottomLeft.getX()) / 1) * _screenSize.getX();
+        float height = ((topRight.getY() - bottomLeft.getY()) / 1) * _screenSize.getY();
+        float x = (bottomLeft.getX() * _screenSize.getX()) - (width / 2);
+        float y = (bottomLeft.getY() * _screenSize.getY()) - (height / 2);
+        pic.setWidth(width);
+        pic.setHeight(height);
+        pic.setPosition(x, y);
+        
     }
     
     private void arrangeEnemyWave(ArrayList<IPlayer> enemyWave, float z) {

@@ -30,6 +30,8 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         flyCam.setEnabled(false);
+        this.setDisplayStatView(false);
+        this.setDisplayFps(false);
         
         inputManager.addMapping("Touch", new TouchTrigger(0));
         inputManager.addMapping(InputMappings.left, new KeyTrigger(KeyInput.KEY_LEFT));
@@ -65,6 +67,7 @@ public class Main extends SimpleApplication {
                 waveTwo, 
                 waveThree, 
                 assetManager, 
+                guiNode,
                 cam,
                 inputManager,
                 new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
