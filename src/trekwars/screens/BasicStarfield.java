@@ -80,37 +80,37 @@ public class BasicStarfield implements IScreen {
     }
     
     private void buildHud() {
-        Picture topLeft = new Picture();
+        Picture topLeft = new Picture("top-left");
         topLeft.setImage(_assetManager, "Interface/lcars-top-left.png", true);
         positionPicture(topLeft, new Vector2f(0f, 0.75f), new Vector2f(0.25f, 1f));
         _guiNode.attachChild(topLeft);
         
-        Picture topRight = new Picture();
+        Picture topRight = new Picture("top-right");
         topRight.setImage(_assetManager, "Interface/lcars-top-right.png", true);
         positionPicture(topRight, new Vector2f(0.75f, 0.75f), new Vector2f(1f, 1f));
         _guiNode.attachChild(topRight);
         
-        Picture topMiddle = new Picture();
+        Picture topMiddle = new Picture("top-middle");
         topMiddle.setImage(_assetManager, "Interface/lcars-top-middle.png", true);
         positionPicture(topMiddle, new Vector2f(0.3f, 0.9f), new Vector2f(0.7f, 1f));
         _guiNode.attachChild(topMiddle);
         
-        Picture bottomLeft = new Picture();
+        Picture bottomLeft = new Picture("bottom-left");
         bottomLeft.setImage(_assetManager, "Interface/lcars-bottom-left.png", true);
         positionPicture(bottomLeft, new Vector2f(0f, 0f), new Vector2f(0.25f, 0.25f));
         _guiNode.attachChild(bottomLeft);
         
-        Picture bottomRight = new Picture();
+        Picture bottomRight = new Picture("bottom-right");
         bottomRight.setImage(_assetManager, "Interface/lcars-bottom-right.png", true);
         positionPicture(bottomRight, new Vector2f(0.75f, 0f), new Vector2f(1f, 0.25f));
         _guiNode.attachChild(bottomRight);
         
-        Picture leftButton = new Picture();
+        Picture leftButton = new Picture("left-button");
         leftButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
         positionPicture(leftButton, new Vector2f(0f, 0.3f), new Vector2f(0.25f, 0.7f));
         _guiNode.attachChild(leftButton);
         
-        Picture rightButton = new Picture();
+        Picture rightButton = new Picture("right-button");
         rightButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
         positionPicture(rightButton, new Vector2f(0.75f, 0.3f), new Vector2f(1f, 0.7f));
         _guiNode.attachChild(rightButton);
@@ -119,8 +119,8 @@ public class BasicStarfield implements IScreen {
     private void positionPicture(Picture pic, Vector2f bottomLeft, Vector2f topRight) {
         float width = ((topRight.getX() - bottomLeft.getX()) / 1) * _screenSize.getX();
         float height = ((topRight.getY() - bottomLeft.getY()) / 1) * _screenSize.getY();
-        float x = (bottomLeft.getX() * _screenSize.getX()) - (width / 2);
-        float y = (bottomLeft.getY() * _screenSize.getY()) - (height / 2);
+        float x = Math.max((bottomLeft.getX() * _screenSize.getX()) - (width / 2), 0);
+        float y = Math.max((bottomLeft.getY() * _screenSize.getY()) - (height / 2), 0);
         pic.setWidth(width);
         pic.setHeight(height);
         pic.setPosition(x, y);
