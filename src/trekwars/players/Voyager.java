@@ -1,6 +1,8 @@
 package trekwars.players;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
+import com.jme3.audio.AudioSource;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
@@ -13,6 +15,8 @@ public class Voyager extends AbstractPlayer {
     private final Spatial _voyager;
     private final Node _spatialNode;
     private final Spatial _phaser;
+    private final AudioNode _audioNode;
+    private boolean _isFiring = false;
     
     public Voyager(AssetManager assetManager, PlayerType playerType){
         super(playerType);
@@ -37,6 +41,12 @@ public class Voyager extends AbstractPlayer {
         _spatialNode = new Node();
         _spatialNode.attachChild(_voyager);
         _spatialNode.attachChild(_phaser);
+        
+        _audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
+        _audioNode.setPositional(true);
+        _audioNode.setLooping(false);
+        _audioNode.setVolume(0.1f);
+        _spatialNode.attachChild(_audioNode);
         
         attachChild(_spatialNode);
     }
@@ -74,10 +84,23 @@ public class Voyager extends AbstractPlayer {
     @Override
     protected void onFireStart(float tpf) {
         _spatialNode.attachChild(_phaser);
+        _isFiring = true;
     }
     
     @Override
     protected void onFireStop(float tpf) {
         _spatialNode.detachChild(_phaser);
+        _isFiring = false;
+    }
+    
+    @Override
+    protected void onUpdate(float tpf) {
+        if(_isFiring) {
+            if(_audioNode.getStatus() != AudioSource.Status.Playing) {
+                _audioNode.play();
+            }
+        } else {
+            _audioNode.stop();
+        }
     }
 }
