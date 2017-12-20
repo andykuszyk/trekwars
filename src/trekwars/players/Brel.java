@@ -2,9 +2,15 @@ package trekwars.players;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,8 +34,19 @@ public class Brel extends AbstractPlayer {
         _brel.setMaterial(brel_material);
         _brel.setLocalScale(0.3f);
         
+        Sphere sphere = new Sphere(10, 10, 1);
+        Material shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        shieldsMaterial.setColor("Color", new ColorRGBA(0, 1, 0, 0.5f));
+        shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        Geometry shields = new Geometry("shields", sphere);
+        shields.setMaterial(shieldsMaterial);
+        shields.setQueueBucket(RenderQueue.Bucket.Transparent);
+        shields.scale(4f, 2f, 3f);
+        shields.setLocalTranslation(0, -1f, 0);
+        
         _spatialNode = new Node();
         _spatialNode.attachChild(_brel);
+        _spatialNode.attachChild(shields);
         _disrupterNode = new Node();
         _pulses = new DisrupterPulseList(
                 assetManager,
