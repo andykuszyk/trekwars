@@ -2,7 +2,6 @@ package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
-import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -42,8 +41,9 @@ public class BasicStarfield implements IScreen {
     private final float _enemyWaveThreeZ = -75f;
     private final InputManager _inputManager;
     private final Vector2f _screenSize;
-    private final Node _guiNode;
     private final AssetManager _assetManager;
+    private final Button _leftButton;
+    private final Button _rightButton;
 
     public BasicStarfield(
             IPlayer player, 
@@ -67,7 +67,6 @@ public class BasicStarfield implements IScreen {
         _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);;
         _inputManager = inputManager;
         _screenSize = screenSize;
-        _guiNode = guiNode;
         _assetManager = assetManager;
         
         createStarfield(assetManager);
@@ -76,55 +75,66 @@ public class BasicStarfield implements IScreen {
         arrangeEnemyWave(_enemyWaveOne, _enemyWaveOneZ);
         arrangeEnemyWave(_enemyWaveTwo, _enemyWaveTwoZ);
         arrangeEnemyWave(_enemyWaveThree, _enemyWaveThreeZ);
-        buildHud();
-    }
-    
-    private void buildHud() {
-        Picture topLeft = new Picture("top-left");
-        topLeft.setImage(_assetManager, "Interface/lcars-top-left.png", true);
-        positionPicture(topLeft, new Vector2f(0f, 0.9f), new Vector2f(0.25f, 1f));
-        _guiNode.attachChild(topLeft);
         
-        Picture topRight = new Picture("top-right");
-        topRight.setImage(_assetManager, "Interface/lcars-top-right.png", true);
-        positionPicture(topRight, new Vector2f(0.75f, 0.9f), new Vector2f(1f, 1f));
-        _guiNode.attachChild(topRight);
+        guiNode.attachChild(new GuiElement(
+                "top-left", 
+                assetManager, 
+                new Vector2f(0f, 0.9f), 
+                new Vector2f(0.25f, 1f), 
+                screenSize, 
+                "Interface/lcars-top-left.png").getPicture());
         
-        Picture topMiddle = new Picture("top-middle");
-        topMiddle.setImage(_assetManager, "Interface/lcars-top-middle.png", true);
-        positionPicture(topMiddle, new Vector2f(0.26f, 0.98f), new Vector2f(0.74f, 1f));
-        _guiNode.attachChild(topMiddle);
+        guiNode.attachChild(new GuiElement(
+                "top-right", 
+                assetManager, 
+                new Vector2f(0.75f, 0.9f), 
+                new Vector2f(1f, 1f), 
+                screenSize, 
+                "Interface/lcars-top-right.png").getPicture());
         
-        Picture bottomLeft = new Picture("bottom-left");
-        bottomLeft.setImage(_assetManager, "Interface/lcars-bottom-left.png", true);
-        positionPicture(bottomLeft, new Vector2f(0f, 0f), new Vector2f(0.25f, 0.1f));
-        _guiNode.attachChild(bottomLeft);
+        guiNode.attachChild(new GuiElement(
+                "top-middle", 
+                assetManager, 
+                new Vector2f(0.26f, 0.98f), 
+                new Vector2f(0.74f, 1f),
+                screenSize, 
+                "Interface/lcars-top-middle.png").getPicture());
         
-        Picture bottomRight = new Picture("bottom-right");
-        bottomRight.setImage(_assetManager, "Interface/lcars-bottom-right.png", true);
-        positionPicture(bottomRight, new Vector2f(0.75f, 0f), new Vector2f(1f, 0.1f));
-        _guiNode.attachChild(bottomRight);
+        guiNode.attachChild(new GuiElement(
+                "bottom-left", 
+                assetManager, 
+                new Vector2f(0f, 0f), 
+                new Vector2f(0.25f, 0.1f),
+                screenSize, 
+                "Interface/lcars-bottom-left.png").getPicture());
         
-        Picture leftButton = new Picture("left-button");
-        leftButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
-        positionPicture(leftButton, new Vector2f(0f, 0.11f), new Vector2f(0.11f, 0.9f));
-        _guiNode.attachChild(leftButton);
+        guiNode.attachChild(new GuiElement(
+                "bottom-right", 
+                assetManager, 
+                new Vector2f(0.75f, 0f), 
+                new Vector2f(1f, 0.1f),
+                screenSize, 
+                "Interface/lcars-bottom-right.png").getPicture());
         
-        Picture rightButton = new Picture("right-button");
-        rightButton.setImage(_assetManager, "Interface/lcars-side-button-inactive.png", true);
-        positionPicture(rightButton, new Vector2f(0.89f, 0.11f), new Vector2f(1f, 0.9f));
-        _guiNode.attachChild(rightButton);
-    }
-    
-    private void positionPicture(Picture pic, Vector2f bottomLeft, Vector2f topRight) {
-        float width = ((topRight.getX() - bottomLeft.getX()) / 1) * _screenSize.getX();
-        float height = ((topRight.getY() - bottomLeft.getY()) / 1) * _screenSize.getY();
-        float x = Math.max((bottomLeft.getX() * _screenSize.getX()), 0);
-        float y = Math.max((bottomLeft.getY() * _screenSize.getY()), 0);
-        pic.setWidth(width);
-        pic.setHeight(height);
-        pic.setPosition(x, y);
+        _leftButton = new Button(
+                "left-button",
+                "Interface/lcars-side-button-inactive.png",
+                "Interface/lcars-side-button-active.png",
+                new Vector2f(0f, 0.11f), 
+                new Vector2f(0.11f, 0.9f),
+                assetManager,
+                screenSize);
+        guiNode.attachChild(_leftButton.getPicture());
         
+        _rightButton = new Button(
+                "right-button",
+                "Interface/lcars-side-button-inactive.png",
+                "Interface/lcars-side-button-active.png",
+                new Vector2f(0.89f, 0.11f), 
+                new Vector2f(1f, 0.9f),
+                assetManager,
+                screenSize);
+        guiNode.attachChild(_rightButton.getPicture());
     }
     
     private void arrangeEnemyWave(ArrayList<IPlayer> enemyWave, float z) {
@@ -191,7 +201,6 @@ public class BasicStarfield implements IScreen {
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
         updatePlayers(_enemyWaveThree, tpf);
-        
         positionCamera();
         
         for(Spatial star : _stars) {
@@ -221,7 +230,6 @@ public class BasicStarfield implements IScreen {
 
     public void onAnalog(String name, float keyPressed, float tpf) {
         if(name == null) return;
-        
         if (name.equals(InputMappings.left)) {
             _player.turnLeft();
         }
@@ -238,11 +246,34 @@ public class BasicStarfield implements IScreen {
             _player.stop();
         }
         else if(name.equals(InputMappings.left_click)) {
-            float x = _inputManager.getCursorPosition().getX();
-            if(x < _screenSize.getX() / 2) {
+            if(mouseIsLeft()) {
                 _player.turnLeft();
             } else {
                 _player.turnRight();
+            }
+        }
+    }
+    
+    private boolean mouseIsLeft() {
+        float x = _inputManager.getCursorPosition().getX();
+        return x < _screenSize.getX() / 2;
+    }
+    
+    public void onAction(String name, boolean keyPressed, float tpf) {
+        if(name == null) return;
+        if(name.equals(InputMappings.left_click)) {
+            if(keyPressed) {
+                if(mouseIsLeft()) {
+                    _leftButton.activate();
+                } else {
+                    _rightButton.activate();
+                }
+            } else {
+                if(mouseIsLeft()) {
+                    _leftButton.deactivate();
+                } else {
+                    _rightButton.deactivate();
+                }
             }
         }
     }

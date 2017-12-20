@@ -3,6 +3,7 @@ package trekwars.core;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -51,6 +52,16 @@ public class Main extends SimpleApplication {
                 InputMappings.select,
                 InputMappings.fire,
                 InputMappings.left_click);
+        
+        inputManager.addListener(
+                analogListener, 
+                InputMappings.left,
+                InputMappings.right,
+                InputMappings.boost,
+                InputMappings.stop,
+                InputMappings.select,
+                InputMappings.fire,
+                InputMappings.left_click);
 
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
         waveOne.add(new Brel(assetManager, PlayerType.Enemy));
@@ -74,9 +85,15 @@ public class Main extends SimpleApplication {
         
     }
     
-    private AnalogListener actionListener = new AnalogListener() {
+    private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float keyPressed, float tpf) {
             _screen.onAnalog(name, keyPressed, tpf);
+        }
+    };
+    
+    private ActionListener actionListener = new ActionListener() {
+        public void onAction(String name, boolean keyPressed, float tpf) {
+            _screen.onAction(name, keyPressed, tpf);
         }
     };
 
