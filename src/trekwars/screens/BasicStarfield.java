@@ -63,8 +63,8 @@ public class BasicStarfield implements IScreen {
         _rootNode = new Node();
         _player = player;
         _enemyWaveOne = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveOne);
-        _enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);;
-        _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);;
+        _enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);
+        _enemyWaveThree = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveThree);
         _inputManager = inputManager;
         _screenSize = screenSize;
         _assetManager = assetManager;
