@@ -1,5 +1,7 @@
 package trekwars.players;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioData.DataType;
+import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -16,6 +18,7 @@ public class Brel extends AbstractPlayer {
     private Date _lastPulseTime = new Date();
     private final float _secondsBetweenPulses = 1;
     private final Node _disrupterNode;
+    private final AudioNode _audioNode;
     
     public Brel(AssetManager assetManager, PlayerType playerType){
         super(playerType);
@@ -37,6 +40,12 @@ public class Brel extends AbstractPlayer {
                 2,
                 new Vector3f()
         );
+        
+        _audioNode = new AudioNode(assetManager, "Sounds/disrupter.wav", false);
+        _audioNode.setPositional(true);
+        _audioNode.setLooping(false);
+        _audioNode.setVolume(0.1f);
+        _spatialNode.attachChild(_audioNode);
         
         attachChild(_spatialNode);
     }
@@ -92,6 +101,7 @@ public class Brel extends AbstractPlayer {
                 _spatialNode.getWorldRotation(),
                 new Vector3f(2f, -0.5f, 0f)
             );
+            _audioNode.play();
         }
     }
 

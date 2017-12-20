@@ -1,6 +1,8 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
+import com.jme3.audio.AudioSource;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
@@ -45,6 +47,7 @@ public class BasicStarfield implements IScreen {
     private final Button _leftButton;
     private final Button _rightButton;
     private final Button _fireButton;
+    private final AudioNode _audioNode;
 
     public BasicStarfield(
             IPlayer player, 
@@ -76,6 +79,12 @@ public class BasicStarfield implements IScreen {
         arrangeEnemyWave(_enemyWaveOne, _enemyWaveOneZ);
         arrangeEnemyWave(_enemyWaveTwo, _enemyWaveTwoZ);
         arrangeEnemyWave(_enemyWaveThree, _enemyWaveThreeZ);
+        
+        _audioNode = new AudioNode(assetManager, "Sounds/federation-theme.ogg", true);
+        _audioNode.setPositional(false);
+        _audioNode.setVolume(0.5f);
+        _audioNode.play();
+        _rootNode.attachChild(_audioNode);
         
         guiNode.attachChild(new GuiElement(
                 "top-left", 
@@ -219,6 +228,10 @@ public class BasicStarfield implements IScreen {
             if(new Distance(star, _player.getRootNode()).getLocal() < _minStarDistance) {
                 positionStar(star);
             }
+        }
+        
+        if(_audioNode.getStatus() != AudioSource.Status.Playing) {
+            _audioNode.play();
         }
     }
     
