@@ -225,7 +225,8 @@ public abstract class AbstractPlayer implements IPlayer {
         }
         _stopCount = 0;
         
-        Vector3f m = new Vector3f(0, 0, -(boostMultiplier * (getTranslationalSpeed() * tpf)));
+        float playerBonus = _playerType == PlayerType.Enemy ? 1f : 3f;
+        Vector3f m = new Vector3f(0, 0, -(boostMultiplier * (getTranslationalSpeed() * tpf * playerBonus)));
         Vector3f worldMove = _rootNode.localToWorld(m, m);
         _rootNode.setLocalTranslation(worldMove);
     }

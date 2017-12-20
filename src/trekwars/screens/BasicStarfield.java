@@ -36,11 +36,12 @@ public class BasicStarfield implements IScreen {
     private final Random _random = new Random();
     private final float _starRadius = 100;
     private final float _minStarDistance = 50;
+    private final float _maxStarDistance = 120;
     private final int _numberOfStars = 1000;
     private List<Spatial> _stars = new ArrayList<Spatial>();
-    private final float _enemyWaveOneZ = -25f;
-    private final float _enemyWaveTwoZ = -50f;
-    private final float _enemyWaveThreeZ = -75f;
+    private final float _enemyWaveOneZ = -50f;
+    private final float _enemyWaveTwoZ = -75f;
+    private final float _enemyWaveThreeZ = -100f;
     private final InputManager _inputManager;
     private final Vector2f _screenSize;
     private final AssetManager _assetManager;
@@ -193,7 +194,8 @@ public class BasicStarfield implements IScreen {
     }
     
     private void positionStar(Spatial star) {
-        star.setLocalTranslation(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
+        Vector3f newCoords = new Vector3f(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
+        star.setLocalTranslation(_player.getRootNode().getLocalTranslation().add(newCoords));
     }
     
     private float generateStarCoordinate() {
@@ -225,7 +227,8 @@ public class BasicStarfield implements IScreen {
         
         for(Spatial star : _stars) {
             star.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
-            if(new Distance(star, _player.getRootNode()).getLocal() < _minStarDistance) {
+            double distance = new Distance(star, _player.getRootNode()).getLocal();
+            if(distance < _minStarDistance || distance > _maxStarDistance) {
                 positionStar(star);
             }
         }
