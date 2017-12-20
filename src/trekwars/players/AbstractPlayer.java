@@ -20,9 +20,16 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollMultiplier = 1f;
     private float _previousRotationAmount = 0f;
     private final PlayerType _playerType;
+    private final AbstractPlayer _player;
+    
+    protected AbstractPlayer(PlayerType playerType, AbstractPlayer player) {
+        _playerType = playerType;
+        _player = player;
+    }
     
     protected AbstractPlayer(PlayerType playerType) {
         _playerType = playerType;
+        _player = null;
     }
     
     public PlayerType getPlayerType() {
@@ -207,7 +214,7 @@ public abstract class AbstractPlayer implements IPlayer {
         }
     }
     
-    private void move(float tpf) {
+    protected void move(float tpf) {
         float boostMultiplier = 1;
         if(_boostCount > 0) {
             boostMultiplier = getBoostMultiplier();
@@ -267,5 +274,11 @@ public abstract class AbstractPlayer implements IPlayer {
     
     protected Collection<Node> getOtherNodes() {
         return new ArrayList<Node>();
+    }
+    
+    protected float getDistanceToPlayer() {
+        if(_player == null) return 0f;
+        return this.getRootNode().getWorldTranslation().distance(
+                _player.getRootNode().getWorldTranslation());
     }
 }

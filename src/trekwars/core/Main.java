@@ -11,6 +11,7 @@ import com.jme3.input.controls.TouchTrigger;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import java.util.ArrayList;
+import trekwars.players.AbstractPlayer;
 import trekwars.players.Brel;
 import trekwars.players.IPlayer;
 import trekwars.players.PlayerType;
@@ -63,17 +64,18 @@ public class Main extends SimpleApplication {
                 InputMappings.fire,
                 InputMappings.left_click);
 
+        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player);
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
         ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy));
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, player));
         ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(new Brel(assetManager, PlayerType.Enemy));
+        waveThree.add(new Brel(assetManager, PlayerType.Enemy, player));
         setScreen(new BasicStarfield(
-                new Voyager(assetManager, PlayerType.Player), 
+                player, 
                 waveOne, 
                 waveTwo, 
                 waveThree, 

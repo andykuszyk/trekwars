@@ -1,6 +1,5 @@
 package trekwars.players;
 import com.jme3.asset.AssetManager;
-import com.jme3.audio.AudioData.DataType;
 import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
@@ -19,9 +18,10 @@ public class Brel extends AbstractPlayer {
     private final float _secondsBetweenPulses = 1;
     private final Node _disrupterNode;
     private final AudioNode _audioNode;
+    private final float _disrupterRange = 30f;
     
-    public Brel(AssetManager assetManager, PlayerType playerType){
-        super(playerType);
+    public Brel(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
+        super(playerType, player);
        
         _brel = assetManager.loadModel("Models/brel.j3o");
         Material brel_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -35,7 +35,7 @@ public class Brel extends AbstractPlayer {
                 assetManager,
                 _disrupterNode,
                 50,
-                500,
+                _disrupterRange,
                 0.5f,
                 2,
                 new Vector3f()
@@ -79,7 +79,18 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void autopilot(float tpf) {
-        this.fire();
+        float distance = getDistanceToPlayer();
+        if(distance <= _disrupterRange / 4) {
+            turnLeft();
+            boost();
+            move(tpf);
+            fire();
+        } else if(distance <= _disrupterRange / 2) {
+            turnLeft();
+            move(tpf);
+        } else if(distance <= _disrupterRange) {
+            fire();
+        }
     }
 
     @Override
