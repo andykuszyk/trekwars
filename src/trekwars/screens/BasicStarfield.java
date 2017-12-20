@@ -44,6 +44,7 @@ public class BasicStarfield implements IScreen {
     private final AssetManager _assetManager;
     private final Button _leftButton;
     private final Button _rightButton;
+    private final Button _fireButton;
 
     public BasicStarfield(
             IPlayer player, 
@@ -135,6 +136,16 @@ public class BasicStarfield implements IScreen {
                 assetManager,
                 screenSize);
         guiNode.attachChild(_rightButton.getPicture());
+        
+        _fireButton = new Button(
+                "fire-button",
+                "Interface/lcars-fire-inactive.png",
+                "Interface/lcars-fire-active.png",
+                new Vector2f(0.26f, 0f), 
+                new Vector2f(0.74f, 0.1f),
+                assetManager,
+                screenSize);
+        guiNode.attachChild(_fireButton.getPicture());
     }
     
     private void arrangeEnemyWave(ArrayList<IPlayer> enemyWave, float z) {
@@ -248,6 +259,8 @@ public class BasicStarfield implements IScreen {
         else if(name.equals(InputMappings.left_click)) {
             if(mouseIsLeft()) {
                 _player.turnLeft();
+            } else if (mouseIsFire()) {
+                _player.fire();
             } else {
                 _player.turnRight();
             }
@@ -255,8 +268,13 @@ public class BasicStarfield implements IScreen {
     }
     
     private boolean mouseIsLeft() {
-        float x = _inputManager.getCursorPosition().getX();
-        return x < _screenSize.getX() / 2;
+        return 
+                _inputManager.getCursorPosition().getX() < _screenSize.getX() / 2 && 
+                _inputManager.getCursorPosition().getY() > _screenSize.getY() / 5;
+    }
+    
+    private boolean mouseIsFire() {
+        return _inputManager.getCursorPosition().getY() <= _screenSize.getY() / 5;
     }
     
     public void onAction(String name, boolean keyPressed, float tpf) {
@@ -265,12 +283,16 @@ public class BasicStarfield implements IScreen {
             if(keyPressed) {
                 if(mouseIsLeft()) {
                     _leftButton.activate();
+                } else if(mouseIsFire()) {
+                    _fireButton.activate();
                 } else {
                     _rightButton.activate();
                 }
             } else {
                 if(mouseIsLeft()) {
                     _leftButton.deactivate();
+                } else if(mouseIsFire()) {
+                    _fireButton.deactivate();
                 } else {
                     _rightButton.deactivate();
                 }
