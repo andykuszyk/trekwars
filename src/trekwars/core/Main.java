@@ -32,7 +32,7 @@ public class Main extends SimpleApplication {
     public void simpleInitApp() {
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
-        this.setDisplayFps(false);
+//        this.setDisplayFps(false);
         
         inputManager.addMapping("Touch", new TouchTrigger(0));
         inputManager.addMapping(InputMappings.left, new KeyTrigger(KeyInput.KEY_LEFT));

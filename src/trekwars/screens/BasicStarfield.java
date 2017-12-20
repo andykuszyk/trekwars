@@ -283,10 +283,16 @@ public class BasicStarfield implements IScreen {
             if(keyPressed) {
                 if(mouseIsLeft()) {
                     _leftButton.activate();
+                    _rightButton.deactivate();
+                    _fireButton.deactivate();
                 } else if(mouseIsFire()) {
                     _fireButton.activate();
+                    _leftButton.deactivate();
+                    _rightButton.deactivate();
                 } else {
                     _rightButton.activate();
+                    _leftButton.deactivate();
+                    _fireButton.deactivate();
                 }
             } else {
                 if(mouseIsLeft()) {
