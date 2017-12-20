@@ -98,7 +98,7 @@ public class BasicStarfield implements IScreen {
                 new Vector2f(0.26f, 0.98f), 
                 new Vector2f(0.74f, 1f),
                 screenSize, 
-                "Interface/lcars-top-middle.png").getPicture());
+                "Interface/lcars-box-inactive.png").getPicture());
         
         guiNode.attachChild(new GuiElement(
                 "bottom-left", 
@@ -118,20 +118,20 @@ public class BasicStarfield implements IScreen {
         
         _leftButton = new Button(
                 "left-button",
-                "Interface/lcars-side-button-inactive.png",
-                "Interface/lcars-side-button-active.png",
+                "Interface/lcars-box-inactive.png",
+                "Interface/lcars-box-active.png",
                 new Vector2f(0f, 0.11f), 
-                new Vector2f(0.11f, 0.9f),
+                new Vector2f(0.11f, 0.89f),
                 assetManager,
                 screenSize);
         guiNode.attachChild(_leftButton.getPicture());
         
         _rightButton = new Button(
                 "right-button",
-                "Interface/lcars-side-button-inactive.png",
-                "Interface/lcars-side-button-active.png",
+                "Interface/lcars-box-inactive.png",
+                "Interface/lcars-box-active.png",
                 new Vector2f(0.89f, 0.11f), 
-                new Vector2f(1f, 0.9f),
+                new Vector2f(1f, 0.89f),
                 assetManager,
                 screenSize);
         guiNode.attachChild(_rightButton.getPicture());
