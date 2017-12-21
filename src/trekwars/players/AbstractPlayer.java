@@ -36,6 +36,8 @@ public abstract class AbstractPlayer implements IPlayer {
     private final Material _shieldsMaterial;
     private final float _shieldUpAlphaRate = 5f;
     private final float _shieldDownAlphaRate = 0.1f;
+    private float _life;
+    private final float _lifeCapacity;
     
     protected AbstractPlayer(
             PlayerType playerType, 
@@ -51,6 +53,12 @@ public abstract class AbstractPlayer implements IPlayer {
         _shieldColor = shieldColor;
         attachChild(_spatialNode);
         
+        if(playerType == PlayerType.Player) {
+            _lifeCapacity = _life = 1f;
+        } else {
+            _lifeCapacity = _life = 0.25f;
+        }
+        
         Sphere sphere = new Sphere(10, 10, 1);
         _shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         _shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
@@ -65,10 +73,15 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void setShieldColor() {
+        float lifeRatio = _life / _lifeCapacity;
         _shieldsMaterial.setColor(
-                "Color", 
-                new ColorRGBA(_shieldColor.r, _shieldColor.g, _shieldColor.b, _shieldAlpha)
-                );
+            "Color", 
+            new ColorRGBA(
+                1 - lifeRatio, 
+                lifeRatio * _shieldColor.g, 
+                lifeRatio * _shieldColor.b, 
+                _shieldAlpha
+            ));
     }
     
     public PlayerType getPlayerType() {
@@ -137,8 +150,12 @@ public abstract class AbstractPlayer implements IPlayer {
                 }
             }
             if(isHit) {
+                _life -= 0.05f * tpf;
                 increaseShieldAlpha(tpf);
             } else {
+                if(_playerType == PlayerType.Player) {
+                    _life += 0.001f * tpf;
+                }
                 decreaseShieldAlpha(tpf);
             }
         }
