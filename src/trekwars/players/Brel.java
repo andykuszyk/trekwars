@@ -25,25 +25,21 @@ public class Brel extends AbstractPlayer {
     private final float _disrupterRange = 30f;
     
     public Brel(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
-        super(playerType, player);
+        super(
+                playerType, 
+                player, 
+                new ColorRGBA(0, 1, 0, 0.5f), 
+                new Vector3f(4f, 2f, 3f),
+                new Vector3f(0, -1f, 0),
+                assetManager
+                );
        
         _brel = assetManager.loadModel("Models/brel.j3o");
         Material brel_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         _brel.setMaterial(brel_material);
         _brel.setLocalScale(0.3f);
         
-        Sphere sphere = new Sphere(10, 10, 1);
-        Material shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        shieldsMaterial.setColor("Color", new ColorRGBA(0, 1, 0, 0.5f));
-        shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        Geometry shields = new Geometry("shields", sphere);
-        shields.setMaterial(shieldsMaterial);
-        shields.setQueueBucket(RenderQueue.Bucket.Transparent);
-        shields.scale(4f, 2f, 3f);
-        shields.setLocalTranslation(0, -1f, 0);
-        
         _spatialNode.attachChild(_brel);
-        _spatialNode.attachChild(shields);
         _disrupterNode = new Node();
         _pulses = new DisrupterPulseList(
                 assetManager,

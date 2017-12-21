@@ -1,9 +1,16 @@
 package trekwars.players;
 
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Sphere;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,11 +30,29 @@ public abstract class AbstractPlayer implements IPlayer {
     private final AbstractPlayer _player;
     protected final Node _spatialNode;
     
-    protected AbstractPlayer(PlayerType playerType, AbstractPlayer player) {
+    protected AbstractPlayer(
+            PlayerType playerType, 
+            AbstractPlayer player,
+            ColorRGBA shieldColour,
+            Vector3f shieldScale,
+            Vector3f shieldTranslation,
+            AssetManager assetManager
+            ) {
         _playerType = playerType;
         _player = player;
         _spatialNode = new Node();
         attachChild(_spatialNode);
+        
+        Sphere sphere = new Sphere(10, 10, 1);
+        Material shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        shieldsMaterial.setColor("Color", shieldColour);
+        shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        Geometry shields = new Geometry("shields", sphere);
+        shields.setMaterial(shieldsMaterial);
+        shields.setQueueBucket(RenderQueue.Bucket.Transparent);
+        shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
+        shields.setLocalTranslation(shieldTranslation);
+        _spatialNode.attachChild(shields);
     }
     
     public PlayerType getPlayerType() {

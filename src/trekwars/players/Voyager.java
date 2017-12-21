@@ -5,8 +5,8 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import java.util.ArrayList;
@@ -19,7 +19,14 @@ public class Voyager extends AbstractPlayer {
     private boolean _isFiring = false;
     
     public Voyager(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
-        super(playerType, player);
+        super(
+                playerType, 
+                player, 
+                new ColorRGBA(0, 0, 1, 0.5f), 
+                new Vector3f(3f, 2f, 4f),
+                new Vector3f(0, 0f, 0),
+                assetManager
+                );
         
         // Voyager
         _voyager = assetManager.loadModel("Models/voyager.j3o");
