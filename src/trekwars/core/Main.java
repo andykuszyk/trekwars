@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import trekwars.players.AbstractPlayer;
 import trekwars.players.Brel;
 import trekwars.players.IPlayer;
+import trekwars.players.IPlayerController;
+import trekwars.players.PlayerController;
 import trekwars.players.PlayerType;
 import trekwars.players.Voyager;
 import trekwars.screens.BasicStarfield;
@@ -64,16 +66,17 @@ public class Main extends SimpleApplication {
                 InputMappings.fire,
                 InputMappings.left_click);
 
-        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, null);
+        IPlayerController playerController = new PlayerController();
+        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, playerController);
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
         ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, player));
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController));
         ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(new Brel(assetManager, PlayerType.Enemy, player));
+        waveThree.add(new Brel(assetManager, PlayerType.Enemy, playerController));
         setScreen(new BasicStarfield(
                 player, 
                 waveOne, 

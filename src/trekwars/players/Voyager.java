@@ -18,10 +18,10 @@ public class Voyager extends AbstractPlayer {
     private final AudioNode _audioNode;
     private boolean _isFiring = false;
     
-    public Voyager(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
+    public Voyager(AssetManager assetManager, PlayerType playerType, IPlayerController playerController){
         super(
                 playerType, 
-                player, 
+                playerController, 
                 new ColorRGBA(0, 0, 1, 0.5f), 
                 new Vector3f(3f, 2f, 4f),
                 new Vector3f(0, 0f, 0),

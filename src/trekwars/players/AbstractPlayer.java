@@ -28,24 +28,25 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float _rollMultiplier = 1f;
     private float _previousRotationAmount = 0f;
     private final PlayerType _playerType;
-    private final AbstractPlayer _player;
+    private final IPlayerController _playerController;
     protected final Node _spatialNode;
     private final Spatial _shields;
     private float _shieldAlpha = 0f;
     private final ColorRGBA _shieldColor;
     private final Material _shieldsMaterial;
-    private final float _shieldAlphaRate = 2f;
+    private final float _shieldUpAlphaRate = 5f;
+    private final float _shieldDownAlphaRate = 0.1f;
     
     protected AbstractPlayer(
             PlayerType playerType, 
-            AbstractPlayer player,
+            IPlayerController playerController,
             ColorRGBA shieldColor,
             Vector3f shieldScale,
             Vector3f shieldTranslation,
             AssetManager assetManager
             ) {
         _playerType = playerType;
-        _player = player;
+        _playerController = playerController;
         _spatialNode = new Node();
         _shieldColor = shieldColor;
         attachChild(_spatialNode);
@@ -60,6 +61,7 @@ public abstract class AbstractPlayer implements IPlayer {
         _shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
         _shields.setLocalTranslation(shieldTranslation);
         _spatialNode.attachChild(_shields);
+        playerController.registerPlayer(this);
     }
     
     private void setShieldColor() {
@@ -116,9 +118,16 @@ public abstract class AbstractPlayer implements IPlayer {
                 break;
         } 
         
-        if(_player != null) {
+        updateShields(tpf);
+        
+        onUpdate(tpf);
+    }
+    
+    private void updateShields(float tpf) {
+        for(AbstractPlayer player : _playerController.getPlayers()) {
+            if(player == this) continue;
             boolean isHit = false;
-            for(Spatial weapon : _player.getWeaponSpatials()) {
+            for(Spatial weapon : player.getWeaponSpatials()) {
                 if(weapon.getParent() == null) continue;
                 CollisionResults results = new CollisionResults();
                 weapon.collideWith(_spatialNode.getWorldBound(), results);
@@ -133,17 +142,15 @@ public abstract class AbstractPlayer implements IPlayer {
                 decreaseShieldAlpha(tpf);
             }
         }
-        
-        onUpdate(tpf);
     }
     
     private void increaseShieldAlpha(float tpf) {
-        _shieldAlpha = Math.min(0.5f, _shieldAlpha + (_shieldAlphaRate * tpf));
+        _shieldAlpha = Math.min(0.5f, _shieldAlpha + (_shieldUpAlphaRate * tpf));
         setShieldColor();
     }
     
     private void decreaseShieldAlpha(float tpf) {
-        _shieldAlpha = Math.max(0.01f, _shieldAlpha - (_shieldAlphaRate * tpf));
+        _shieldAlpha = Math.max(0.01f, _shieldAlpha - (_shieldDownAlphaRate * tpf));
         setShieldColor();
     }
     
@@ -342,8 +349,8 @@ public abstract class AbstractPlayer implements IPlayer {
     public abstract Iterable<Spatial> getWeaponSpatials();
     
     protected float getDistanceToPlayer() {
-        if(_player == null) return 0f;
+        if(_playerController.getPlayer() == null) return 0f;
         return this.getRootNode().getWorldTranslation().distance(
-                _player.getRootNode().getWorldTranslation());
+                _playerController.getPlayer().getRootNode().getWorldTranslation());
     }
 }

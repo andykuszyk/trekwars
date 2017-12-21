@@ -24,10 +24,10 @@ public class Brel extends AbstractPlayer {
     private final AudioNode _audioNode;
     private final float _disrupterRange = 30f;
     
-    public Brel(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
+    public Brel(AssetManager assetManager, PlayerType playerType, IPlayerController playerController){
         super(
                 playerType, 
-                player, 
+                playerController, 
                 new ColorRGBA(0, 1, 0, 0.5f), 
                 new Vector3f(4f, 2f, 3f),
                 new Vector3f(0, -1f, 0),
