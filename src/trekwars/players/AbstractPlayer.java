@@ -1,6 +1,7 @@
 package trekwars.players;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -29,11 +30,16 @@ public abstract class AbstractPlayer implements IPlayer {
     private final PlayerType _playerType;
     private final AbstractPlayer _player;
     protected final Node _spatialNode;
+    private final Spatial _shields;
+    private float _shieldAlpha = 0f;
+    private final ColorRGBA _shieldColor;
+    private final Material _shieldsMaterial;
+    private final float _shieldAlphaRate = 2f;
     
     protected AbstractPlayer(
             PlayerType playerType, 
             AbstractPlayer player,
-            ColorRGBA shieldColour,
+            ColorRGBA shieldColor,
             Vector3f shieldScale,
             Vector3f shieldTranslation,
             AssetManager assetManager
@@ -41,18 +47,26 @@ public abstract class AbstractPlayer implements IPlayer {
         _playerType = playerType;
         _player = player;
         _spatialNode = new Node();
+        _shieldColor = shieldColor;
         attachChild(_spatialNode);
         
         Sphere sphere = new Sphere(10, 10, 1);
-        Material shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        shieldsMaterial.setColor("Color", shieldColour);
-        shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        Geometry shields = new Geometry("shields", sphere);
-        shields.setMaterial(shieldsMaterial);
-        shields.setQueueBucket(RenderQueue.Bucket.Transparent);
-        shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
-        shields.setLocalTranslation(shieldTranslation);
-        _spatialNode.attachChild(shields);
+        _shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        _shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        setShieldColor();
+        _shields = new Geometry("shields", sphere);
+        _shields.setMaterial(_shieldsMaterial);
+        _shields.setQueueBucket(RenderQueue.Bucket.Transparent);
+        _shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
+        _shields.setLocalTranslation(shieldTranslation);
+        _spatialNode.attachChild(_shields);
+    }
+    
+    private void setShieldColor() {
+        _shieldsMaterial.setColor(
+                "Color", 
+                new ColorRGBA(_shieldColor.r, _shieldColor.g, _shieldColor.b, _shieldAlpha)
+                );
     }
     
     public PlayerType getPlayerType() {
@@ -102,7 +116,34 @@ public abstract class AbstractPlayer implements IPlayer {
                 break;
         } 
         
+        if(_player != null) {
+            boolean isHit = false;
+            for(Spatial weapon : _player.getWeaponSpatials()) {
+                CollisionResults results = new CollisionResults();
+                weapon.collideWith(_spatialNode.getWorldBound(), results);
+                if(results.size() > 0) {
+                    isHit = true;
+                    break;
+                }
+            }
+            if(isHit) {
+                increaseShieldAlpha(tpf);
+            } else {
+                decreaseShieldAlpha(tpf);
+            }
+        }
+        
         onUpdate(tpf);
+    }
+    
+    private void increaseShieldAlpha(float tpf) {
+        _shieldAlpha = Math.min(0.5f, _shieldAlpha + (_shieldAlphaRate * tpf));
+        setShieldColor();
+    }
+    
+    private void decreaseShieldAlpha(float tpf) {
+        _shieldAlpha = Math.max(0.01f, _shieldAlpha - (_shieldAlphaRate * tpf));
+        setShieldColor();
     }
     
     protected void onUpdate(float tpf) { }
