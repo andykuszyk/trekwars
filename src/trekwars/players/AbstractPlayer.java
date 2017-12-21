@@ -21,15 +21,13 @@ public abstract class AbstractPlayer implements IPlayer {
     private float _previousRotationAmount = 0f;
     private final PlayerType _playerType;
     private final AbstractPlayer _player;
+    protected final Node _spatialNode;
     
     protected AbstractPlayer(PlayerType playerType, AbstractPlayer player) {
         _playerType = playerType;
         _player = player;
-    }
-    
-    protected AbstractPlayer(PlayerType playerType) {
-        _playerType = playerType;
-        _player = null;
+        _spatialNode = new Node();
+        attachChild(_spatialNode);
     }
     
     public PlayerType getPlayerType() {
@@ -40,7 +38,7 @@ public abstract class AbstractPlayer implements IPlayer {
         Right, Left, None
     }
     
-    protected void attachChild(Spatial child) {
+    protected final void attachChild(Spatial child) {
         if(_rootNode == null) _rootNode = new Node();
         _rootNode.attachChild(child);
     }
@@ -86,8 +84,6 @@ public abstract class AbstractPlayer implements IPlayer {
     
     protected abstract void autopilot(float tpf);
     
-    protected abstract Node getSpatialNode();
-    
     private void fire(float tpf) {
         if(_fireCount > 0){
             onFireStart(tpf);
@@ -107,15 +103,14 @@ public abstract class AbstractPlayer implements IPlayer {
         float rollAmount = rotationalMultiplier * _rollMultiplier;
         boolean shouldTurn = false;
         
-        Node child = getSpatialNode();
-        Quaternion localRotation = child.getLocalRotation();
+        Quaternion localRotation = _spatialNode.getLocalRotation();
 
         if(shouldTurn(currentTurnDirection, localRotation)) {
-            roll(child, localRotation, rollAmount, currentTurnDirection);
+            roll(_spatialNode, localRotation, rollAmount, currentTurnDirection);
             shouldTurn = true;
         } else {
             int turningMultiplier = currentTurnDirection == TurnDirection.None ? 1 : 2;
-            restoreRotation(child, rotationalMultiplier * turningMultiplier, localRotation);
+            restoreRotation(_spatialNode, rotationalMultiplier * turningMultiplier, localRotation);
         }
         
         float rotationAmount;
@@ -276,6 +271,8 @@ public abstract class AbstractPlayer implements IPlayer {
     protected Collection<Node> getOtherNodes() {
         return new ArrayList<Node>();
     }
+    
+    public abstract Iterable<Spatial> getWeaponSpatials();
     
     protected float getDistanceToPlayer() {
         if(_player == null) return 0f;

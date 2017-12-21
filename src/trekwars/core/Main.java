@@ -64,7 +64,7 @@ public class Main extends SimpleApplication {
                 InputMappings.fire,
                 InputMappings.left_click);
 
-        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player);
+        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, null);
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
         waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));
         waveOne.add(new Brel(assetManager, PlayerType.Enemy, player));

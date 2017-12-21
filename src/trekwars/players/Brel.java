@@ -10,7 +10,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -18,7 +17,6 @@ import java.util.Date;
 public class Brel extends AbstractPlayer {
     
     private final Spatial _brel;
-    private final Node _spatialNode;
     private final DisrupterPulseList _pulses;
     private Date _lastPulseTime = new Date();
     private final float _secondsBetweenPulses = 1;
@@ -44,7 +42,6 @@ public class Brel extends AbstractPlayer {
         shields.scale(4f, 2f, 3f);
         shields.setLocalTranslation(0, -1f, 0);
         
-        _spatialNode = new Node();
         _spatialNode.attachChild(_brel);
         _spatialNode.attachChild(shields);
         _disrupterNode = new Node();
@@ -63,8 +60,15 @@ public class Brel extends AbstractPlayer {
         _audioNode.setLooping(false);
         _audioNode.setVolume(0.1f);
         _spatialNode.attachChild(_audioNode);
-        
-        attachChild(_spatialNode);
+    }
+    
+    @Override
+    public Iterable<Spatial> getWeaponSpatials() {
+        ArrayList<Spatial> weapons = new ArrayList<Spatial>();
+        for(DisrupterPulse pulse : _pulses.getPulses()) {
+            weapons.add(pulse.getSpatial());
+        }
+        return weapons;
     }
     
     @Override
@@ -108,11 +112,6 @@ public class Brel extends AbstractPlayer {
         } else if(distance <= _disrupterRange) {
             fire();
         }
-    }
-
-    @Override
-    protected Node getSpatialNode() {
-        return _spatialNode;
     }
 
     @Override

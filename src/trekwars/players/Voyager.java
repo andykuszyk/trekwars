@@ -9,17 +9,17 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
+import java.util.ArrayList;
 
 public class Voyager extends AbstractPlayer {
     
     private final Spatial _voyager;
-    private final Node _spatialNode;
     private final Spatial _phaser;
     private final AudioNode _audioNode;
     private boolean _isFiring = false;
     
-    public Voyager(AssetManager assetManager, PlayerType playerType){
-        super(playerType);
+    public Voyager(AssetManager assetManager, PlayerType playerType, AbstractPlayer player){
+        super(playerType, player);
         
         // Voyager
         _voyager = assetManager.loadModel("Models/voyager.j3o");
@@ -38,7 +38,6 @@ public class Voyager extends AbstractPlayer {
         _phaser.setLocalTranslation(-0.25f, -1f, -1f);
         _phaser.setMaterial(material);
         
-        _spatialNode = new Node();
         _spatialNode.attachChild(_voyager);
         _spatialNode.attachChild(_phaser);
         
@@ -47,8 +46,6 @@ public class Voyager extends AbstractPlayer {
         _audioNode.setLooping(false);
         _audioNode.setVolume(0.1f);
         _spatialNode.attachChild(_audioNode);
-        
-        attachChild(_spatialNode);
     }
 
     @Override
@@ -77,11 +74,6 @@ public class Voyager extends AbstractPlayer {
     }
 
     @Override
-    protected Node getSpatialNode() {
-        return _spatialNode;
-    }
-
-    @Override
     protected void onFireStart(float tpf) {
         _spatialNode.attachChild(_phaser);
         _isFiring = true;
@@ -102,5 +94,12 @@ public class Voyager extends AbstractPlayer {
         } else {
             _audioNode.stop();
         }
+    }
+    
+    @Override
+    public Iterable<Spatial> getWeaponSpatials() {
+       ArrayList weapons = new ArrayList<Spatial>();
+       weapons.add(_phaser);
+       return weapons;
     }
 }

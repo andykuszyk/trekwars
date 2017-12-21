@@ -64,4 +64,7 @@ public class DisrupterPulseList {
         }
     }
     
+    public Iterable<DisrupterPulse> getPulses() {
+        return _pulses;
+    }
 }
