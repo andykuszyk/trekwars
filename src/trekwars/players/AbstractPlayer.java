@@ -119,6 +119,7 @@ public abstract class AbstractPlayer implements IPlayer {
         if(_player != null) {
             boolean isHit = false;
             for(Spatial weapon : _player.getWeaponSpatials()) {
+                if(weapon.getParent() == null) continue;
                 CollisionResults results = new CollisionResults();
                 weapon.collideWith(_spatialNode.getWorldBound(), results);
                 if(results.size() > 0) {
