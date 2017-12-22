@@ -6,6 +6,7 @@ import com.jme3.audio.AudioSource;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -14,6 +15,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -320,7 +323,11 @@ public class BasicStarfield implements IScreen {
 
     private void createStarfield(AssetManager assetManager) {
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.White);
+        Texture star = assetManager.loadTexture("Textures/star.png");
+        star.setWrap(WrapMode.Repeat);
+        material.setTexture("ColorMap", star);
+        material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        material.getAdditionalRenderState().setDepthWrite(false);
         for(int i = 0; i < _numberOfStars; i++) {
             Quad quad = new Quad(1,1);
             Geometry geom = new Geometry("star", quad);
