@@ -60,10 +60,6 @@ public class BasicStarfield implements IScreen {
             Camera camera,
             InputManager inputManager,
             Vector2f screenSize){
-        if(player == null || camera == null) {
-            //TODO: throw new ArgumentNullException();
-        }
-        
         _camera = camera;
         _rootNode = new Node();
         _player = player;
