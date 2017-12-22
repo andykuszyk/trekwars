@@ -88,10 +88,17 @@ public class BasicStarfield implements IScreen {
         _audioNode = new AudioNode(assetManager, "Sounds/federation-theme.ogg", true);
         _audioNode.setPositional(false);
         _audioNode.setVolume(0.5f);
-        _audioNode.play();
         _rootNode.attachChild(_audioNode);
         
         initialiseHud();
+    }
+    
+    public void start() {
+        _audioNode.play();
+    }
+    
+    public IScreen getNextScreen() {
+        return null;
     }
     
     public Node getGuiNode() {

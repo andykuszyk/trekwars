@@ -8,4 +8,6 @@ public interface IScreen {
     Node getGuiNode();
     void onAnalog(String name, float keyPressed, float tpf);
     void onAction(String name, boolean keyPressed, float tpf);
+    IScreen getNextScreen();
+    void start();
 }

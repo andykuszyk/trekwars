@@ -24,6 +24,7 @@ import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
 import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
+import trekwars.screens.Splash;
 
 public class Main extends SimpleApplication {
 
@@ -40,42 +41,22 @@ public class Main extends SimpleApplication {
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
 //        this.setDisplayFps(false);
-        
+        Vector2f screenSize = new Vector2f(this.settings.getWidth(), this.settings.getHeight());
         initialiseInput();
-
+        
+        setScreen(new Splash(assetManager, screenSize, getPlayerFactory(), inputManager, cam));
+    }
+    
+    public PlayerFactory getPlayerFactory() {
         ArrayList<Texture> explosionTextures = loadExplosionTextures(assetManager);
         IPlayerController playerController = new PlayerController();
         AudioNode explosionNode = new AudioNode(assetManager, "Sounds/explosion.wav", false);
-        PlayerFactory playerFactory = new PlayerFactory(
+        return new PlayerFactory(
                 assetManager, 
                 cam, 
                 explosionTextures, 
                 playerController, 
                 explosionNode);
-        
-        AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
-        
-        ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        
-        ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        
-        ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        
-        setScreen(new BasicStarfield(
-                player, 
-                waveOne, 
-                waveTwo, 
-                waveThree, 
-                assetManager, 
-                cam,
-                inputManager,
-                new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
     }
     
     private void initialiseInput() {
@@ -149,6 +130,10 @@ public class Main extends SimpleApplication {
         }
         
         _screen.update(tpf);
+        IScreen nextScreen = _screen.getNextScreen();
+        if(nextScreen != null) {
+            setScreen(nextScreen);
+        }
     }
     
     private void setScreen(IScreen screen) {
@@ -157,6 +142,7 @@ public class Main extends SimpleApplication {
         guiNode.detachAllChildren();
         rootNode.attachChild(_screen.getRootNode());
         guiNode.attachChild(_screen.getGuiNode());
+        _screen.start();
     }
 
     @Override
