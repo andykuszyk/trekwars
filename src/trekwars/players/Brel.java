@@ -2,14 +2,12 @@ package trekwars.players;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Geometry;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,14 +22,21 @@ public class Brel extends AbstractPlayer {
     private final AudioNode _audioNode;
     private final float _disrupterRange = 30f;
     
-    public Brel(AssetManager assetManager, PlayerType playerType, IPlayerController playerController){
+    public Brel(
+            AssetManager assetManager, 
+            PlayerType playerType, 
+            IPlayerController playerController,
+            ArrayList<Texture> explosionTextures,
+            Camera camera){
         super(
                 playerType, 
                 playerController, 
                 new ColorRGBA(0, 1, 0, 0.5f), 
                 new Vector3f(4f, 2f, 3f),
                 new Vector3f(0, -1f, 0),
-                assetManager
+                assetManager,
+                explosionTextures,
+                camera
                 );
        
         _brel = assetManager.loadModel("Models/brel.j3o");
@@ -96,6 +101,7 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void autopilot(float tpf) {
+        if(_life <= 0) return;
         float distance = getDistanceToPlayer();
         if(distance <= _disrupterRange / 4) {
             turnLeft();

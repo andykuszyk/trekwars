@@ -1,6 +1,7 @@
 package trekwars.core;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -10,6 +11,8 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.TouchTrigger;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
 import trekwars.players.AbstractPlayer;
 import trekwars.players.Brel;
@@ -66,17 +69,19 @@ public class Main extends SimpleApplication {
                 InputMappings.fire,
                 InputMappings.left_click);
 
+        ArrayList<Texture> explosionTextures = loadExplosionTextures(assetManager);
+        
         IPlayerController playerController = new PlayerController();
-        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, playerController);
+        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, playerController, explosionTextures, cam);
         ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
+        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
         ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController));
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
+        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
         ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(new Brel(assetManager, PlayerType.Enemy, playerController));
+        waveThree.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
         setScreen(new BasicStarfield(
                 player, 
                 waveOne, 
@@ -88,6 +93,27 @@ public class Main extends SimpleApplication {
                 inputManager,
                 new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
         
+    }
+    
+    private ArrayList<Texture> loadExplosionTextures(AssetManager assetManager) {
+        ArrayList<Texture> textures = new ArrayList<Texture>();
+        for(int i = 0; i <= 273; i++) {
+            String number;
+            if (i < 10) {
+                number = String.format("000%d", i);
+            } else if (i < 100) {
+                number = String.format("00%d", i);
+            } else {
+                number = String.format("0%d", i);
+            }
+            Texture texture = assetManager.loadTexture(String.format(
+                    "Textures/explosion/explosion%s.png",
+                    number
+                    ));
+            texture.setWrap(WrapMode.Repeat);
+            textures.add(texture);
+        }
+        return textures;
     }
     
     private AnalogListener analogListener = new AnalogListener() {

@@ -3,6 +3,8 @@ package trekwars.screens;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
@@ -11,6 +13,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -342,9 +345,10 @@ public class BasicStarfield implements IScreen {
         material.setTexture("ColorMap", star);
         material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         for(int i = 0; i < _numberOfStars; i++) {
-            Quad quad = new Quad(1.5f,1.5f);
+            Quad quad = new Quad(2f,2f);
             Geometry geom = new Geometry("star", quad);
             geom.setMaterial(material);
+            geom.setQueueBucket(Bucket.Transparent);
             _rootNode.attachChild(geom);
             positionStar(geom);
             _stars.add(geom);

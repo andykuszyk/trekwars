@@ -7,11 +7,14 @@ import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -36,8 +39,13 @@ public abstract class AbstractPlayer implements IPlayer {
     private final Material _shieldsMaterial;
     private final float _shieldUpAlphaRate = 5f;
     private final float _shieldDownAlphaRate = 0.1f;
-    private float _life;
+    protected float _life;
     private final float _lifeCapacity;
+    private final Geometry _explosion;
+    private int _explosionFrame = 0;
+    private final ArrayList<Texture> _explosionTextures;
+    private final Camera _camera;
+    private final float _explosionSize = 30f;
     
     protected AbstractPlayer(
             PlayerType playerType, 
@@ -45,13 +53,17 @@ public abstract class AbstractPlayer implements IPlayer {
             ColorRGBA shieldColor,
             Vector3f shieldScale,
             Vector3f shieldTranslation,
-            AssetManager assetManager
+            AssetManager assetManager,
+            ArrayList<Texture> explosionTextures,
+            Camera camera
             ) {
         _playerType = playerType;
         _playerController = playerController;
         _spatialNode = new Node();
         _shieldColor = shieldColor;
         attachChild(_spatialNode);
+        _explosionTextures = explosionTextures;
+        _camera = camera;
         
         if(playerType == PlayerType.Player) {
             _lifeCapacity = _life = 1f;
@@ -59,6 +71,14 @@ public abstract class AbstractPlayer implements IPlayer {
             _lifeCapacity = _life = 0.25f;
         }
         
+        // Setup explosion 
+        _explosion = new Geometry("explosion", new Quad(_explosionSize, _explosionSize));
+        Material explosionMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        explosionMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        _explosion.setQueueBucket(RenderQueue.Bucket.Transparent);
+        _explosion.setMaterial(explosionMaterial);
+        
+        // Setup shields 
         Sphere sphere = new Sphere(10, 10, 1);
         _shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         _shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
@@ -69,6 +89,7 @@ public abstract class AbstractPlayer implements IPlayer {
         _shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
         _shields.setLocalTranslation(shieldTranslation);
         _spatialNode.attachChild(_shields);
+        
         playerController.registerPlayer(this);
     }
     
@@ -132,8 +153,22 @@ public abstract class AbstractPlayer implements IPlayer {
         } 
         
         updateShields(tpf);
-        
+        handleExplosion(tpf);
         onUpdate(tpf);
+    }
+    
+    private void handleExplosion(float tpf) {
+        if(_life <= 0) {
+            _rootNode.detachAllChildren();
+            _rootNode.attachChild(_explosion);
+            _explosion.setLocalTranslation(_explosionSize / 2, -_explosionSize / 2, 0);
+            if(_explosionFrame >= _explosionTextures.size()) {
+                return;
+            }
+            _explosion.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
+            _explosion.getMaterial().setTexture("ColorMap", _explosionTextures.get(_explosionFrame));
+            _explosionFrame++;
+        }
     }
     
     private void updateShields(float tpf) {
@@ -301,6 +336,8 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     protected void move(float tpf) {
+        if(_life <= 0) return;
+        
         float boostMultiplier = 1;
         if(_boostCount > 0) {
             boostMultiplier = getBoostMultiplier();
