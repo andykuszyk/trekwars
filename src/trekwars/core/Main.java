@@ -19,6 +19,8 @@ import trekwars.players.Brel;
 import trekwars.players.IPlayer;
 import trekwars.players.IPlayerController;
 import trekwars.players.PlayerController;
+import trekwars.players.PlayerFactory;
+import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
 import trekwars.players.Voyager;
 import trekwars.screens.BasicStarfield;
@@ -40,6 +42,40 @@ public class Main extends SimpleApplication {
         this.setDisplayStatView(false);
 //        this.setDisplayFps(false);
         
+        initialiseInput();
+
+        ArrayList<Texture> explosionTextures = loadExplosionTextures(assetManager);
+        IPlayerController playerController = new PlayerController();
+        PlayerFactory playerFactory = new PlayerFactory(
+                assetManager, cam, explosionTextures, playerController);
+        
+        AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
+        
+        ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
+        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        
+        ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
+        waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        
+        ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
+        waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        
+        setScreen(new BasicStarfield(
+                player, 
+                waveOne, 
+                waveTwo, 
+                waveThree, 
+                assetManager, 
+                guiNode,
+                cam,
+                inputManager,
+                new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
+    }
+    
+    private void initialiseInput() {
         inputManager.addMapping("Touch", new TouchTrigger(0));
         inputManager.addMapping(InputMappings.left, new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping(InputMappings.right, new KeyTrigger(KeyInput.KEY_RIGHT));
@@ -68,31 +104,6 @@ public class Main extends SimpleApplication {
                 InputMappings.select,
                 InputMappings.fire,
                 InputMappings.left_click);
-
-        ArrayList<Texture> explosionTextures = loadExplosionTextures(assetManager);
-        
-        IPlayerController playerController = new PlayerController();
-        AbstractPlayer player = new Voyager(assetManager, PlayerType.Player, playerController, explosionTextures, cam);
-        ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        waveOne.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        waveTwo.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(new Brel(assetManager, PlayerType.Enemy, playerController, explosionTextures, cam));
-        setScreen(new BasicStarfield(
-                player, 
-                waveOne, 
-                waveTwo, 
-                waveThree, 
-                assetManager, 
-                guiNode,
-                cam,
-                inputManager,
-                new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
-        
     }
     
     private ArrayList<Texture> loadExplosionTextures(AssetManager assetManager) {

@@ -139,18 +139,20 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     public void update(float tpf) {
-        turn(tpf);
-        fire(tpf);
-        
-        switch(_playerType){
-            default:
-            case Player:
-                move(tpf);
-                break;
-            case Enemy:
-                autopilot(tpf);
-                break;
-        } 
+        if(_life > 0) {
+            turn(tpf);
+            fire(tpf);
+            
+            switch(_playerType){
+                default:
+                case Player:
+                    move(tpf);
+                    break;
+                case Enemy:
+                    autopilot(tpf);
+                    break;
+            } 
+        }
         
         updateShields(tpf);
         handleExplosion(tpf);
