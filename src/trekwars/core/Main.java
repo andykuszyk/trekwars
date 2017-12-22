@@ -73,7 +73,6 @@ public class Main extends SimpleApplication {
                 waveTwo, 
                 waveThree, 
                 assetManager, 
-                guiNode,
                 cam,
                 inputManager,
                 new Vector2f(this.settings.getWidth(), this.settings.getHeight())));
@@ -155,7 +154,9 @@ public class Main extends SimpleApplication {
     private void setScreen(IScreen screen) {
         _screen = screen;
         rootNode.detachAllChildren();
+        guiNode.detachAllChildren();
         rootNode.attachChild(_screen.getRootNode());
+        guiNode.attachChild(_screen.getGuiNode());
     }
 
     @Override

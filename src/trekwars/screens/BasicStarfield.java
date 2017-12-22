@@ -52,10 +52,11 @@ public class BasicStarfield implements IScreen {
     private final InputManager _inputManager;
     private final Vector2f _screenSize;
     private final AssetManager _assetManager;
-    private final Button _leftButton;
-    private final Button _rightButton;
-    private final Button _fireButton;
+    private Button _leftButton;
+    private Button _rightButton;
+    private Button _fireButton;
     private final AudioNode _audioNode;
+    private final Node _guiNode;
 
     public BasicStarfield(
             IPlayer player, 
@@ -63,7 +64,6 @@ public class BasicStarfield implements IScreen {
             Iterable<IPlayer> enemyWaveTwo,
             Iterable<IPlayer> enemyWaveThree,
             AssetManager assetManager,
-            Node guiNode,
             Camera camera,
             InputManager inputManager,
             Vector2f screenSize){
@@ -76,6 +76,7 @@ public class BasicStarfield implements IScreen {
         _inputManager = inputManager;
         _screenSize = screenSize;
         _assetManager = assetManager;
+        _guiNode = new Node();
         
         createStarfield(assetManager);
         createLighting();
@@ -90,44 +91,52 @@ public class BasicStarfield implements IScreen {
         _audioNode.play();
         _rootNode.attachChild(_audioNode);
         
-        guiNode.attachChild(new GuiElement(
+        initialiseHud();
+    }
+    
+    public Node getGuiNode() {
+        return _guiNode;
+    }
+    
+    private void initialiseHud() {
+        _guiNode.attachChild(new GuiElement(
                 "top-left", 
-                assetManager, 
+                _assetManager, 
                 new Vector2f(0f, 0.9f), 
                 new Vector2f(0.25f, 1f), 
-                screenSize, 
+                _screenSize, 
                 "Interface/lcars-top-left.png").getPicture());
         
-        guiNode.attachChild(new GuiElement(
+        _guiNode.attachChild(new GuiElement(
                 "top-right", 
-                assetManager, 
+                _assetManager, 
                 new Vector2f(0.75f, 0.9f), 
                 new Vector2f(1f, 1f), 
-                screenSize, 
+                _screenSize, 
                 "Interface/lcars-top-right.png").getPicture());
         
-        guiNode.attachChild(new GuiElement(
+        _guiNode.attachChild(new GuiElement(
                 "top-middle", 
-                assetManager, 
+                _assetManager, 
                 new Vector2f(0.26f, 0.98f), 
                 new Vector2f(0.74f, 1f),
-                screenSize, 
+                _screenSize, 
                 "Interface/lcars-box-inactive.png").getPicture());
         
-        guiNode.attachChild(new GuiElement(
+        _guiNode.attachChild(new GuiElement(
                 "bottom-left", 
-                assetManager, 
+                _assetManager, 
                 new Vector2f(0f, 0f), 
                 new Vector2f(0.25f, 0.1f),
-                screenSize, 
+                _screenSize, 
                 "Interface/lcars-bottom-left.png").getPicture());
         
-        guiNode.attachChild(new GuiElement(
+        _guiNode.attachChild(new GuiElement(
                 "bottom-right", 
-                assetManager, 
+                _assetManager, 
                 new Vector2f(0.75f, 0f), 
                 new Vector2f(1f, 0.1f),
-                screenSize, 
+                _screenSize, 
                 "Interface/lcars-bottom-right.png").getPicture());
         
         _leftButton = new Button(
@@ -136,9 +145,9 @@ public class BasicStarfield implements IScreen {
                 "Interface/lcars-box-active.png",
                 new Vector2f(0f, 0.11f), 
                 new Vector2f(0.11f, 0.89f),
-                assetManager,
-                screenSize);
-        guiNode.attachChild(_leftButton.getPicture());
+                _assetManager,
+                _screenSize);
+        _guiNode.attachChild(_leftButton.getPicture());
         
         _rightButton = new Button(
                 "right-button",
@@ -146,9 +155,9 @@ public class BasicStarfield implements IScreen {
                 "Interface/lcars-box-active.png",
                 new Vector2f(0.89f, 0.11f), 
                 new Vector2f(1f, 0.89f),
-                assetManager,
-                screenSize);
-        guiNode.attachChild(_rightButton.getPicture());
+                _assetManager,
+                _screenSize);
+        _guiNode.attachChild(_rightButton.getPicture());
         
         _fireButton = new Button(
                 "fire-button",
@@ -156,9 +165,9 @@ public class BasicStarfield implements IScreen {
                 "Interface/lcars-fire-active.png",
                 new Vector2f(0.26f, 0f), 
                 new Vector2f(0.74f, 0.1f),
-                assetManager,
-                screenSize);
-        guiNode.attachChild(_fireButton.getPicture());
+                _assetManager,
+                _screenSize);
+        _guiNode.attachChild(_fireButton.getPicture());
     }
     
     private void arrangeEnemyWave(ArrayList<IPlayer> enemyWave, float z) {
