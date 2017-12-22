@@ -154,7 +154,7 @@ public abstract class AbstractPlayer implements IPlayer {
                 increaseShieldAlpha(tpf);
             } else {
                 if(_playerType == PlayerType.Player) {
-                    _life += 0.001f * tpf;
+                    _life += 0.0001f * tpf;
                 }
                 decreaseShieldAlpha(tpf);
             }
