@@ -27,7 +27,8 @@ public class Brel extends AbstractPlayer {
             PlayerType playerType, 
             IPlayerController playerController,
             ArrayList<Texture> explosionTextures,
-            Camera camera){
+            Camera camera,
+            AudioNode explosionNode){
         super(
                 playerType, 
                 playerController, 
@@ -36,7 +37,8 @@ public class Brel extends AbstractPlayer {
                 new Vector3f(0, -1f, 0),
                 assetManager,
                 explosionTextures,
-                camera
+                camera,
+                explosionNode
                 );
        
         _brel = assetManager.loadModel("Models/brel.j3o");

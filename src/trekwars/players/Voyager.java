@@ -25,7 +25,8 @@ public class Voyager extends AbstractPlayer {
             PlayerType playerType, 
             IPlayerController playerController,
             ArrayList<Texture> explosionTextures,
-            Camera camera){
+            Camera camera,
+            AudioNode explosionNode){
         super(
                 playerType, 
                 playerController, 
@@ -34,7 +35,8 @@ public class Voyager extends AbstractPlayer {
                 new Vector3f(0, 0f, 0),
                 assetManager,
                 explosionTextures,
-                camera
+                camera,
+                explosionNode
                 );
         
         // Voyager

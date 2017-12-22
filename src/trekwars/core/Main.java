@@ -2,6 +2,7 @@ package trekwars.core;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -15,14 +16,12 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
 import trekwars.players.AbstractPlayer;
-import trekwars.players.Brel;
 import trekwars.players.IPlayer;
 import trekwars.players.IPlayerController;
 import trekwars.players.PlayerController;
 import trekwars.players.PlayerFactory;
 import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
-import trekwars.players.Voyager;
 import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
 
@@ -46,8 +45,13 @@ public class Main extends SimpleApplication {
 
         ArrayList<Texture> explosionTextures = loadExplosionTextures(assetManager);
         IPlayerController playerController = new PlayerController();
+        AudioNode explosionNode = new AudioNode(assetManager, "Sounds/explosion.wav", false);
         PlayerFactory playerFactory = new PlayerFactory(
-                assetManager, cam, explosionTextures, playerController);
+                assetManager, 
+                cam, 
+                explosionTextures, 
+                playerController, 
+                explosionNode);
         
         AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
         

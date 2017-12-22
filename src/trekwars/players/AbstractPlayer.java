@@ -1,6 +1,7 @@
 package trekwars.players;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -46,6 +47,7 @@ public abstract class AbstractPlayer implements IPlayer {
     private final ArrayList<Texture> _explosionTextures;
     private final Camera _camera;
     private final float _explosionSize = 30f;
+    private final AudioNode _explosionNode;
     
     protected AbstractPlayer(
             PlayerType playerType, 
@@ -55,7 +57,8 @@ public abstract class AbstractPlayer implements IPlayer {
             Vector3f shieldTranslation,
             AssetManager assetManager,
             ArrayList<Texture> explosionTextures,
-            Camera camera
+            Camera camera,
+            AudioNode explosionNode
             ) {
         _playerType = playerType;
         _playerController = playerController;
@@ -64,6 +67,7 @@ public abstract class AbstractPlayer implements IPlayer {
         attachChild(_spatialNode);
         _explosionTextures = explosionTextures;
         _camera = camera;
+        _explosionNode = explosionNode;
         
         if(playerType == PlayerType.Player) {
             _lifeCapacity = _life = 1f;
@@ -77,6 +81,7 @@ public abstract class AbstractPlayer implements IPlayer {
         explosionMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         _explosion.setQueueBucket(RenderQueue.Bucket.Transparent);
         _explosion.setMaterial(explosionMaterial);
+        _explosion.setLocalTranslation(_explosionSize / 2, -_explosionSize / 2, 0);
         
         // Setup shields 
         Sphere sphere = new Sphere(10, 10, 1);
@@ -161,12 +166,17 @@ public abstract class AbstractPlayer implements IPlayer {
     
     private void handleExplosion(float tpf) {
         if(_life <= 0) {
-            _rootNode.detachAllChildren();
-            _rootNode.attachChild(_explosion);
-            _explosion.setLocalTranslation(_explosionSize / 2, -_explosionSize / 2, 0);
+            if(_explosionFrame == 0) {
+                _rootNode.detachAllChildren();
+                _rootNode.attachChild(_explosion);
+                _rootNode.attachChild(_explosionNode);
+                _explosionNode.play();
+            } 
+            
             if(_explosionFrame >= _explosionTextures.size()) {
                 return;
             }
+            
             _explosion.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
             _explosion.getMaterial().setTexture("ColorMap", _explosionTextures.get(_explosionFrame));
             _explosionFrame++;
@@ -191,7 +201,9 @@ public abstract class AbstractPlayer implements IPlayer {
                 increaseShieldAlpha(tpf);
             } else {
                 if(_playerType == PlayerType.Player) {
-                    _life += 0.0001f * tpf;
+                    if(_life >= 0) {
+                        _life += 0.0001f * tpf;
+                    }
                 }
                 decreaseShieldAlpha(tpf);
             }
