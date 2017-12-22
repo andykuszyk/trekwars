@@ -18,6 +18,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
+import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,9 +39,9 @@ public class BasicStarfield implements IScreen {
     private final float _cameraYDistance = 3f;
     private final Random _random = new Random();
     private final float _starRadius = 100;
-    private final float _minStarDistance = 50;
-    private final float _maxStarDistance = 120;
-    private final int _numberOfStars = 1000;
+    private final float _minStarDistance = 75;
+    private final float _maxStarDistance = 150;
+    private final int _numberOfStars = 200;
     private List<Spatial> _stars = new ArrayList<Spatial>();
     private final float _enemyWaveOneZ = -50f;
     private final float _enemyWaveTwoZ = -75f;
@@ -322,14 +323,26 @@ public class BasicStarfield implements IScreen {
     }
 
     private void createStarfield(AssetManager assetManager) {
+        _rootNode.attachChild(
+            SkyFactory.createSky(
+                assetManager, 
+                assetManager.loadTexture("Textures/stars.png"), 
+                assetManager.loadTexture("Textures/stars.png"), 
+                assetManager.loadTexture("Textures/stars.png"), 
+                assetManager.loadTexture("Textures/stars.png"), 
+                assetManager.loadTexture("Textures/stars.png"), 
+                assetManager.loadTexture("Textures/stars.png"), 
+                Vector3f.UNIT_XYZ,
+                200)
+            );
+        
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture star = assetManager.loadTexture("Textures/star.png");
         star.setWrap(WrapMode.Repeat);
         material.setTexture("ColorMap", star);
         material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        material.getAdditionalRenderState().setDepthWrite(false);
         for(int i = 0; i < _numberOfStars; i++) {
-            Quad quad = new Quad(1,1);
+            Quad quad = new Quad(1.5f,1.5f);
             Geometry geom = new Geometry("star", quad);
             geom.setMaterial(material);
             _rootNode.attachChild(geom);
