@@ -1,0 +1,5 @@
+language: android
+android:
+  components:
+    - android-8
+install: ant -f ./ -Dnb.internal.action.name=build jar
