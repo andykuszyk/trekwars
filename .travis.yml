@@ -2,4 +2,5 @@ language: android
 android:
   components:
     - android-8
+before_install: apt-get install ant
 install: ant -f ./ -Dnb.internal.action.name=build jar
