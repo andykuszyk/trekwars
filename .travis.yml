@@ -1,2 +1,2 @@
 language: java
-install: ant build jar
+install: ant -f ./ -Dnb.internal.action.name=build jar
