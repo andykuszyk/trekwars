@@ -275,7 +275,7 @@ is divided into following sections:
                     </src>
                     <classpath>
                         <path path="@{classpath}"/>
-                        <path pathelement="libs/*.jar"/>
+                        <path path="libs/*.jar"/>
                     </classpath>
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.profile.cmd.line.arg}"/>
@@ -316,7 +316,7 @@ is divided into following sections:
                     </src>
                     <classpath>
                         <path path="@{classpath}"/>
-                        <path pathelement="libs/*.jar"/>
+                        <path path="libs/*.jar"/>
                     </classpath>
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.profile.cmd.line.arg}"/>
