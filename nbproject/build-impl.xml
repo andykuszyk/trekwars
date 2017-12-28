@@ -30,6 +30,12 @@ is divided into following sections:
             </not>
         </condition>
     </fail>
+    <path id="build.classpath">
+        <fileset dir="libs">
+            <include name="**/*.jar"/>
+            <include name="**/*.zip"/>
+        </fileset>
+    </path>
     <target depends="test,jar,javadoc" description="Build and test whole project." name="default"/>
     <!-- 
                 ======================
@@ -275,8 +281,8 @@ is divided into following sections:
                     </src>
                     <classpath>
                         <path path="@{classpath}"/>
-                        <path path="libs/*.jar"/>
                     </classpath>
+                    <classpath refid="build.classpath"/>
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.profile.cmd.line.arg}"/>
                     <compilerarg line="${javac.compilerargs}"/>
@@ -316,8 +322,8 @@ is divided into following sections:
                     </src>
                     <classpath>
                         <path path="@{classpath}"/>
-                        <path path="libs/*.jar"/>
                     </classpath>
+                    <classpath refid="build.classpath"/>
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.profile.cmd.line.arg}"/>
                     <compilerarg line="${javac.compilerargs}"/>
