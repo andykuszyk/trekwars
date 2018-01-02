@@ -3,8 +3,6 @@ package trekwars.screens;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
 import com.jme3.input.InputManager;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
@@ -21,7 +19,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
-import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,6 +55,10 @@ public class BasicStarfield implements IScreen {
     private Button _fireButton;
     private final AudioNode _audioNode;
     private final Node _guiNode;
+    private final ArrayList<TouchEvent> _touchEvents = new ArrayList<TouchEvent>();
+    private boolean _isTouchLeft = false;
+    private boolean _isTouchRight = false;
+    private boolean _isTouchFire = false;
 
     public BasicStarfield(
             IPlayer player, 
@@ -94,8 +95,6 @@ public class BasicStarfield implements IScreen {
         initialiseHud();
     }
     
-    private final ArrayList<TouchEvent> _touchEvents = new ArrayList<TouchEvent>();
-    
     private boolean isTouchUp(TouchEvent.Type evt) {
         return 
                 evt == TouchEvent.Type.UP ||
@@ -111,20 +110,19 @@ public class BasicStarfield implements IScreen {
     }
     
     private void handleTouch() {
-        boolean isTouchLeft = false;
-        boolean isTouchRight = false;
-        boolean isTouchFire = false;
-        
         for(TouchEvent evt : _touchEvents) {
-            if (isTouchUp(evt.getType())) continue;
-            isTouchLeft = isTouchLeft || touchIsLeft(evt);
-            isTouchFire = isTouchFire || touchIsFire(evt);
-            isTouchRight = isTouchRight || (!isTouchRight && !isTouchFire);
+            if(touchIsLeft(evt)) {
+                _isTouchLeft = !isTouchUp(evt.getType());
+            } else if(touchIsFire(evt)) {
+                _isTouchFire = !isTouchUp(evt.getType());
+            } else {
+                _isTouchRight = !isTouchUp(evt.getType());
+            }
         }
         
-        if(isTouchLeft) _player.turnLeft();
-        if(isTouchRight) _player.turnRight();
-        if(isTouchFire) _player.fire();
+        if(_isTouchLeft) _player.turnLeft();
+        if(_isTouchRight) _player.turnRight();
+        if(_isTouchFire) _player.fire();
         
         _touchEvents.clear();
     }
