@@ -4,9 +4,11 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.TouchListener;
 import com.jme3.input.controls.TouchTrigger;
 import com.jme3.input.event.TouchEvent;
@@ -29,6 +31,7 @@ public class Main extends SimpleApplication implements TouchListener {
         Main app = new Main();
         app.setShowSettings(false);
         app.start();
+        app.settings.setFullscreen(true);
     }
 
     @Override

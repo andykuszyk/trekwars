@@ -95,14 +95,15 @@ public class BasicStarfield implements IScreen {
         initialiseHud();
     }
     
-    private boolean isTouchUp(TouchEvent.Type evt) {
+    private boolean isTouchDown(TouchEvent.Type evt) {
         return 
-                evt == TouchEvent.Type.UP ||
-                evt == TouchEvent.Type.LONGPRESSED ||
-                evt == TouchEvent.Type.IDLE ||
-                evt == TouchEvent.Type.KEY_UP ||
-                evt == TouchEvent.Type.FLING ||
-                evt == TouchEvent.Type.TAP;
+                evt == TouchEvent.Type.MOVE ||
+                evt == TouchEvent.Type.SCROLL ||
+                evt == TouchEvent.Type.SCALE_START ||
+                evt == TouchEvent.Type.SCALE_MOVE ||
+                evt == TouchEvent.Type.TAP ||
+                evt == TouchEvent.Type.SHOWPRESS ||
+                evt == TouchEvent.Type.DOWN;
     }
     
     public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
@@ -110,15 +111,28 @@ public class BasicStarfield implements IScreen {
     }
     
     private void handleTouch() {
+        boolean leftIsHandled = false;
+        boolean rightIsHandled = false;
+        boolean fireIsHandled = false;
+        
         for(TouchEvent evt : _touchEvents) {
-            if(touchIsLeft(evt)) {
-                _isTouchLeft = !isTouchUp(evt.getType());
-            } else if(touchIsFire(evt)) {
-                _isTouchFire = !isTouchUp(evt.getType());
-            } else {
-                _isTouchRight = !isTouchUp(evt.getType());
-            }
-        }
+             System.out.println(String.format("SZYK: %s", evt.getType()));
+
+             if(touchIsLeft(evt)) {
+                 if(!leftIsHandled) {
+                    _isTouchLeft = isTouchDown(evt.getType());
+                    leftIsHandled = !_isTouchLeft;
+                 }
+             } else if(touchIsFire(evt)) {
+                 if (!fireIsHandled) {
+                     _isTouchFire = isTouchDown(evt.getType());
+                     fireIsHandled = !_isTouchFire;
+                 }
+             } else if(!rightIsHandled) {
+                 _isTouchRight = isTouchDown(evt.getType());
+                 rightIsHandled = !_isTouchRight;
+             }
+         }
         
         if(_isTouchLeft) _player.turnLeft();
         if(_isTouchRight) _player.turnRight();
