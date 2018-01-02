@@ -4,29 +4,24 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.TouchListener;
 import com.jme3.input.controls.TouchTrigger;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
-import trekwars.players.AbstractPlayer;
-import trekwars.players.IPlayer;
 import trekwars.players.IPlayerController;
 import trekwars.players.PlayerController;
 import trekwars.players.PlayerFactory;
-import trekwars.players.PlayerFactoryType;
-import trekwars.players.PlayerType;
-import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
 import trekwars.screens.Splash;
 
-public class Main extends SimpleApplication {
+public class Main extends SimpleApplication implements TouchListener {
 
     private IScreen _screen;
     
@@ -88,7 +83,15 @@ public class Main extends SimpleApplication {
                 InputMappings.select,
                 InputMappings.fire,
                 InputMappings.left_click);
+        
+        inputManager.addListener(this, new String[] {"Touch"});
     }
+    
+    @Override
+     public void onTouch(String binding, TouchEvent evt, float tpf) {
+         _screen.onTouch(evt, tpf, this.settings.getWidth(), this.settings.getHeight());
+         evt.setConsumed();
+     }
     
     private ArrayList<Texture> loadExplosionTextures(AssetManager assetManager) {
         ArrayList<Texture> textures = new ArrayList<Texture>();

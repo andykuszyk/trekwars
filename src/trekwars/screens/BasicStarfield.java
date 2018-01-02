@@ -6,6 +6,7 @@ import com.jme3.audio.AudioSource;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.input.InputManager;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -91,6 +92,41 @@ public class BasicStarfield implements IScreen {
         _rootNode.attachChild(_audioNode);
         
         initialiseHud();
+    }
+    
+    private final ArrayList<TouchEvent> _touchEvents = new ArrayList<TouchEvent>();
+    
+    private boolean isTouchUp(TouchEvent.Type evt) {
+        return 
+                evt == TouchEvent.Type.UP ||
+                evt == TouchEvent.Type.LONGPRESSED ||
+                evt == TouchEvent.Type.IDLE ||
+                evt == TouchEvent.Type.KEY_UP ||
+                evt == TouchEvent.Type.FLING ||
+                evt == TouchEvent.Type.TAP;
+    }
+    
+    public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
+        _touchEvents.add(evt);
+    }
+    
+    private void handleTouch() {
+        boolean isTouchLeft = false;
+        boolean isTouchRight = false;
+        boolean isTouchFire = false;
+        
+        for(TouchEvent evt : _touchEvents) {
+            if (isTouchUp(evt.getType())) continue;
+            isTouchLeft = isTouchLeft || touchIsLeft(evt);
+            isTouchFire = isTouchFire || touchIsFire(evt);
+            isTouchRight = isTouchRight || (!isTouchRight && !isTouchFire);
+        }
+        
+        if(isTouchLeft) _player.turnLeft();
+        if(isTouchRight) _player.turnRight();
+        if(isTouchFire) _player.fire();
+        
+        _touchEvents.clear();
     }
     
     public void start() {
@@ -238,6 +274,7 @@ public class BasicStarfield implements IScreen {
     }
 
     public void update(float tpf) {
+        handleTouch();
         _player.update(tpf);
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
@@ -300,6 +337,16 @@ public class BasicStarfield implements IScreen {
                 _player.turnRight();
             }
         }
+    }
+    
+    private boolean touchIsLeft(TouchEvent evt) {
+        return 
+                evt.getX() < _screenSize.getX() / 2 && 
+                evt.getY() > _screenSize.getY() / 5;
+    }
+    
+    private boolean touchIsFire(TouchEvent evt) {
+        return evt.getY() <= _screenSize.getY() / 5;
     }
     
     private boolean mouseIsLeft() {

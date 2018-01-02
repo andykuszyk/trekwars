@@ -2,6 +2,7 @@ package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -58,6 +59,10 @@ public class Splash implements Callable<IScreen>, IScreen {
         
         _executor = Executors.newSingleThreadExecutor();
         _nextScreen = _executor.submit(this);
+    }
+    
+    public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
+    
     }
 
     public Node getGuiNode() {
