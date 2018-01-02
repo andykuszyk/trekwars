@@ -17,3 +17,5 @@ dist/
 nbproject/private
 mobile/bin*
 mobile/assets/*
+*.keystore
+*.pem
