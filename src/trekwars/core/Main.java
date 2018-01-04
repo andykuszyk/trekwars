@@ -42,7 +42,14 @@ public class Main extends SimpleApplication implements TouchListener {
         Vector2f screenSize = new Vector2f(this.settings.getWidth(), this.settings.getHeight());
         initialiseInput();
         
-        setScreen(new Splash(assetManager, screenSize, getPlayerFactory(), inputManager, cam));
+        setScreen(new Splash(
+                assetManager, 
+                screenSize, 
+                getPlayerFactory(), 
+                inputManager, 
+                cam,
+                Splash.NextScreen.MainMenu
+                ));
     }
     
     public PlayerFactory getPlayerFactory() {

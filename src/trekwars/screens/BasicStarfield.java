@@ -5,45 +5,22 @@ import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import com.jme3.input.InputManager;
 import com.jme3.input.event.TouchEvent;
-import com.jme3.light.AmbientLight;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Quad;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
-import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import trekwars.core.Distance;
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
 
-public class BasicStarfield implements IScreen {
-    
-    private final Node _rootNode;
+public class BasicStarfield extends AbstractStarfield {
     private final IPlayer _player;
     private final ArrayList<IPlayer> _enemyWaveOne;
     private final ArrayList<IPlayer> _enemyWaveTwo;
     private final ArrayList<IPlayer> _enemyWaveThree;
-    private final Camera _camera;
     private final float _cameraZDistance = 10f;
     private final float _cameraYDistance = 3f;
-    private final Random _random = new Random();
-    private final float _starRadius = 100;
-    private final float _minStarDistance = 75;
-    private final float _maxStarDistance = 150;
-    private final int _numberOfStars = 200;
-    private List<Spatial> _stars = new ArrayList<Spatial>();
     private final float _enemyWaveOneZ = -50f;
     private final float _enemyWaveTwoZ = -75f;
     private final float _enemyWaveThreeZ = -100f;
@@ -54,7 +31,6 @@ public class BasicStarfield implements IScreen {
     private Button _rightButton;
     private Button _fireButton;
     private final AudioNode _audioNode;
-    private final Node _guiNode;
     private final ArrayList<TouchEvent> _touchEvents = new ArrayList<TouchEvent>();
     private boolean _isTouchLeft = false;
     private boolean _isTouchRight = false;
@@ -69,8 +45,7 @@ public class BasicStarfield implements IScreen {
             Camera camera,
             InputManager inputManager,
             Vector2f screenSize){
-        _camera = camera;
-        _rootNode = new Node();
+        super(assetManager, player, camera);
         _player = player;
         _enemyWaveOne = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveOne);
         _enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);
@@ -78,10 +53,7 @@ public class BasicStarfield implements IScreen {
         _inputManager = inputManager;
         _screenSize = screenSize;
         _assetManager = assetManager;
-        _guiNode = new Node();
         
-        createStarfield(assetManager);
-        createLighting();
         attachChildren(player, enemyWaveOne, enemyWaveTwo, enemyWaveThree);
         arrangeEnemyWave(_enemyWaveOne, _enemyWaveOneZ);
         arrangeEnemyWave(_enemyWaveTwo, _enemyWaveTwoZ);
@@ -147,10 +119,6 @@ public class BasicStarfield implements IScreen {
     
     public IScreen getNextScreen() {
         return null;
-    }
-    
-    public Node getGuiNode() {
-        return _guiNode;
     }
     
     private void initialiseHud() {
@@ -243,33 +211,10 @@ public class BasicStarfield implements IScreen {
     private float getAverageWidth(Iterable<IPlayer> players) {
         float sumOfWidths = 0f;
         float numberOfWidths = 0;
-  
-        //TODO
         sumOfWidths = 10;
         numberOfWidths = 1;
-//        for (IPlayer player : players) {
-//            for(Spatial         for (IPlayer player : players) {
-//            for(Spatial child : player.getRootNode().getChildren()) {
-//                child.getWorldBound().
-//            }
-//        }child : player.getRootNode().getChildren()) {
-//                child.getWorldBound().
-//            }
-//        }
         
         return sumOfWidths / numberOfWidths;
-    }
-    
-    private void positionStar(Spatial star) {
-        Vector3f newCoords = new Vector3f(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
-        star.setLocalTranslation(_player.getRootNode().getLocalTranslation().add(newCoords));
-    }
-    
-    private float generateStarCoordinate() {
-        return
-                (_random.nextFloat() - 0.5f) * 
-                ((_starRadius + _minStarDistance) / _minStarDistance) * 
-                _starRadius;
     }
     
     private void attachRootNodes(Iterable<IPlayer> players){
@@ -280,26 +225,15 @@ public class BasicStarfield implements IScreen {
             }
         }
     }
-    
-    public Node getRootNode() {
-        return _rootNode;
-    }
 
-    public void update(float tpf) {
+    @Override
+    protected void onUpdate(float tpf) {
         handleTouch();
         _player.update(tpf);
         updatePlayers(_enemyWaveOne, tpf);
         updatePlayers(_enemyWaveTwo, tpf);
         updatePlayers(_enemyWaveThree, tpf);
-        positionCamera();
-        
-        for(Spatial star : _stars) {
-            star.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
-            double distance = new Distance(star, _player.getRootNode()).getLocal();
-            if(distance < _minStarDistance || distance > _maxStarDistance) {
-                positionStar(star);
-            }
-        }
+        positionCamera();     
         
         if(_audioNode.getStatus() != AudioSource.Status.Playing) {
             _audioNode.play();
@@ -400,36 +334,6 @@ public class BasicStarfield implements IScreen {
         }
     }
 
-    private void createStarfield(AssetManager assetManager) {
-        _rootNode.attachChild(
-            SkyFactory.createSky(
-                assetManager, 
-                assetManager.loadTexture("Textures/stars.png"), 
-                assetManager.loadTexture("Textures/stars.png"), 
-                assetManager.loadTexture("Textures/stars.png"), 
-                assetManager.loadTexture("Textures/stars.png"), 
-                assetManager.loadTexture("Textures/stars.png"), 
-                assetManager.loadTexture("Textures/stars.png"), 
-                Vector3f.UNIT_XYZ,
-                200)
-            );
-        
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture star = assetManager.loadTexture("Textures/star.png");
-        star.setWrap(WrapMode.Repeat);
-        material.setTexture("ColorMap", star);
-        material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        for(int i = 0; i < _numberOfStars; i++) {
-            Quad quad = new Quad(2f,2f);
-            Geometry geom = new Geometry("star", quad);
-            geom.setMaterial(material);
-            geom.setQueueBucket(Bucket.Transparent);
-            _rootNode.attachChild(geom);
-            positionStar(geom);
-            _stars.add(geom);
-        }
-    }
-
     private void attachChildren(
             IPlayer player, 
             Iterable<IPlayer> enemyWaveOne, 
@@ -441,11 +345,5 @@ public class BasicStarfield implements IScreen {
         attachRootNodes(enemyWaveOne);
         attachRootNodes(enemyWaveTwo);
         attachRootNodes(enemyWaveThree);
-    }
-
-    private void createLighting() {
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(1.3f));
-        _rootNode.addLight(al);
     }
 }

@@ -30,19 +30,25 @@ public class Splash implements Callable<IScreen>, IScreen {
     private final Camera _camera;
     private Future<IScreen> _nextScreen;
     private final ExecutorService _executor;
+    private final NextScreen _nextScreenSelection;
+    
+    public enum NextScreen {
+        BasicStarfield, MainMenu
+    }
     
     public Splash(
             AssetManager assetManager, 
             Vector2f screenSize,
             PlayerFactory playerFactory,
             InputManager inputManager,
-            Camera camera) {
+            Camera camera,
+            NextScreen nextScreen) {
         _assetManager = assetManager;
         _screenSize = screenSize;
         _playerFactory = playerFactory;
         _camera = camera;
         _inputManager = inputManager;
-        
+        _nextScreenSelection = nextScreen;
         _guiNode = new Node();
         _rootNode = new Node();
         _guiNode.attachChild(new GuiElement(
@@ -101,25 +107,32 @@ public class Splash implements Callable<IScreen>, IScreen {
     
     @Override
     public IScreen call() throws InterruptedException {
-        AbstractPlayer player = _playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
-        ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-        waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-        waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-        waveThree.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        Thread.sleep(2000);
-        return new BasicStarfield(
-                player, 
-                waveOne, 
-                waveTwo, 
-                waveThree, 
-                _assetManager, 
-                _camera,
-                _inputManager,
-                _screenSize);
-    }   
+        if (_nextScreenSelection == NextScreen.BasicStarfield) {
+            AbstractPlayer player = _playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
+            ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
+            waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
+            waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
+            waveThree.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+            Thread.sleep(2000);
+            return new BasicStarfield(
+                    player, 
+                    waveOne,    
+                    waveTwo, 
+                    waveThree, 
+                    _assetManager, 
+                    _camera,
+                    _inputManager,
+                    _screenSize);
+        } else if(_nextScreenSelection == NextScreen.MainMenu) {
+            return new MainMenu(_assetManager, null, _camera, _playerFactory);
+        }
+        else {
+            return null;
+        }
+    }
 }
