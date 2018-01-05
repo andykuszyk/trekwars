@@ -57,7 +57,6 @@ public class Voyager extends AbstractPlayer {
         _phaser.setMaterial(material);
         
         _spatialNode.attachChild(_voyager);
-        _spatialNode.attachChild(_phaser);
         
         _audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
         _audioNode.setPositional(true);
