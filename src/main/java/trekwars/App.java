@@ -1,4 +1,4 @@
-package trekwars.core;
+package trekwars;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
@@ -22,13 +22,14 @@ import trekwars.players.PlayerController;
 import trekwars.players.PlayerFactory;
 import trekwars.screens.IScreen;
 import trekwars.screens.Splash;
+import trekwars.core.InputMappings;
 
-public class Main extends SimpleApplication implements TouchListener {
+public class App extends SimpleApplication implements TouchListener {
 
     private IScreen _screen;
     
     public static void main(String[] args) {
-        Main app = new Main();
+        App app = new App();
         app.setShowSettings(false);
         app.start();
         app.settings.setFullscreen(true);
