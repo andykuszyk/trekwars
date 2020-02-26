@@ -21,3 +21,8 @@ mobile/assets/*
 *.pem
 *.dylib
 .gradle/
+*.swp
+.classpath
+.project
+.settings/
+bin/
