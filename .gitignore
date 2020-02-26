@@ -19,3 +19,5 @@ mobile/bin*
 mobile/assets/*
 *.keystore
 *.pem
+*.dylib
+.gradle/
