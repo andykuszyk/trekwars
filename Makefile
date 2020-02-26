@@ -1,6 +1,6 @@
 .PHONY: build
 build:
-	./gradlew clean build
+	./gradlew build
 
 .PHONY: run
 run: jar
@@ -8,4 +8,8 @@ run: jar
 
 .PHONY: jar
 jar:
-	./gradlew clean shadowJar
+	./gradlew shadowJar
+
+.PHONY: watch
+watch:
+	find ./src/ | grep -e 'java$$' | entr -c make build
