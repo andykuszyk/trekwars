@@ -1,7 +1,7 @@
 .PHONY: build
 build:
-	./gradlew build
+	./gradlew clean build
 
 .PHONY: run
 run:
-	./gradlew run
+	./gradlew clean run
