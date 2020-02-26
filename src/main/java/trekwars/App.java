@@ -1,5 +1,6 @@
 package trekwars;
 
+import com.simsilica.lemur.GuiGlobals;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
@@ -37,9 +38,9 @@ public class App extends SimpleApplication implements TouchListener {
 
     @Override
     public void simpleInitApp() {
+        GuiGlobals.initialize(this);
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
-//        this.setDisplayFps(false);
         Vector2f screenSize = new Vector2f(this.settings.getWidth(), this.settings.getHeight());
         initialiseInput();
         
