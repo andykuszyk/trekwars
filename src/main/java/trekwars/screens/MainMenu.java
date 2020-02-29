@@ -50,11 +50,13 @@ public class MainMenu extends AbstractStarfield {
         _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
         _ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
         _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        _ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
+        _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
 
         playersNode = new Node();
         _rootNode.attachChild(playersNode);
 
-        radiusSize = 10f;
+        radiusSize = 20f;
         theta = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / _ships.size()), Vector3f.UNIT_Y);
         Vector3f radius = new Vector3f(0, 0, radiusSize);
         _camera.setLocation(new Vector3f(0, (float)(radiusSize * 0.25), radiusSize * 2));
@@ -72,7 +74,7 @@ public class MainMenu extends AbstractStarfield {
     }
     
     private Spatial makeSign(Material material) {
-        Quad quad = new Quad(10f,2f);
+        Quad quad = new Quad(30f,5f);
         Geometry geom = new Geometry("sign", quad);
         geom.setMaterial(material);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
@@ -108,15 +110,15 @@ public class MainMenu extends AbstractStarfield {
     public void onUpdate(float tpf) {
         for(IPlayer ship : _ships) {
             if(ship.getRootNode().getWorldTranslation().getZ() > radiusSize * 0.9f) {
-                ship.getRootNode().rotate(0, tpf * 0.1f, 0);
+                ship.getRootNode().rotate(0, tpf * 0.2f, 0);
             } else {
                 ship.getRootNode().setLocalRotation(new Quaternion());
             }
         }
         Vector3f cameraLocation = _camera.getLocation();
         _chooseYourShip.setLocalTranslation(
-                cameraLocation.x + 5,
-                3,
+                cameraLocation.x - 15,
+                5,
                 0
                 );
         _chooseYourShip.lookAt(cameraLocation, Vector3f.UNIT_Y);

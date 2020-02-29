@@ -85,6 +85,8 @@ public abstract class AbstractStarfield implements IScreen {
         Vector3f newCoords = new Vector3f(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
         if(_player != null) {
             star.setLocalTranslation(_player.getRootNode().getLocalTranslation().add(newCoords));
+        } else {
+            star.setLocalTranslation(newCoords);
         }
     }
     
