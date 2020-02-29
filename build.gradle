@@ -15,12 +15,11 @@ repositories {
     maven { url "http://dl.bintray.com/jmonkeyengine/com.jme3" }
 }
 
+def jme3 = [v:'3.0.10', g:'com.jme3']
 dependencies {
-    compile "com.simsilica:lemur:1.11.0"
-    compile "com.simsilica:lemur-proto:1.10.0"
-    compile group: 'org.jmonkeyengine', name: 'jme3-desktop', version: '3.2.2-stable'
-    compile group: 'org.jmonkeyengine', name: 'jme3-core', version: '3.2.2-stable'
-    compile group: 'org.jmonkeyengine', name: 'jme3-lwjgl', version: '3.2.2-stable'
+	compile "${jme3.g}:jme3-core:${jme3.v}"
+	runtime "${jme3.g}:jme3-desktop:${jme3.v}"
+	runtime "${jme3.g}:jme3-lwjgl:${jme3.v}"
     implementation 'com.google.guava:guava:28.0-jre'
 
     // Use JUnit test framework
