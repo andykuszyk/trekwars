@@ -15,7 +15,12 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import trekwars.core.InputMappings;
@@ -27,6 +32,7 @@ import trekwars.players.PlayerType;
 public class MainMenu extends AbstractStarfield {
     private final Node playersNode;
     private final Quaternion theta;
+    private final float radiusSize;
     private Camera _camera;
     private ArrayList<IPlayer> _ships = new ArrayList<IPlayer>();
     private Spatial _chooseYourShip;
@@ -44,14 +50,11 @@ public class MainMenu extends AbstractStarfield {
         _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
         _ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
         _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        _ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
-        _ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        _ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
 
         playersNode = new Node();
         _rootNode.attachChild(playersNode);
 
-        float radiusSize = 10f;
+        radiusSize = 10f;
         theta = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / _ships.size()), Vector3f.UNIT_Y);
         Vector3f radius = new Vector3f(0, 0, radiusSize);
         _camera.setLocation(new Vector3f(0, (float)(radiusSize * 0.25), radiusSize * 2));
@@ -87,22 +90,28 @@ public class MainMenu extends AbstractStarfield {
     
     @Override
     public void onAnalog(String name, float keyPressed, float tpf) {
-        if(lastKeyPress != null && LocalDateTime.now().isBefore(lastKeyPress.plusSeconds(1))) {
+        if(lastKeyPress != null && LocalDateTime.now().isBefore(lastKeyPress.plus(500, ChronoUnit.MILLIS))) {
+
             return;
         }
         lastKeyPress = LocalDateTime.now();
         Vector3f cameraLocation = _camera.getLocation();
+        float stepRotate = (float)(Math.PI * 2 / _ships.size());
         if(name.equals(InputMappings.left)) {
-            playersNode.rotate(theta);
+            playersNode.rotate(0, stepRotate, 0);
         } else if (name.equals(InputMappings.right)) {
-            playersNode.rotate(theta.mult(-1));
+            playersNode.rotate(0, -stepRotate, 0);
         }
     }
     
     @Override
     public void onUpdate(float tpf) {
         for(IPlayer ship : _ships) {
-//            ship.getRootNode().rotate(0, tpf * 0.5f, 0);
+            if(ship.getRootNode().getWorldTranslation().getZ() > radiusSize * 0.9f) {
+                ship.getRootNode().rotate(0, tpf * 0.1f, 0);
+            } else {
+                ship.getRootNode().setLocalRotation(new Quaternion());
+            }
         }
         Vector3f cameraLocation = _camera.getLocation();
         _chooseYourShip.setLocalTranslation(
