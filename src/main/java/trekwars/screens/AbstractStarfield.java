@@ -27,6 +27,7 @@ public abstract class AbstractStarfield implements IScreen {
     private final float _minStarDistance = 75;
     private final float _maxStarDistance = 150;
     private final int _numberOfStars = 200;
+    protected final AssetManager _assetManager;
     private ArrayList<Spatial> _stars = new ArrayList<Spatial>();
     private final IPlayer _player;
     protected final Node _guiNode;
@@ -41,6 +42,7 @@ public abstract class AbstractStarfield implements IScreen {
         _rootNode = new Node();
         _guiNode = new Node();
         _camera = camera;
+        _assetManager = assetManager;
         createStarfield(assetManager);
         createLighting();
     }
