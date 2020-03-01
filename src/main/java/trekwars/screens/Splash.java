@@ -130,7 +130,7 @@ public class Splash implements Callable<IScreen>, IScreen {
                         _inputManager,
                         _screenSize);
             } else if (_nextScreenSelection == NextScreen.MainMenu) {
-                return new MainMenu(_assetManager, null, _camera, _playerFactory);
+                return new MainMenu(_assetManager, null, _camera, _playerFactory, _screenSize);
             } else {
                 return null;
             }
