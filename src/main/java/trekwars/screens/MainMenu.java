@@ -97,15 +97,15 @@ public class MainMenu extends AbstractStarfield {
         Texture texture = assetManager.loadTexture("Interface/" + logo);
         texture.setWrap(Texture.WrapMode.Repeat);
         material.setTexture("ColorMap", texture);
-        Geometry spatial = new Geometry(logo, new Quad(logoSize, logoSize));
-        spatial.setMaterial(material);
-        Spatial clone = spatial.clone();
+        Geometry front = new Geometry(logo, new Quad(logoSize, logoSize));
+        front.setMaterial(material);
+        Geometry back = front.clone();
         Node node = new Node();
-        node.attachChild(spatial);
-        node.attachChild(clone);
-        spatial.setLocalTranslation(-logoSize / 2, -logoSize / 2, 0f);
-        clone.rotate(0, (float)Math.PI, 0);
-        clone.setLocalTranslation(logoSize / 2, -logoSize / 2, 0f);
+        node.attachChild(front);
+        node.attachChild(back);
+        front.setLocalTranslation(-logoSize / 2, -logoSize / 2, 0f);
+        back.rotate(0, (float)Math.PI, 0);
+        back.setLocalTranslation(logoSize / 2, -logoSize / 2, 0f);
         return node;
     }
 
