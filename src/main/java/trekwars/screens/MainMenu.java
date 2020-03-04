@@ -146,5 +146,9 @@ public class MainMenu extends AbstractStarfield {
                 ship.getRootNode().setLocalRotation(new Quaternion());
             }
         }
+
+        for(Spatial enemy : enemies) {
+            enemy.rotate(0, tpf * 0.2f, 0);
+        }
     }
 }
