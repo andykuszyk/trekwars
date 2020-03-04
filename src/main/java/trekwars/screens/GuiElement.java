@@ -5,8 +5,8 @@ import com.jme3.math.Vector2f;
 import com.jme3.ui.Picture;
 
 public class GuiElement {
-    protected final Picture _picture;
-    protected final AssetManager _assetManager;
+    protected final Picture picture;
+    protected final AssetManager assetManager;
     
     public GuiElement(
             String name,
@@ -16,19 +16,19 @@ public class GuiElement {
             Vector2f screenSize,
             String imagePath
             ) {
-        _picture = new Picture(name);
-        _assetManager = assetManager;
+        picture = new Picture(name);
+        this.assetManager = assetManager;
         float width = ((topRight.getX() - bottomLeft.getX()) / 1) * screenSize.getX();
         float height = ((topRight.getY() - bottomLeft.getY()) / 1) * screenSize.getY();
         float x = Math.max((bottomLeft.getX() * screenSize.getX()), 0);
         float y = Math.max((bottomLeft.getY() * screenSize.getY()), 0);
-        _picture.setWidth(width);
-        _picture.setHeight(height);
-        _picture.setPosition(x, y);
-        _picture.setImage(_assetManager, imagePath, true);
+        picture.setWidth(width);
+        picture.setHeight(height);
+        picture.setPosition(x, y);
+        picture.setImage(assetManager, imagePath, true);
     }
     
     public Picture getPicture() {
-        return _picture;
+        return picture;
     }
 }

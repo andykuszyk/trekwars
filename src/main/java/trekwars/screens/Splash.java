@@ -21,16 +21,16 @@ import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
 
 public class Splash implements Callable<IScreen>, IScreen {
-    private final Node _guiNode;
-    private final Node _rootNode;
-    private final AssetManager _assetManager;
-    private final Vector2f _screenSize;
-    private final PlayerFactory _playerFactory;
-    private final InputManager _inputManager;
-    private final Camera _camera;
-    private Future<IScreen> _nextScreen;
-    private final ExecutorService _executor;
-    private final NextScreen _nextScreenSelection;
+    private final Node guiNode;
+    private final Node rootNode;
+    private final AssetManager assetManager;
+    private final Vector2f screenSize;
+    private final PlayerFactory playerFactory;
+    private final InputManager inputManager;
+    private final Camera camera;
+    private Future<IScreen> nextScreen;
+    private final ExecutorService executor;
+    private final NextScreen nextScreenSelection;
     
     public enum NextScreen {
         BasicStarfield, MainMenu
@@ -43,15 +43,15 @@ public class Splash implements Callable<IScreen>, IScreen {
             InputManager inputManager,
             Camera camera,
             NextScreen nextScreen) {
-        _assetManager = assetManager;
-        _screenSize = screenSize;
-        _playerFactory = playerFactory;
-        _camera = camera;
-        _inputManager = inputManager;
-        _nextScreenSelection = nextScreen;
-        _guiNode = new Node();
-        _rootNode = new Node();
-        _guiNode.attachChild(new GuiElement(
+        this.assetManager = assetManager;
+        this.screenSize = screenSize;
+        this.playerFactory = playerFactory;
+        this.camera = camera;
+        this.inputManager = inputManager;
+        nextScreenSelection = nextScreen;
+        guiNode = new Node();
+        rootNode = new Node();
+        guiNode.attachChild(new GuiElement(
                 "splash", 
                 assetManager, 
                 new Vector2f(0f, 0f), 
@@ -61,10 +61,10 @@ public class Splash implements Callable<IScreen>, IScreen {
         
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.3f));
-        _rootNode.addLight(al);
+        rootNode.addLight(al);
         
-        _executor = Executors.newSingleThreadExecutor();
-        _nextScreen = _executor.submit(this);
+        executor = Executors.newSingleThreadExecutor();
+        this.nextScreen = executor.submit(this);
     }
     
     public void onTouch(TouchEvent evt, float tpf, float screenWidth, float screenHeight) {
@@ -72,13 +72,13 @@ public class Splash implements Callable<IScreen>, IScreen {
     }
 
     public Node getGuiNode() {
-        return _guiNode;
+        return guiNode;
     }
     
     public void update(float tpf) { }
 
     public Node getRootNode() {
-        return _rootNode;
+        return rootNode;
     }
 
     public void onAnalog(String name, float keyPressed, float tpf) { }
@@ -86,17 +86,17 @@ public class Splash implements Callable<IScreen>, IScreen {
     public void onAction(String name, boolean keyPressed, float tpf) { }
     
     public IScreen getNextScreen() {
-        if(_nextScreen == null) {
+        if(nextScreen == null) {
             return null;
-        } else if(_nextScreen.isDone()) {
+        } else if(nextScreen.isDone()) {
             try {
-                return _nextScreen.get();
+                return nextScreen.get();
             } catch (InterruptedException ex) { 
-                _nextScreen = null;
+                nextScreen = null;
             } catch (ExecutionException ex) {
-                _nextScreen = null;
+                nextScreen = null;
             }
-            _executor.shutdown();
+            executor.shutdown();
             return null;
         } else {
             return null;
@@ -108,34 +108,34 @@ public class Splash implements Callable<IScreen>, IScreen {
     @Override
     public IScreen call() throws InterruptedException {
         try {
-            if (_nextScreenSelection == NextScreen.BasicStarfield) {
-                AbstractPlayer player = _playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
+            if (nextScreenSelection == NextScreen.BasicStarfield) {
+                AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
                 ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-                waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveOne.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-                waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveTwo.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-                waveThree.add(_playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 Thread.sleep(2000);
                 return new BasicStarfield(
                         player,
                         waveOne,
                         waveTwo,
                         waveThree,
-                        _assetManager,
-                        _camera,
-                        _inputManager,
-                        _screenSize);
-            } else if (_nextScreenSelection == NextScreen.MainMenu) {
-                return new MainMenu(_assetManager, null, _camera, _playerFactory, _screenSize);
+                        assetManager,
+                        camera,
+                        inputManager,
+                        screenSize);
+            } else if (nextScreenSelection == NextScreen.MainMenu) {
+                return new MainMenu(assetManager, null, camera, playerFactory, screenSize);
             } else {
                 return null;
             }
         } finally {
-            _executor.shutdown();
+            executor.shutdown();
         }
     }
 }

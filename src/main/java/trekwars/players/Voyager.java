@@ -15,10 +15,10 @@ import java.util.ArrayList;
 
 public class Voyager extends AbstractPlayer {
     
-    private final Spatial _voyager;
-    private final Spatial _phaser;
-    private final AudioNode _audioNode;
-    private boolean _isFiring = false;
+    private final Spatial voyager;
+    private final Spatial phaser;
+    private final AudioNode audioNode;
+    private boolean isFiring = false;
     
     public Voyager(
             AssetManager assetManager, 
@@ -40,29 +40,29 @@ public class Voyager extends AbstractPlayer {
                 );
         
         // Voyager
-        _voyager = assetManager.loadModel("Models/voyager.j3o");
+        voyager = assetManager.loadModel("Models/voyager.j3o");
         Material voyager_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         voyager_material.setTexture("ColorMap", assetManager.loadTexture("Textures/voyager.png"));
-        _voyager.setMaterial(voyager_material);
-        _voyager.setLocalScale(0.5f);
+        voyager.setMaterial(voyager_material);
+        voyager.setLocalScale(0.5f);
         
         
         // Phaser
         Quad quad = new Quad(0.5f,50);
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         material.setColor("Color", ColorRGBA.White);
-        _phaser = new Geometry("star", quad);
-        _phaser.rotate(-(float)Math.PI / 2, 0f, 0f);
-        _phaser.setLocalTranslation(-0.25f, -1f, -1f);
-        _phaser.setMaterial(material);
+        phaser = new Geometry("star", quad);
+        phaser.rotate(-(float)Math.PI / 2, 0f, 0f);
+        phaser.setLocalTranslation(-0.25f, -1f, -1f);
+        phaser.setMaterial(material);
         
-        _spatialNode.attachChild(_voyager);
+        spatialNode.attachChild(voyager);
         
-        _audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
-        _audioNode.setPositional(true);
-        _audioNode.setLooping(false);
-        _audioNode.setVolume(0.1f);
-        _spatialNode.attachChild(_audioNode);
+        audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
+        audioNode.setPositional(true);
+        audioNode.setLooping(false);
+        audioNode.setVolume(0.1f);
+        spatialNode.attachChild(audioNode);
     }
 
     @Override
@@ -92,31 +92,31 @@ public class Voyager extends AbstractPlayer {
 
     @Override
     protected void onFireStart(float tpf) {
-        _spatialNode.attachChild(_phaser);
-        _isFiring = true;
+        spatialNode.attachChild(phaser);
+        isFiring = true;
     }
     
     @Override
     protected void onFireStop(float tpf) {
-        _spatialNode.detachChild(_phaser);
-        _isFiring = false;
+        spatialNode.detachChild(phaser);
+        isFiring = false;
     }
     
     @Override
     protected void onUpdate(float tpf) {
-        if(_isFiring) {
-            if(_audioNode.getStatus() != AudioSource.Status.Playing) {
-                _audioNode.play();
+        if(isFiring) {
+            if(audioNode.getStatus() != AudioSource.Status.Playing) {
+                audioNode.play();
             }
         } else {
-            _audioNode.stop();
+            audioNode.stop();
         }
     }
     
     @Override
     public Iterable<Spatial> getWeaponSpatials() {
        ArrayList weapons = new ArrayList<Spatial>();
-       weapons.add(_phaser);
+       weapons.add(phaser);
        return weapons;
     }
 }

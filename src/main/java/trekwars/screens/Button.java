@@ -4,8 +4,8 @@ import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector2f;
 
 public final class Button extends GuiElement {
-    private final String _inactivePath;
-    private final String _activePath;
+    private final String inactivePath;
+    private final String activePath;
     
     public Button(
             String name, 
@@ -17,16 +17,16 @@ public final class Button extends GuiElement {
             Vector2f screenSize
             ) {
         super(name, assetManager, bottomLeft, topRight, screenSize, inactivePath);
-        _inactivePath = inactivePath;
-        _activePath = activePath;
+        this.inactivePath = inactivePath;
+        this.activePath = activePath;
     }
     
     
     public void activate() {
-        _picture.setImage(_assetManager, _activePath, true);
+        picture.setImage(assetManager, activePath, true);
     }
     
     public void deactivate() {
-        _picture.setImage(_assetManager, _inactivePath, true);
+        picture.setImage(assetManager, inactivePath, true);
     }
 }

@@ -21,34 +21,34 @@ import trekwars.core.Distance;
 import trekwars.players.IPlayer;
 
 public abstract class AbstractStarfield implements IScreen {
-    protected final Node _rootNode;
-    private final Random _random = new Random();
-    private final float _starRadius = 100;
-    private final float _minStarDistance = 75;
-    private final float _maxStarDistance = 150;
-    private final int _numberOfStars = 200;
-    protected final AssetManager _assetManager;
-    private ArrayList<Spatial> _stars = new ArrayList<Spatial>();
-    private final IPlayer _player;
-    protected final Node _guiNode;
-    protected final Camera _camera;
+    protected final Node rootNode;
+    private final Random random = new Random();
+    private final float starRadius = 100;
+    private final float minStarDistance = 75;
+    private final float maxStarDistance = 150;
+    private final int numberOfStars = 200;
+    protected final AssetManager assetManager;
+    private ArrayList<Spatial> stars = new ArrayList<Spatial>();
+    private final IPlayer player;
+    protected final Node guiNode;
+    protected final Camera camera;
     
     public AbstractStarfield(
             AssetManager assetManager,
             IPlayer player,
             Camera camera
             ) {
-        _player = player;
-        _rootNode = new Node();
-        _guiNode = new Node();
-        _camera = camera;
-        _assetManager = assetManager;
+        this.player = player;
+        rootNode = new Node();
+        guiNode = new Node();
+        this.camera = camera;
+        this.assetManager = assetManager;
         createStarfield(assetManager);
         createLighting();
     }
     
     private void createStarfield(AssetManager assetManager) {
-        _rootNode.attachChild(
+        rootNode.attachChild(
             SkyFactory.createSky(
                 assetManager, 
                 assetManager.loadTexture("Textures/stars.png"), 
@@ -66,27 +66,27 @@ public abstract class AbstractStarfield implements IScreen {
         star.setWrap(Texture.WrapMode.Repeat);
         material.setTexture("ColorMap", star);
         material.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        for(int i = 0; i < _numberOfStars; i++) {
+        for(int i = 0; i < numberOfStars; i++) {
             Quad quad = new Quad(2f,2f);
             Geometry geom = new Geometry("star", quad);
             geom.setMaterial(material);
             geom.setQueueBucket(RenderQueue.Bucket.Transparent);
-            _rootNode.attachChild(geom);
+            rootNode.attachChild(geom);
             positionStar(geom);
-            _stars.add(geom);
+            stars.add(geom);
         }
     }
         
     private void createLighting() {
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.3f));
-        _rootNode.addLight(al);
+        rootNode.addLight(al);
     }   
     
     private void positionStar(Spatial star) {
         Vector3f newCoords = new Vector3f(generateStarCoordinate(), generateStarCoordinate(), generateStarCoordinate());
-        if(_player != null) {
-            star.setLocalTranslation(_player.getRootNode().getLocalTranslation().add(newCoords));
+        if(player != null) {
+            star.setLocalTranslation(player.getRootNode().getLocalTranslation().add(newCoords));
         } else {
             star.setLocalTranslation(newCoords);
         }
@@ -94,21 +94,21 @@ public abstract class AbstractStarfield implements IScreen {
     
     private float generateStarCoordinate() {
         return
-                (_random.nextFloat() - 0.5f) * 
-                ((_starRadius + _minStarDistance) / _minStarDistance) * 
-                _starRadius;
+                (random.nextFloat() - 0.5f) * 
+                ((starRadius + minStarDistance) / minStarDistance) * 
+                starRadius;
     }
     
     public void update(float tpf) {
-        for(Spatial star : _stars) {
-            star.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
+        for(Spatial star : stars) {
+            star.lookAt(camera.getLocation(), Vector3f.UNIT_Y);
             double distance;
-            if(_player == null) {
-                distance = star.getWorldTranslation().distance(_camera.getLocation());
+            if(player == null) {
+                distance = star.getWorldTranslation().distance(camera.getLocation());
             } else {
-                distance = new Distance(star, _player.getRootNode()).getLocal();
+                distance = new Distance(star, player.getRootNode()).getLocal();
             }
-            if(distance < _minStarDistance || distance > _maxStarDistance) {
+            if(distance < minStarDistance || distance > maxStarDistance) {
                 positionStar(star);
             }
         }
@@ -121,11 +121,11 @@ public abstract class AbstractStarfield implements IScreen {
     }
 
     public Node getRootNode() {
-        return _rootNode;
+        return rootNode;
     }
 
     public Node getGuiNode() {
-        return _guiNode;
+        return guiNode;
     }
 
     public void onAnalog(String name, float keyPressed, float tpf) {

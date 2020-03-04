@@ -14,13 +14,13 @@ import java.util.Date;
 
 public class Brel extends AbstractPlayer {
     
-    private final Spatial _brel;
-    private final DisrupterPulseList _pulses;
-    private Date _lastPulseTime = new Date();
-    private final float _secondsBetweenPulses = 1;
-    private final Node _disrupterNode;
-    private final AudioNode _audioNode;
-    private final float _disrupterRange = 30f;
+    private final Spatial brel;
+    private final DisrupterPulseList pulses;
+    private Date lastPulseTime = new Date();
+    private final float secondsBetweenPulses = 1;
+    private final Node disrupterNode;
+    private final AudioNode audioNode;
+    private final float disrupterRange = 30f;
     
     public Brel(
             AssetManager assetManager, 
@@ -41,34 +41,34 @@ public class Brel extends AbstractPlayer {
                 explosionNode
                 );
        
-        _brel = assetManager.loadModel("Models/brel.j3o");
+        brel = assetManager.loadModel("Models/brel.j3o");
         Material brel_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        _brel.setMaterial(brel_material);
-        _brel.setLocalScale(0.3f);
+        brel.setMaterial(brel_material);
+        brel.setLocalScale(0.3f);
         
-        _spatialNode.attachChild(_brel);
-        _disrupterNode = new Node();
-        _pulses = new DisrupterPulseList(
+        spatialNode.attachChild(brel);
+        disrupterNode = new Node();
+        pulses = new DisrupterPulseList(
                 assetManager,
-                _disrupterNode,
+                disrupterNode,
                 50,
-                _disrupterRange,
+                disrupterRange,
                 0.5f,
                 2,
                 new Vector3f()
         );
         
-        _audioNode = new AudioNode(assetManager, "Sounds/disrupter.wav", false);
-        _audioNode.setPositional(true);
-        _audioNode.setLooping(false);
-        _audioNode.setVolume(0.1f);
-        _spatialNode.attachChild(_audioNode);
+        audioNode = new AudioNode(assetManager, "Sounds/disrupter.wav", false);
+        audioNode.setPositional(true);
+        audioNode.setLooping(false);
+        audioNode.setVolume(0.1f);
+        spatialNode.attachChild(audioNode);
     }
     
     @Override
     public Iterable<Spatial> getWeaponSpatials() {
         ArrayList<Spatial> weapons = new ArrayList<Spatial>();
-        for(DisrupterPulse pulse : _pulses.getPulses()) {
+        for(DisrupterPulse pulse : pulses.getPulses()) {
             weapons.add(pulse.getSpatial());
         }
         return weapons;
@@ -77,7 +77,7 @@ public class Brel extends AbstractPlayer {
     @Override
     protected Collection<Node> getOtherNodes() {
         ArrayList<Node> nodes = new ArrayList<Node>();
-        nodes.add(_disrupterNode);
+        nodes.add(disrupterNode);
         return nodes;
     }
 
@@ -103,36 +103,36 @@ public class Brel extends AbstractPlayer {
 
     @Override
     protected void autopilot(float tpf) {
-        if(_life <= 0) return;
+        if(life <= 0) return;
         float distance = getDistanceToPlayer();
-        if(distance <= _disrupterRange / 4) {
+        if(distance <= disrupterRange / 4) {
             turnLeft();
             boost();
             move(tpf);
             fire();
-        } else if(distance <= _disrupterRange / 2) {
+        } else if(distance <= disrupterRange / 2) {
             turnLeft();
             move(tpf);
-        } else if(distance <= _disrupterRange) {
+        } else if(distance <= disrupterRange) {
             fire();
         }
     }
 
     @Override
     protected void onFireStart(float tpf) {
-         if(((new Date().getTime() - _lastPulseTime.getTime()) / 1000f) > _secondsBetweenPulses){
-            _lastPulseTime = new Date();
-            _pulses.addPulse(
-                _spatialNode.getWorldTranslation(),
-                _spatialNode.getWorldRotation(),
+         if(((new Date().getTime() - lastPulseTime.getTime()) / 1000f) > secondsBetweenPulses){
+            lastPulseTime = new Date();
+            pulses.addPulse(
+                spatialNode.getWorldTranslation(),
+                spatialNode.getWorldRotation(),
                 new Vector3f(-2f, -0.5f, 0f)
             );
-            _pulses.addPulse(
-                _spatialNode.getWorldTranslation(),
-                _spatialNode.getWorldRotation(),
+            pulses.addPulse(
+                spatialNode.getWorldTranslation(),
+                spatialNode.getWorldRotation(),
                 new Vector3f(2f, -0.5f, 0f)
             );
-            _audioNode.play();
+            audioNode.play();
         }
     }
 
@@ -143,7 +143,7 @@ public class Brel extends AbstractPlayer {
     
     @Override
     protected void onUpdate(float tpf) {
-        _pulses.update(tpf);
+        pulses.update(tpf);
     }
 }
 

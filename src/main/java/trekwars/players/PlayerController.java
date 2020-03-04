@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class PlayerController implements IPlayerController {
 
-    private final ArrayList<AbstractPlayer> _players = new ArrayList<AbstractPlayer>();
-    private AbstractPlayer _player = null;
+    private final ArrayList<AbstractPlayer> players = new ArrayList<AbstractPlayer>();
+    private AbstractPlayer player = null;
     
     public void registerPlayer(AbstractPlayer player) {
-        _players.add(player);
+        players.add(player);
         if(player.getPlayerType() == PlayerType.Player) {
-            _player = player;
+            player = player;
         }
     }
 
     public Iterable<AbstractPlayer> getPlayers() {
-        return _players;
+        return players;
     }
     
     public AbstractPlayer getPlayer() {
-        return _player;
+        return player;
     }
 }

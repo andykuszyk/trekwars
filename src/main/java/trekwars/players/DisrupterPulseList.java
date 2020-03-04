@@ -7,14 +7,14 @@ import com.jme3.scene.Node;
 import java.util.ArrayList;
 
 public class DisrupterPulseList {
-    private final ArrayList<DisrupterPulse> _pulses = new ArrayList<DisrupterPulse>();
-    private final Node _rootNode;
-    private final AssetManager _assetManager;
-    private final float _speedPerSecond;
-    private final float _range;
-    private final float _width;
-    private final float _depth;
-    private final Vector3f _gunOffset;
+    private final ArrayList<DisrupterPulse> pulses = new ArrayList<DisrupterPulse>();
+    private final Node rootNode;
+    private final AssetManager assetManager;
+    private final float speedPerSecond;
+    private final float range;
+    private final float width;
+    private final float depth;
+    private final Vector3f gunOffset;
     
     public DisrupterPulseList(
             AssetManager assetManager, 
@@ -24,47 +24,47 @@ public class DisrupterPulseList {
             float width, 
             float depth,
             Vector3f gunOffset) {
-        _rootNode = rootNode;
-        _assetManager = assetManager;
-        _speedPerSecond = speedPerSecond;
-        _range = range;
-        _width = width;
-        _depth = depth;
-        _gunOffset = gunOffset;
+        this.rootNode = rootNode;
+        this.assetManager = assetManager;
+        this.speedPerSecond = speedPerSecond;
+        this.range = range;
+        this.width = width;
+        this.depth = depth;
+        this.gunOffset = gunOffset;
     }
     
     public void addPulse(Vector3f start, Quaternion direction, Vector3f offset){
         DisrupterPulse pulse = new DisrupterPulse(
-                _assetManager, 
-                _speedPerSecond,
-                _range,
-                _width,
-                _depth,
+                assetManager, 
+                speedPerSecond,
+                range,
+                width,
+                depth,
                 start,
                 direction,
                 offset
         );
-        _pulses.add(pulse);
-        _rootNode.attachChild(pulse.getSpatial());
+        pulses.add(pulse);
+        rootNode.attachChild(pulse.getSpatial());
     }
     
     public void update(float tpf) {
         ArrayList<DisrupterPulse> deadPulses = new ArrayList<DisrupterPulse>();
         
-        for(DisrupterPulse pulse : _pulses) {
+        for(DisrupterPulse pulse : pulses) {
             pulse.update(tpf);
             if(!pulse.getIsAlive()){
                 deadPulses.add(pulse);
             }
         }
         
-        _pulses.removeAll(deadPulses);
+        pulses.removeAll(deadPulses);
         for(DisrupterPulse pulse : deadPulses) {
-            _rootNode.detachChild(pulse.getSpatial());
+            rootNode.detachChild(pulse.getSpatial());
         }
     }
     
     public Iterable<DisrupterPulse> getPulses() {
-        return _pulses;
+        return pulses;
     }
 }

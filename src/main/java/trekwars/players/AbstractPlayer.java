@@ -21,33 +21,33 @@ import java.util.Collection;
 
 public abstract class AbstractPlayer implements IPlayer {
     
-    protected int _turnLeftCount = 0;
-    protected int _turnRightCount = 0;
-    protected int _boostCount = 0;
-    protected int _fireCount = 0;
-    protected int _stopCount = 0;
-    private Node _rootNode;   
-    private final float _rollRightLimit = -0.6f;
-    private final float _rollLeftLimit = 0.6f;
-    private final float _rollMultiplier = 1f;
-    private float _previousRotationAmount = 0f;
-    private final PlayerType _playerType;
-    private final IPlayerController _playerController;
-    protected final Node _spatialNode;
-    private final Spatial _shields;
-    private float _shieldAlpha = 0f;
-    private final ColorRGBA _shieldColor;
-    private final Material _shieldsMaterial;
-    private final float _shieldUpAlphaRate = 5f;
-    private final float _shieldDownAlphaRate = 0.1f;
-    protected float _life;
-    private final float _lifeCapacity;
-    private final Geometry _explosion;
-    private int _explosionFrame = 0;
-    private final ArrayList<Texture> _explosionTextures;
-    private final Camera _camera;
-    private final float _explosionSize = 30f;
-    private final AudioNode _explosionNode;
+    protected int turnLeftCount = 0;
+    protected int turnRightCount = 0;
+    protected int boostCount = 0;
+    protected int fireCount = 0;
+    protected int stopCount = 0;
+    private Node rootNode;   
+    private final float rollRightLimit = -0.6f;
+    private final float rollLeftLimit = 0.6f;
+    private final float rollMultiplier = 1f;
+    private float previousRotationAmount = 0f;
+    private final PlayerType playerType;
+    private final IPlayerController playerController;
+    protected final Node spatialNode;
+    private final Spatial shields;
+    private float shieldAlpha = 0f;
+    private final ColorRGBA shieldColor;
+    private final Material shieldsMaterial;
+    private final float shieldUpAlphaRate = 5f;
+    private final float shieldDownAlphaRate = 0.1f;
+    protected float life;
+    private final float lifeCapacity;
+    private final Geometry explosion;
+    private int explosionFrame = 0;
+    private final ArrayList<Texture> explosionTextures;
+    private final Camera camera;
+    private final float explosionSize = 30f;
+    private final AudioNode explosionNode;
     
     protected AbstractPlayer(
             PlayerType playerType, 
@@ -60,58 +60,58 @@ public abstract class AbstractPlayer implements IPlayer {
             Camera camera,
             AudioNode explosionNode
             ) {
-        _playerType = playerType;
-        _playerController = playerController;
-        _spatialNode = new Node();
-        _shieldColor = shieldColor;
-        attachChild(_spatialNode);
-        _explosionTextures = explosionTextures;
-        _camera = camera;
-        _explosionNode = explosionNode;
+        this.playerType = playerType;
+        this.playerController = playerController;
+        spatialNode = new Node();
+        this.shieldColor = shieldColor;
+        attachChild(spatialNode);
+        this.explosionTextures = explosionTextures;
+        this.camera = camera;
+        this.explosionNode = explosionNode;
         
         if(playerType == PlayerType.Player) {
-            _lifeCapacity = _life = 1f;
+            lifeCapacity = life = 1f;
         } else {
-            _lifeCapacity = _life = 0.25f;
+            lifeCapacity = life = 0.25f;
         }
         
         // Setup explosion 
-        _explosion = new Geometry("explosion", new Quad(_explosionSize, _explosionSize));
+        explosion = new Geometry("explosion", new Quad(explosionSize, explosionSize));
         Material explosionMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         explosionMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        _explosion.setQueueBucket(RenderQueue.Bucket.Transparent);
-        _explosion.setMaterial(explosionMaterial);
-        _explosion.setLocalTranslation(_explosionSize / 2, -_explosionSize / 2, 0);
+        explosion.setQueueBucket(RenderQueue.Bucket.Transparent);
+        explosion.setMaterial(explosionMaterial);
+        explosion.setLocalTranslation(explosionSize / 2, -explosionSize / 2, 0);
         
         // Setup shields 
         Sphere sphere = new Sphere(10, 10, 1);
-        _shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        _shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        shieldsMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        shieldsMaterial.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         setShieldColor();
-        _shields = new Geometry("shields", sphere);
-        _shields.setMaterial(_shieldsMaterial);
-        _shields.setQueueBucket(RenderQueue.Bucket.Transparent);
-        _shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
-        _shields.setLocalTranslation(shieldTranslation);
-        _spatialNode.attachChild(_shields);
+        shields = new Geometry("shields", sphere);
+        shields.setMaterial(shieldsMaterial);
+        shields.setQueueBucket(RenderQueue.Bucket.Transparent);
+        shields.scale(shieldScale.x, shieldScale.y, shieldScale.z);
+        shields.setLocalTranslation(shieldTranslation);
+        spatialNode.attachChild(shields);
         
         playerController.registerPlayer(this);
     }
     
     private void setShieldColor() {
-        float lifeRatio = _life / _lifeCapacity;
-        _shieldsMaterial.setColor(
+        float lifeRatio = life / lifeCapacity;
+        shieldsMaterial.setColor(
             "Color", 
             new ColorRGBA(
                 1 - lifeRatio, 
-                lifeRatio * _shieldColor.g, 
-                lifeRatio * _shieldColor.b, 
-                _shieldAlpha
+                lifeRatio * shieldColor.g, 
+                lifeRatio * shieldColor.b, 
+                shieldAlpha
             ));
     }
     
     public PlayerType getPlayerType() {
-        return _playerType;
+        return playerType;
     }
     
     protected enum TurnDirection {
@@ -119,36 +119,36 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     protected final void attachChild(Spatial child) {
-        if(_rootNode == null) _rootNode = new Node();
-        _rootNode.attachChild(child);
+        if(rootNode == null) rootNode = new Node();
+        rootNode.attachChild(child);
     }
     
     public void turnRight() {
-        _turnRightCount++;
+        turnRightCount++;
     }
     
     public void turnLeft(){
-        _turnLeftCount++;
+        turnLeftCount++;
     }
     
     public void boost(){
-        _boostCount++;
+        boostCount++;
     }
     
     public void fire() {
-        _fireCount++;
+        fireCount++;
     }
     
     public void stop() {
-        _stopCount++;
+        stopCount++;
     }
     
     public void update(float tpf) {
-        if(_life > 0) {
+        if(life > 0) {
             turn(tpf);
             fire(tpf);
             
-            switch(_playerType){
+            switch(playerType){
                 default:
                 case Player:
                     move(tpf);
@@ -165,44 +165,44 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void handleExplosion(float tpf) {
-        if(_life <= 0) {
-            if(_explosionFrame == 0) {
-                _rootNode.detachAllChildren();
-                _rootNode.attachChild(_explosion);
-                _rootNode.attachChild(_explosionNode);
-                _explosionNode.play();
+        if(life <= 0) {
+            if(explosionFrame == 0) {
+                rootNode.detachAllChildren();
+                rootNode.attachChild(explosion);
+                rootNode.attachChild(explosionNode);
+                explosionNode.play();
             } 
             
-            if(_explosionFrame >= _explosionTextures.size()) {
+            if(explosionFrame >= explosionTextures.size()) {
                 return;
             }
             
-            _explosion.lookAt(_camera.getLocation(), Vector3f.UNIT_Y);
-            _explosion.getMaterial().setTexture("ColorMap", _explosionTextures.get(_explosionFrame));
-            _explosionFrame++;
+            explosion.lookAt(camera.getLocation(), Vector3f.UNIT_Y);
+            explosion.getMaterial().setTexture("ColorMap", explosionTextures.get(explosionFrame));
+            explosionFrame++;
         }
     }
     
     private void updateShields(float tpf) {
-        for(AbstractPlayer player : _playerController.getPlayers()) {
+        for(AbstractPlayer player : playerController.getPlayers()) {
             if(player == this) continue;
             boolean isHit = false;
             for(Spatial weapon : player.getWeaponSpatials()) {
                 if(weapon.getParent() == null) continue;
                 CollisionResults results = new CollisionResults();
-                weapon.collideWith(_spatialNode.getWorldBound(), results);
+                weapon.collideWith(spatialNode.getWorldBound(), results);
                 if(results.size() > 0) {
                     isHit = true;
                     break;
                 }
             }
             if(isHit) {
-                _life -= 0.05f * tpf;
+                life -= 0.05f * tpf;
                 increaseShieldAlpha(tpf);
             } else {
-                if(_playerType == PlayerType.Player) {
-                    if(_life >= 0) {
-                        _life += 0.0001f * tpf;
+                if(playerType == PlayerType.Player) {
+                    if(life >= 0) {
+                        life += 0.0001f * tpf;
                     }
                 }
                 decreaseShieldAlpha(tpf);
@@ -211,12 +211,12 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private void increaseShieldAlpha(float tpf) {
-        _shieldAlpha = Math.min(0.5f, _shieldAlpha + (_shieldUpAlphaRate * tpf));
+        shieldAlpha = Math.min(0.5f, shieldAlpha + (shieldUpAlphaRate * tpf));
         setShieldColor();
     }
     
     private void decreaseShieldAlpha(float tpf) {
-        _shieldAlpha = Math.max(0.01f, _shieldAlpha - (_shieldDownAlphaRate * tpf));
+        shieldAlpha = Math.max(0.01f, shieldAlpha - (shieldDownAlphaRate * tpf));
         setShieldColor();
     }
     
@@ -225,12 +225,12 @@ public abstract class AbstractPlayer implements IPlayer {
     protected abstract void autopilot(float tpf);
     
     private void fire(float tpf) {
-        if(_fireCount > 0){
+        if(fireCount > 0){
             onFireStart(tpf);
         } else {
             onFireStop(tpf);
         }
-        _fireCount = 0;
+        fireCount = 0;
     }
     
     protected abstract void onFireStart(float tpf);
@@ -240,17 +240,17 @@ public abstract class AbstractPlayer implements IPlayer {
     private void turn(float tpf) {
         TurnDirection currentTurnDirection = getTurnDirection();
         float rotationalMultiplier = getRotationalSpeed() * tpf;
-        float rollAmount = rotationalMultiplier * _rollMultiplier;
+        float rollAmount = rotationalMultiplier * rollMultiplier;
         boolean shouldTurn = false;
         
-        Quaternion localRotation = _spatialNode.getLocalRotation();
+        Quaternion localRotation = spatialNode.getLocalRotation();
 
         if(shouldTurn(currentTurnDirection, localRotation)) {
-            roll(_spatialNode, localRotation, rollAmount, currentTurnDirection);
+            roll(spatialNode, localRotation, rollAmount, currentTurnDirection);
             shouldTurn = true;
         } else {
             int turningMultiplier = currentTurnDirection == TurnDirection.None ? 1 : 2;
-            restoreRotation(_spatialNode, rotationalMultiplier * turningMultiplier, localRotation);
+            restoreRotation(spatialNode, rotationalMultiplier * turningMultiplier, localRotation);
         }
         
         float rotationAmount;
@@ -258,30 +258,30 @@ public abstract class AbstractPlayer implements IPlayer {
             float targetRotationAmount = getRotationalSpeed() * tpf * getRotationSign(currentTurnDirection);
             boolean achievedTargetRotation = 
                     targetRotationAmount > 0 ?
-                    _previousRotationAmount >= targetRotationAmount :
-                    _previousRotationAmount <= targetRotationAmount;
+                    previousRotationAmount >= targetRotationAmount :
+                    previousRotationAmount <= targetRotationAmount;
             if(achievedTargetRotation) {
                 rotationAmount = targetRotationAmount;
             } else {
-                if(getRotationSign(currentTurnDirection) != Math.round(_previousRotationAmount / Math.abs(_previousRotationAmount))) {
-                    _previousRotationAmount = _previousRotationAmount * -1;
+                if(getRotationSign(currentTurnDirection) != Math.round(previousRotationAmount / Math.abs(previousRotationAmount))) {
+                    previousRotationAmount = previousRotationAmount * -1;
                 }
                 rotationAmount = 
-                        Math.abs(_previousRotationAmount) < Math.abs(targetRotationAmount * tpf) ?
+                        Math.abs(previousRotationAmount) < Math.abs(targetRotationAmount * tpf) ?
                         targetRotationAmount * tpf :
-                        _previousRotationAmount * (1 + 2 * tpf / getRotationalSpeed());
+                        previousRotationAmount * (1 + 2 * tpf / getRotationalSpeed());
                 if(Math.abs(rotationAmount) > Math.abs(targetRotationAmount)) {
                     rotationAmount = targetRotationAmount;
                 }
             }
         } else {
-            rotationAmount = _previousRotationAmount * (1 - tpf / getRotationalSpeed());
+            rotationAmount = previousRotationAmount * (1 - tpf / getRotationalSpeed());
         }
-        _rootNode.rotate(0,rotationAmount,0);
-        _previousRotationAmount = rotationAmount;
+        rootNode.rotate(0,rotationAmount,0);
+        previousRotationAmount = rotationAmount;
         
-        _turnLeftCount = 0;
-        _turnRightCount = 0;
+        turnLeftCount = 0;
+        turnRightCount = 0;
     }
     
     private boolean shouldTurn(TurnDirection currentTurnDirection, Quaternion localRotation){
@@ -298,12 +298,12 @@ public abstract class AbstractPlayer implements IPlayer {
     private void roll(Spatial spatial, Quaternion localRotation, float rollAmount, TurnDirection turnDirection){
         switch(turnDirection){
             case Right:
-                if(localRotation.getZ() > _rollRightLimit) {
+                if(localRotation.getZ() > rollRightLimit) {
                     spatial.rotate(rollAmount/5,-rollAmount/2,-rollAmount);
                 } 
                 break;
             case Left:
-                if(localRotation.getZ() < _rollLeftLimit){
+                if(localRotation.getZ() < rollLeftLimit){
                     spatial.rotate(rollAmount/5,rollAmount/2,rollAmount);
                 } 
                 break;
@@ -340,9 +340,9 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     private TurnDirection getTurnDirection() {
-        if( _turnRightCount + _turnLeftCount == 0){
+        if( turnRightCount + turnLeftCount == 0){
             return TurnDirection.None;
-        } else if(_turnRightCount - _turnLeftCount > 0){
+        } else if(turnRightCount - turnLeftCount > 0){
             return TurnDirection.Right;
         } else {
             return TurnDirection.Left;
@@ -350,22 +350,22 @@ public abstract class AbstractPlayer implements IPlayer {
     }
     
     protected void move(float tpf) {
-        if(_life <= 0) return;
+        if(life <= 0) return;
         
         float boostMultiplier = 1;
-        if(_boostCount > 0) {
+        if(boostCount > 0) {
             boostMultiplier = getBoostMultiplier();
         }
-        _boostCount = 0;
-        if(_stopCount > 0) {
+        boostCount = 0;
+        if(stopCount > 0) {
             boostMultiplier = 0f;
         }
-        _stopCount = 0;
+        stopCount = 0;
         
-        float playerBonus = _playerType == PlayerType.Enemy ? 1f : 3f;
+        float playerBonus = playerType == PlayerType.Enemy ? 1f : 3f;
         Vector3f m = new Vector3f(0, 0, -(boostMultiplier * (getTranslationalSpeed() * tpf * playerBonus)));
-        Vector3f worldMove = _rootNode.localToWorld(m, m);
-        _rootNode.setLocalTranslation(worldMove);
+        Vector3f worldMove = rootNode.localToWorld(m, m);
+        rootNode.setLocalTranslation(worldMove);
     }
     
     /**
@@ -397,10 +397,10 @@ public abstract class AbstractPlayer implements IPlayer {
     protected abstract float getBoostMultiplier();
     
     public Node getRootNode() {
-        if(_rootNode == null){
-            _rootNode = new Node();
+        if(rootNode == null){
+            rootNode = new Node();
         }
-        return _rootNode;
+        return rootNode;
     }
     
     public Iterable<Node> getRootNodes() {
@@ -417,8 +417,8 @@ public abstract class AbstractPlayer implements IPlayer {
     public abstract Iterable<Spatial> getWeaponSpatials();
     
     protected float getDistanceToPlayer() {
-        if(_playerController.getPlayer() == null) return 0f;
+        if(playerController.getPlayer() == null) return 0f;
         return this.getRootNode().getWorldTranslation().distance(
-                _playerController.getPlayer().getRootNode().getWorldTranslation());
+                playerController.getPlayer().getRootNode().getWorldTranslation());
     }
 }

@@ -26,7 +26,7 @@ import trekwars.core.InputMappings;
 
 public class App extends SimpleApplication implements TouchListener {
 
-    private IScreen _screen;
+    private IScreen screen;
     
     public static void main(String[] args) {
         App app = new App();
@@ -100,7 +100,7 @@ public class App extends SimpleApplication implements TouchListener {
     
     @Override
      public void onTouch(String binding, TouchEvent evt, float tpf) {
-         _screen.onTouch(evt, tpf, this.settings.getWidth(), this.settings.getHeight());
+         screen.onTouch(evt, tpf, this.settings.getWidth(), this.settings.getHeight());
          evt.setConsumed();
      }
     
@@ -127,36 +127,36 @@ public class App extends SimpleApplication implements TouchListener {
     
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float keyPressed, float tpf) {
-            _screen.onAnalog(name, keyPressed, tpf);
+            screen.onAnalog(name, keyPressed, tpf);
         }
     };
     
     private ActionListener actionListener = new ActionListener() {
         public void onAction(String name, boolean keyPressed, float tpf) {
-            _screen.onAction(name, keyPressed, tpf);
+            screen.onAction(name, keyPressed, tpf);
         }
     };
 
     @Override
     public void simpleUpdate(float tpf) {
-        if(_screen == null) {
+        if(screen == null) {
             throw new IllegalStateException("_screen cannot be null");
         }
         
-        _screen.update(tpf);
-        IScreen nextScreen = _screen.getNextScreen();
+        screen.update(tpf);
+        IScreen nextScreen = screen.getNextScreen();
         if(nextScreen != null) {
             setScreen(nextScreen);
         }
     }
     
     private void setScreen(IScreen screen) {
-        _screen = screen;
+        this.screen = screen;
         rootNode.detachAllChildren();
         guiNode.detachAllChildren();
-        rootNode.attachChild(_screen.getRootNode());
-        guiNode.attachChild(_screen.getGuiNode());
-        _screen.start();
+        rootNode.attachChild(screen.getRootNode());
+        guiNode.attachChild(screen.getGuiNode());
+        screen.start();
     }
 
     @Override
