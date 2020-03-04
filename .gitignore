@@ -27,3 +27,4 @@ mobile/assets/*
 .settings/
 bin/
 .idea/
+*.so
