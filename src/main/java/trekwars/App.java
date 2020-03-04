@@ -17,6 +17,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
+import java.util.logging.Logger;
+
 import trekwars.players.IPlayerController;
 import trekwars.players.PlayerController;
 import trekwars.players.PlayerFactory;
@@ -27,6 +29,7 @@ import trekwars.core.InputMappings;
 public class App extends SimpleApplication implements TouchListener {
 
     private IScreen screen;
+    private Logger log = Logger.getGlobal();
     
     public static void main(String[] args) {
         App app = new App();
@@ -151,6 +154,7 @@ public class App extends SimpleApplication implements TouchListener {
     }
     
     private void setScreen(IScreen screen) {
+        log.info("Setting new screen");
         this.screen = screen;
         rootNode.detachAllChildren();
         guiNode.detachAllChildren();

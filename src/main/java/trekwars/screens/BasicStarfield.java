@@ -37,6 +37,7 @@ public class BasicStarfield extends AbstractStarfield {
     private boolean isTouchLeft = false;
     private boolean isTouchRight = false;
     private boolean isTouchFire = false;
+    private Logger log = Logger.getGlobal();
 
     public BasicStarfield(
             IPlayer player, 
@@ -48,6 +49,8 @@ public class BasicStarfield extends AbstractStarfield {
             InputManager inputManager,
             Vector2f screenSize){
         super(assetManager, player, camera);
+        log.info("Starting basic starfield");
+
         this.player = player;
         this.enemyWaveOne = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveOne);
         this.enemyWaveTwo = new ArrayList<IPlayer>((Collection<? extends IPlayer>) enemyWaveTwo);
@@ -55,7 +58,8 @@ public class BasicStarfield extends AbstractStarfield {
         this.inputManager = inputManager;
         this.screenSize = screenSize;
         this.assetManager = assetManager;
-        
+
+        log.info("Attaching and arranging children");
         attachChildren(player, enemyWaveOne, enemyWaveTwo, enemyWaveThree);
         arrangeEnemyWave(this.enemyWaveOne, enemyWaveOneZ);
         arrangeEnemyWave(this.enemyWaveTwo, enemyWaveTwoZ);
@@ -66,9 +70,11 @@ public class BasicStarfield extends AbstractStarfield {
         audioNode.setVolume(0.5f);
         rootNode.attachChild(audioNode);
         
+
+        log.info("Initialising hud");
         initialiseHud();
-        Logger logger = Logger.getGlobal();
-        logger.info("Starting basic starfield");
+
+        log.info("Basic starfield loaded");
     }
     
     private boolean isTouchDown(TouchEvent.Type evt) {

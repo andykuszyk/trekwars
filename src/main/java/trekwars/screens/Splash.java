@@ -33,7 +33,8 @@ public class Splash implements Callable<IScreen>, IScreen {
     private Future<IScreen> nextScreen;
     private final ExecutorService executor;
     private final NextScreen nextScreenSelection;
-    
+    private Logger log = Logger.getGlobal();
+
     public enum NextScreen {
         BasicStarfield, MainMenu
     }
@@ -110,8 +111,7 @@ public class Splash implements Callable<IScreen>, IScreen {
     @Override
     public IScreen call() throws InterruptedException {
         try {
-            Logger logger = Logger.getGlobal();
-            logger.info("About to load next screen: " + nextScreenSelection.toString());
+            log.info("About to load next screen: " + nextScreenSelection.toString());
             if (nextScreenSelection == NextScreen.BasicStarfield) {
                 AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
                 ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
@@ -123,8 +123,9 @@ public class Splash implements Callable<IScreen>, IScreen {
                 waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
                 waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                logger.info("Loaded the screen, waiting for 2 seconds");
+                log.info("Loaded the screen, waiting for 2 seconds");
                 Thread.sleep(2000);
+                log.info("Ready to load new screen");
                 return new BasicStarfield(
                         player,
                         waveOne,
