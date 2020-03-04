@@ -32,7 +32,6 @@ public class BasicStarfield extends AbstractStarfield {
     private Button leftButton;
     private Button rightButton;
     private Button fireButton;
-    private final AudioNode audioNode;
     private final ArrayList<TouchEvent> touchEvents = new ArrayList<TouchEvent>();
     private boolean isTouchLeft = false;
     private boolean isTouchRight = false;
@@ -64,12 +63,6 @@ public class BasicStarfield extends AbstractStarfield {
         arrangeEnemyWave(this.enemyWaveOne, enemyWaveOneZ);
         arrangeEnemyWave(this.enemyWaveTwo, enemyWaveTwoZ);
         arrangeEnemyWave(this.enemyWaveThree, enemyWaveThreeZ);
-        
-        audioNode = new AudioNode(assetManager, "Sounds/federation-theme.ogg", true);
-        audioNode.setPositional(false);
-        audioNode.setVolume(0.5f);
-        rootNode.attachChild(audioNode);
-        
 
         log.info("Initialising hud");
         initialiseHud();
@@ -123,9 +116,7 @@ public class BasicStarfield extends AbstractStarfield {
         touchEvents.clear();
     }
     
-    public void start() {
-        audioNode.play();
-    }
+    public void start() { }
     
     public IScreen getNextScreen() {
         return null;
@@ -244,10 +235,6 @@ public class BasicStarfield extends AbstractStarfield {
         updatePlayers(enemyWaveTwo, tpf);
         updatePlayers(enemyWaveThree, tpf);
         positionCamera();     
-        
-        if(audioNode.getStatus() != AudioSource.Status.Playing) {
-            audioNode.play();
-        }
     }
     
     private void positionCamera(){
