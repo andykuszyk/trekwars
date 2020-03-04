@@ -99,9 +99,13 @@ public class MainMenu extends AbstractStarfield {
         material.setTexture("ColorMap", texture);
         Geometry spatial = new Geometry(logo, new Quad(logoSize, logoSize));
         spatial.setMaterial(material);
+        Spatial clone = spatial.clone();
         Node node = new Node();
         node.attachChild(spatial);
+        node.attachChild(clone);
         spatial.setLocalTranslation(-logoSize / 2, -logoSize / 2, 0f);
+        clone.rotate(0, (float)Math.PI, 0);
+        clone.setLocalTranslation(logoSize / 2, -logoSize / 2, 0f);
         return node;
     }
 
@@ -148,7 +152,7 @@ public class MainMenu extends AbstractStarfield {
         }
 
         for(Spatial enemy : enemies) {
-            enemy.rotate(0, tpf * 0.2f, 0);
+            enemy.rotate(0, tpf * 0.5f, 0);
         }
     }
 }
