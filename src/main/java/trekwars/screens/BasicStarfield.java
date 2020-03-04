@@ -11,6 +11,8 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
+
 import trekwars.core.InputMappings;
 import trekwars.players.IPlayer;
 
@@ -65,6 +67,8 @@ public class BasicStarfield extends AbstractStarfield {
         rootNode.attachChild(audioNode);
         
         initialiseHud();
+        Logger logger = Logger.getGlobal();
+        logger.info("Starting basic starfield");
     }
     
     private boolean isTouchDown(TouchEvent.Type evt) {

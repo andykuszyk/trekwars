@@ -1,6 +1,7 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.input.InputManager;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -32,19 +33,26 @@ public class MainMenu extends AbstractStarfield {
     private final float radiusSize = 20f;
     private final Node enemiesNode;
     private final float verticalOffset = 40f;
+    private final Vector2f screenSize;
+    private final PlayerFactory playerFactory;
+    private final InputManager inputManager;
     private Camera camera;
     private ArrayList<IPlayer> ships = new ArrayList<IPlayer>();
     private ArrayList<Spatial> enemies = new ArrayList<Spatial>();
     private LocalDateTime lastKeyPress;
+    private IScreen nextScreen;
 
     public MainMenu(
             AssetManager assetManager,
             IPlayer player,
             Camera camera,
             PlayerFactory playerFactory,
-            Vector2f screenSize) {
+            Vector2f screenSize, InputManager inputManager) {
         super(assetManager, player, camera);
         this.camera = camera;
+        this.screenSize = screenSize;
+        this.playerFactory = playerFactory;
+        this.inputManager = inputManager;
 
         ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
         ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
@@ -136,9 +144,14 @@ public class MainMenu extends AbstractStarfield {
             if(atPlayers) {
                 camera.setLocation(cameraLocation.add(new Vector3f(0f, -verticalOffset, 0f)));
             } else {
-                camera.setLocation(cameraLocation.add(new Vector3f(0f, verticalOffset, 0f)));
+                nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield);
             }
         }
+    }
+
+    @Override
+    public IScreen getNextScreen() {
+        return nextScreen;
     }
     
     @Override

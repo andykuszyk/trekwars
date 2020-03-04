@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
+
 import trekwars.players.AbstractPlayer;
 import trekwars.players.IPlayer;
 import trekwars.players.PlayerFactory;
@@ -108,6 +110,8 @@ public class Splash implements Callable<IScreen>, IScreen {
     @Override
     public IScreen call() throws InterruptedException {
         try {
+            Logger logger = Logger.getGlobal();
+            logger.info("About to load next screen: " + nextScreenSelection.toString());
             if (nextScreenSelection == NextScreen.BasicStarfield) {
                 AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
                 ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
@@ -119,6 +123,7 @@ public class Splash implements Callable<IScreen>, IScreen {
                 waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
                 waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+                logger.info("Loaded the screen, waiting for 2 seconds");
                 Thread.sleep(2000);
                 return new BasicStarfield(
                         player,
@@ -130,7 +135,7 @@ public class Splash implements Callable<IScreen>, IScreen {
                         inputManager,
                         screenSize);
             } else if (nextScreenSelection == NextScreen.MainMenu) {
-                return new MainMenu(assetManager, null, camera, playerFactory, screenSize);
+                return new MainMenu(assetManager, null, camera, playerFactory, screenSize, inputManager);
             } else {
                 return null;
             }
