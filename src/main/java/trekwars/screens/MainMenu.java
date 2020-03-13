@@ -10,13 +10,11 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
-import java.io.Console;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
@@ -28,17 +26,19 @@ import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
 
 public class MainMenu extends AbstractStarfield {
-    private final Node playersNode;
+    private final Node playersNode = new Node();
     private final Quaternion playersAngle;
     private final float radiusSize = 20f;
-    private final Node enemiesNode;
+    private final Node enemyRacesNode = new Node();
+    private final Node playerRacesNode = new Node();
     private final float verticalOffset = 40f;
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
     private Camera camera;
     private ArrayList<IPlayer> ships = new ArrayList<IPlayer>();
-    private ArrayList<Spatial> enemies = new ArrayList<Spatial>();
+    private ArrayList<Spatial> playerRaces = new ArrayList<Spatial>();
+    private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
     private LocalDateTime lastKeyPress;
     private IScreen nextScreen;
 
@@ -53,24 +53,26 @@ public class MainMenu extends AbstractStarfield {
         this.screenSize = screenSize;
         this.playerFactory = playerFactory;
         this.inputManager = inputManager;
-
-        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
-        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
-        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
-        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-
-        playersNode = new Node();
-        enemiesNode = new Node();
         rootNode.attachChild(playersNode);
-        rootNode.attachChild(enemiesNode);
+        rootNode.attachChild(enemyRacesNode);
+        rootNode.attachChild(playerRacesNode);
 
-        playersAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / ships.size()), Vector3f.UNIT_Y);
-        Vector3f playersRadius = new Vector3f(0, 0, radiusSize);
+        playerRacesNode.setLocalTranslation(0f, 0, 0f);
+        playersNode.setLocalTranslation(0f, -verticalOffset, 0f);
+        enemyRacesNode.setLocalTranslation(0f, -verticalOffset * 2, 0f);
+
         camera.setLocation(new Vector3f(0, (float)(radiusSize * 0.25), radiusSize * 2));
         camera.lookAt(new Vector3f(0, 0, radiusSize), Vector3f.UNIT_Y);
 
+        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
+
+        playersAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / ships.size()), Vector3f.UNIT_Y);
+        Vector3f playersRadius = new Vector3f(0, 0, radiusSize);
         for(IPlayer ship : ships) {
             playersNode.attachChild(ship.getRootNode());
             ship.getRootNode().setLocalTranslation(playersRadius);
@@ -81,12 +83,9 @@ public class MainMenu extends AbstractStarfield {
         Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
         Vector3f logosRadius = new Vector3f(0, 0, radiusSize);
         float logoSize = 5f;
-        enemiesNode.setLocalTranslation(0f, -verticalOffset, 0f);
+
         for(String logo : logos) {
-            Spatial logoSpatial = makeLogoSpatial(logo, logoSize);
-            enemies.add(logoSpatial);
-            enemiesNode.attachChild(logoSpatial);
-            logoSpatial.setLocalTranslation(logosRadius);
+            initialiseLogo(logosRadius, logoSize, logo);
             logosRadius = logosAngle.mult(logosRadius);
         }
 
@@ -98,6 +97,18 @@ public class MainMenu extends AbstractStarfield {
                 screenSize,
                 "Interface/main-menu.png").getPicture()
         );
+    }
+
+    private void initialiseLogo(Vector3f logosRadius, float logoSize, String logo) {
+        Spatial playerLogoSpatial = makeLogoSpatial(logo, logoSize);
+        playerRaces.add(playerLogoSpatial);
+        playerRacesNode.attachChild(playerLogoSpatial);
+        playerLogoSpatial.setLocalTranslation(logosRadius);
+
+        Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
+        enemyRaces.add(enemyLogoSpatial);
+        enemyRacesNode.attachChild(enemyLogoSpatial);
+        enemyLogoSpatial.setLocalTranslation(logosRadius);
     }
 
     private Spatial makeLogoSpatial(String logo, float logoSize) {
@@ -117,35 +128,71 @@ public class MainMenu extends AbstractStarfield {
         return node;
     }
 
+    private enum MenuTrack {
+        PlayerRaces, Players, EnemyRaces
+    }
+
     @Override
     public void onAnalog(String name, float keyPressed, float tpf) {
-        if(lastKeyPress != null && LocalDateTime.now().isBefore(lastKeyPress.plus(500, ChronoUnit.MILLIS))) {
-
+        if(lastKeyPress != null && LocalDateTime.now().isBefore(lastKeyPress.plus(200, ChronoUnit.MILLIS))) {
             return;
         }
-        Vector3f cameraLocation = camera.getLocation();
-        boolean atPlayers = cameraLocation.y > 0f;
         lastKeyPress = LocalDateTime.now();
+
+        Vector3f cameraLocation = camera.getLocation();
+        MenuTrack currentMenuTrack = getMenuTrack(cameraLocation);
+
         float playersStepRotate = (float)(Math.PI * 2 / ships.size());
-        float enemiesStepRotate = (float)(Math.PI * 2 / enemies.size());
+        float enemyRacesStepRotate = (float)(Math.PI * 2 / enemyRaces.size());
+        float playerRacesStepRotate = (float)(Math.PI * 2 / playerRaces.size());
+
         if(name.equals(InputMappings.left)) {
-            if(atPlayers) {
-                playersNode.rotate(0, playersStepRotate, 0);
-            } else {
-                enemiesNode.rotate(0, enemiesStepRotate, 0);
-            }
+            rotateMenuTrack(currentMenuTrack, playersStepRotate, enemyRacesStepRotate, playerRacesStepRotate);
         } else if (name.equals(InputMappings.right)) {
-            if(atPlayers) {
-                playersNode.rotate(0, -playersStepRotate, 0);
-            } else {
-                enemiesNode.rotate(0, -enemiesStepRotate, 0);
+            rotateMenuTrack(currentMenuTrack, -playersStepRotate, -enemyRacesStepRotate, -playerRacesStepRotate);
+        } else if(name.equals(InputMappings.up)) {
+            switch (currentMenuTrack) {
+                case PlayerRaces:
+                    return;
+                default:
+                    camera.setLocation(cameraLocation.add(new Vector3f(0, verticalOffset, 0f)));
+                    break;
+            }
+        } else if(name.equals(InputMappings.down)) {
+            switch (currentMenuTrack) {
+                case EnemyRaces:
+                    return;
+                default:
+                    camera.setLocation(cameraLocation.add(new Vector3f(0, -verticalOffset, 0f)));
+                    break;
+
             }
         } else if(name.equals(InputMappings.select)) {
-            if(atPlayers) {
-                camera.setLocation(cameraLocation.add(new Vector3f(0f, -verticalOffset, 0f)));
-            } else {
-                nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield);
-            }
+            nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield);
+        }
+    }
+
+    private void rotateMenuTrack(MenuTrack currentMenuTrack, float playersStepRotate, float enemyRacesStepRotate, float playerRacesStepRotate) {
+        switch(currentMenuTrack) {
+            case Players:
+                playersNode.rotate(0, playersStepRotate, 0);
+                break;
+            case PlayerRaces:
+                playerRacesNode.rotate(0, playerRacesStepRotate, 0);
+                break;
+            case EnemyRaces:
+                enemyRacesNode.rotate(0, enemyRacesStepRotate, 0);
+                break;
+        }
+    }
+
+    private MenuTrack getMenuTrack(Vector3f cameraLocation) {
+        if(cameraLocation.y > 0f) {
+            return MenuTrack.PlayerRaces;
+        } else if(cameraLocation.y < -verticalOffset){
+            return MenuTrack.EnemyRaces;
+        } else {
+            return MenuTrack.Players;
         }
     }
 
@@ -164,8 +211,12 @@ public class MainMenu extends AbstractStarfield {
             }
         }
 
-        for(Spatial enemy : enemies) {
+        for(Spatial enemy : enemyRaces) {
             enemy.rotate(0, tpf * 0.5f, 0);
+        }
+
+        for(Spatial player : playerRaces) {
+            player.rotate(0, tpf * 0.5f, 0);
         }
     }
 }

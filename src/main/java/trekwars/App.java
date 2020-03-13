@@ -72,8 +72,8 @@ public class App extends SimpleApplication implements TouchListener {
         inputManager.addMapping("Touch", new TouchTrigger(0));
         inputManager.addMapping(InputMappings.left, new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping(InputMappings.right, new KeyTrigger(KeyInput.KEY_RIGHT));
-        inputManager.addMapping(InputMappings.boost, new KeyTrigger(KeyInput.KEY_UP));
-        inputManager.addMapping(InputMappings.stop, new KeyTrigger(KeyInput.KEY_DOWN));
+        inputManager.addMapping(InputMappings.up, new KeyTrigger(KeyInput.KEY_UP));
+        inputManager.addMapping(InputMappings.down, new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping(InputMappings.select, new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addMapping(InputMappings.fire, new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping(InputMappings.left_click, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -82,8 +82,8 @@ public class App extends SimpleApplication implements TouchListener {
                 actionListener, 
                 InputMappings.left,
                 InputMappings.right,
-                InputMappings.boost,
-                InputMappings.stop,
+                InputMappings.up,
+                InputMappings.down,
                 InputMappings.select,
                 InputMappings.fire,
                 InputMappings.left_click);
@@ -92,8 +92,8 @@ public class App extends SimpleApplication implements TouchListener {
                 analogListener, 
                 InputMappings.left,
                 InputMappings.right,
-                InputMappings.boost,
-                InputMappings.stop,
+                InputMappings.up,
+                InputMappings.down,
                 InputMappings.select,
                 InputMappings.fire,
                 InputMappings.left_click);

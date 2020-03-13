@@ -1,8 +1,6 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.audio.AudioNode;
-import com.jme3.audio.AudioSource;
 import com.jme3.input.InputManager;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
@@ -262,13 +260,13 @@ public class BasicStarfield extends AbstractStarfield {
         else if (name.equals(InputMappings.right)) {
             player.turnRight();
         }
-        else if (name.equals(InputMappings.boost)) {
+        else if (name.equals(InputMappings.up)) {
             player.boost();
         }
         else if (name.equals(InputMappings.fire)){
             player.fire();
         }
-        else if(name.equals(InputMappings.stop)) {
+        else if(name.equals(InputMappings.down)) {
             player.stop();
         }
         else if(name.equals(InputMappings.left_click)) {
