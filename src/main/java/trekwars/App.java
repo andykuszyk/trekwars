@@ -14,6 +14,7 @@ import com.jme3.input.controls.TouchTrigger;
 import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import java.util.ArrayList;
@@ -34,15 +35,17 @@ public class App extends SimpleApplication implements TouchListener {
     public static void main(String[] args) {
         App app = new App();
         app.setShowSettings(false);
+        AppSettings settings = new AppSettings(true);
+        settings.setFrameRate(30);
+        app.setSettings(settings);
         app.start();
-        app.settings.setFullscreen(true);
     }
 
     @Override
     public void simpleInitApp() {
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
-//        this.setDisplayFps(false);
+        this.setDisplayFps(true);
         Vector2f screenSize = new Vector2f(this.settings.getWidth(), this.settings.getHeight());
         initialiseInput();
         
