@@ -61,6 +61,14 @@ public class PlayerFactory {
                         explosionTextures,
                         camera,
                         explosionNode);
+            case Prometheus:
+                return new Prometheus(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
             default:
                 return null;
         }
