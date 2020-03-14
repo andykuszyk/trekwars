@@ -36,7 +36,8 @@ public class Voyager extends AbstractPlayer {
                 assetManager,
                 explosionTextures,
                 camera,
-                explosionNode
+                explosionNode,
+                PlayerFactoryType.Voyager
                 );
         
         // Voyager

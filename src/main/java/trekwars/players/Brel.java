@@ -38,8 +38,8 @@ public class Brel extends AbstractPlayer {
                 assetManager,
                 explosionTextures,
                 camera,
-                explosionNode
-                );
+                explosionNode,
+                PlayerFactoryType.Brel);
        
         brel = assetManager.loadModel("Models/brel.j3o");
         Material brel_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");

@@ -55,7 +55,8 @@ public class App extends SimpleApplication implements TouchListener {
                 getPlayerFactory(), 
                 inputManager, 
                 cam,
-                Splash.NextScreen.MainMenu
+                Splash.NextScreen.MainMenu,
+                null
                 ));
     }
     

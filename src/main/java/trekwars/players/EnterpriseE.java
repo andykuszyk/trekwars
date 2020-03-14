@@ -37,7 +37,8 @@ public class EnterpriseE extends AbstractPlayer {
                 assetManager,
                 explosionTextures,
                 camera,
-                explosionNode
+                explosionNode,
+                PlayerFactoryType.EnterpriseE
                 );
         log.info("About to load enterprise e model");
         enterpriseE = assetManager.loadModel("Models/enterprise-e.obj");

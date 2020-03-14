@@ -37,7 +37,8 @@ public class Prometheus extends AbstractPlayer {
                 assetManager,
                 explosionTextures,
                 camera,
-                explosionNode
+                explosionNode,
+                PlayerFactoryType.Prometheus
                 );
         prometheus = assetManager.loadModel("Models/prometheus.obj");
         prometheus.setLocalScale(0.75f);

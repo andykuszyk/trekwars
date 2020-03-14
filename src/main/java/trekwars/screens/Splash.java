@@ -30,6 +30,7 @@ public class Splash implements Callable<IScreen>, IScreen {
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
     private final Camera camera;
+    private final GameOptions gameOptions;
     private Future<IScreen> nextScreen;
     private final ExecutorService executor;
     private final NextScreen nextScreenSelection;
@@ -45,12 +46,14 @@ public class Splash implements Callable<IScreen>, IScreen {
             PlayerFactory playerFactory,
             InputManager inputManager,
             Camera camera,
-            NextScreen nextScreen) {
+            NextScreen nextScreen,
+            GameOptions gameOptions) {
         this.assetManager = assetManager;
         this.screenSize = screenSize;
         this.playerFactory = playerFactory;
         this.camera = camera;
         this.inputManager = inputManager;
+        this.gameOptions = gameOptions;
         nextScreenSelection = nextScreen;
         guiNode = new Node();
         rootNode = new Node();
@@ -113,7 +116,7 @@ public class Splash implements Callable<IScreen>, IScreen {
         try {
             log.info("About to load next screen: " + nextScreenSelection.toString());
             if (nextScreenSelection == NextScreen.BasicStarfield) {
-                AbstractPlayer player = playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Player);
+                AbstractPlayer player = playerFactory.create(gameOptions.getPlayerFactoryType(), PlayerType.Player);
                 ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
                 waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
                 waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));

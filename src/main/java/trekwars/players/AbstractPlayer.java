@@ -50,6 +50,7 @@ public abstract class AbstractPlayer implements IPlayer {
     private final float explosionSize = 30f;
     private final AudioNode explosionNode;
     protected final Logger log = Logger.getGlobal();
+    private final PlayerFactoryType playerFactoryType;
     
     protected AbstractPlayer(
             PlayerType playerType, 
@@ -60,8 +61,8 @@ public abstract class AbstractPlayer implements IPlayer {
             AssetManager assetManager,
             ArrayList<Texture> explosionTextures,
             Camera camera,
-            AudioNode explosionNode
-            ) {
+            AudioNode explosionNode,
+            PlayerFactoryType playerFactoryType) {
         this.playerType = playerType;
         this.playerController = playerController;
         spatialNode = new Node();
@@ -70,7 +71,8 @@ public abstract class AbstractPlayer implements IPlayer {
         this.explosionTextures = explosionTextures;
         this.camera = camera;
         this.explosionNode = explosionNode;
-        
+        this.playerFactoryType = playerFactoryType;
+
         if(playerType == PlayerType.Player) {
             lifeCapacity = life = 1f;
         } else {
@@ -98,6 +100,10 @@ public abstract class AbstractPlayer implements IPlayer {
         spatialNode.attachChild(shields);
         
         playerController.registerPlayer(this);
+    }
+
+    public PlayerFactoryType getPlayerFactoryType() {
+        return this.playerFactoryType;
     }
     
     private void setShieldColor() {

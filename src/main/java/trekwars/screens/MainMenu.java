@@ -15,15 +15,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import trekwars.core.InputMappings;
-import trekwars.players.IPlayer;
-import trekwars.players.PlayerFactory;
-import trekwars.players.PlayerFactoryType;
-import trekwars.players.PlayerType;
+import trekwars.players.*;
 
 public class MainMenu extends AbstractStarfield {
     private final Node playersNode = new Node();
@@ -36,11 +34,12 @@ public class MainMenu extends AbstractStarfield {
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
     private Camera camera;
-    private ArrayList<IPlayer> ships = new ArrayList<IPlayer>();
+    private ArrayList<AbstractPlayer> ships = new ArrayList<AbstractPlayer>();
     private ArrayList<Spatial> playerRaces = new ArrayList<Spatial>();
     private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
     private LocalDateTime lastKeyPress;
     private IScreen nextScreen;
+    private Logger log = Logger.getGlobal();
 
     public MainMenu(
             AssetManager assetManager,
@@ -165,7 +164,21 @@ public class MainMenu extends AbstractStarfield {
 
             }
         } else if(name.equals(InputMappings.select)) {
-            nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield);
+            PlayerFactoryType playerFactoryType = PlayerFactoryType.Defiant;
+            boolean playerSet = false;
+            for(AbstractPlayer player : this.ships) {
+                log.info(String.format("player %s at z %f", player.getPlayerFactoryType(), player.getRootNode().getWorldTranslation().z));
+                if(player.getRootNode().getWorldTranslation().z >= radiusSize * 0.9f) {
+                    playerFactoryType = player.getPlayerFactoryType();
+                    playerSet = true;
+                    break;
+                }
+            }
+            if(!playerSet) {
+                log.warning("Player not set!");
+            }
+            GameOptions gameOptions = new GameOptions(playerFactoryType, RaceType.Federation, RaceType.Klingon);
+            nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield, gameOptions);
         }
     }
 

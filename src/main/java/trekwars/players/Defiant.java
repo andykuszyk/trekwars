@@ -37,7 +37,8 @@ public class Defiant extends AbstractPlayer {
                 assetManager,
                 explosionTextures,
                 camera,
-                explosionNode
+                explosionNode,
+                PlayerFactoryType.Defiant
                 );
         log.info("About to load defiant model");
         defiant = assetManager.loadModel("Models/defiant.obj");
