@@ -32,7 +32,7 @@ public class EnterpriseE extends AbstractPlayer {
                 playerType, 
                 playerController, 
                 new ColorRGBA(0, 0, 1, 0.5f), 
-                new Vector3f(3f, 2f, 4f),
+                new Vector3f(3f, 2f, 6f),
                 new Vector3f(0, 0f, 0),
                 assetManager,
                 explosionTextures,
