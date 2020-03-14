@@ -18,6 +18,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 public abstract class AbstractPlayer implements IPlayer {
     
@@ -48,6 +49,7 @@ public abstract class AbstractPlayer implements IPlayer {
     private final Camera camera;
     private final float explosionSize = 30f;
     private final AudioNode explosionNode;
+    protected final Logger log = Logger.getGlobal();
     
     protected AbstractPlayer(
             PlayerType playerType, 

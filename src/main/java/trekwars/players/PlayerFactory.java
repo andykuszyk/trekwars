@@ -27,24 +27,33 @@ public class PlayerFactory {
     }
 
     public AbstractPlayer create(PlayerFactoryType type, PlayerType playerType) {
-        if(type == PlayerFactoryType.Brel) {
-            return new Brel(
-                    assetManager, 
-                    playerType, 
-                    playerController, 
-                    explosionTextures, 
-                    camera,
-                    explosionNode);
-        } else if (type == PlayerFactoryType.Voyager) {
-            return new Voyager(
-                    assetManager, 
-                    playerType, 
-                    playerController, 
-                    explosionTextures, 
-                    camera,
-                    explosionNode);
-        } else {
-            return null;
+        switch(type){
+            case Brel:
+                return new Brel(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
+            case Voyager:
+                return new Voyager(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
+            case Defiant:
+                return new Defiant(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
+            default:
+                return null;
         }
     }
 }

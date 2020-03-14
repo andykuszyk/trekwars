@@ -1,5 +1,5 @@
 package trekwars.players;
 
 public enum PlayerFactoryType {
-    Voyager, Brel
+    Voyager, Brel, Defiant
 }
