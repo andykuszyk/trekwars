@@ -41,6 +41,9 @@ public class Prometheus extends AbstractPlayer {
                 PlayerFactoryType.Prometheus
                 );
         prometheus = assetManager.loadModel("Models/prometheus.obj");
+        Material prometheusMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        prometheusMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/prometheus.jpg"));
+        prometheus.setMaterial(prometheusMaterial);
         prometheus.setLocalScale(0.5f);
 
         Quad quad = new Quad(0.5f,50);

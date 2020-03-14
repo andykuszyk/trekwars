@@ -42,6 +42,9 @@ public class EnterpriseE extends AbstractPlayer {
                 );
         log.info("About to load enterprise e model");
         enterpriseE = assetManager.loadModel("Models/enterprise-e.obj");
+        Material enterpriseMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        enterpriseMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/enterprise-e.jpg"));
+        enterpriseE.setMaterial(enterpriseMaterial);
         log.info("Finished loading enterprise e model");
         enterpriseE.setLocalScale(0.75f);
 

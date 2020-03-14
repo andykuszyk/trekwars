@@ -40,9 +40,10 @@ public class Defiant extends AbstractPlayer {
                 explosionNode,
                 PlayerFactoryType.Defiant
                 );
-        log.info("About to load defiant model");
         defiant = assetManager.loadModel("Models/defiant.obj");
-        log.info("Finished loading defiant model");
+        Material defiantMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        defiantMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/defiant.jpg"));
+        defiant.setMaterial(defiantMaterial);
         defiant.setLocalScale(1.5f);
 
         Quad quad = new Quad(0.5f,50);
