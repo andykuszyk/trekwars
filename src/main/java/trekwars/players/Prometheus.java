@@ -32,7 +32,7 @@ public class Prometheus extends AbstractPlayer {
                 playerType, 
                 playerController, 
                 new ColorRGBA(0, 0, 1, 0.5f), 
-                new Vector3f(3f, 2f, 4f),
+                new Vector3f(3f, 2f, 5f),
                 new Vector3f(0, 0f, 0),
                 assetManager,
                 explosionTextures,
@@ -41,7 +41,7 @@ public class Prometheus extends AbstractPlayer {
                 PlayerFactoryType.Prometheus
                 );
         prometheus = assetManager.loadModel("Models/prometheus.obj");
-        prometheus.setLocalScale(0.75f);
+        prometheus.setLocalScale(0.5f);
 
         Quad quad = new Quad(0.5f,50);
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
