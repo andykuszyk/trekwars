@@ -4,6 +4,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
+
 import java.util.ArrayList;
 
 public class PlayerFactory {
@@ -46,6 +47,14 @@ public class PlayerFactory {
                         explosionNode);
             case Defiant:
                 return new Defiant(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
+            case EnterpriseE:
+                return new EnterpriseE(
                         assetManager,
                         playerType,
                         playerController,

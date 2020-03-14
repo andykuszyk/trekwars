@@ -67,6 +67,7 @@ public class MainMenu extends AbstractStarfield {
         ships.add(playerFactory.create(PlayerFactoryType.Voyager, PlayerType.Enemy));
         ships.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
         ships.add(playerFactory.create(PlayerFactoryType.Defiant, PlayerType.Enemy));
+        ships.add(playerFactory.create(PlayerFactoryType.EnterpriseE, PlayerType.Enemy));
 
         playersAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / ships.size()), Vector3f.UNIT_Y);
         Vector3f playersRadius = new Vector3f(0, 0, radiusSize);
