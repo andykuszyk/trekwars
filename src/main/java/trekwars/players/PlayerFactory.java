@@ -4,6 +4,11 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
+import trekwars.players.federation.Defiant;
+import trekwars.players.federation.EnterpriseE;
+import trekwars.players.federation.Prometheus;
+import trekwars.players.federation.Voyager;
+import trekwars.players.klingon.Brel;
 
 import java.util.ArrayList;
 

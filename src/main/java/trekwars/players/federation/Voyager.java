@@ -1,4 +1,4 @@
-package trekwars.players;
+package trekwars.players.federation;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
@@ -11,19 +11,23 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
+import trekwars.players.AbstractPlayer;
+import trekwars.players.IPlayerController;
+import trekwars.players.PlayerFactoryType;
+import trekwars.players.PlayerType;
 
 import java.util.ArrayList;
 
-public class Defiant extends AbstractPlayer {
+public class Voyager extends AbstractPlayer {
     
-    private final Spatial defiant;
+    private final Spatial voyager;
     private final Spatial phaser;
     private final AudioNode audioNode;
     private boolean isFiring = false;
     
-    public Defiant(
+    public Voyager(
             AssetManager assetManager, 
-            PlayerType playerType, 
+            PlayerType playerType,
             IPlayerController playerController,
             ArrayList<Texture> explosionTextures,
             Camera camera,
@@ -38,14 +42,18 @@ public class Defiant extends AbstractPlayer {
                 explosionTextures,
                 camera,
                 explosionNode,
-                PlayerFactoryType.Defiant
+                PlayerFactoryType.Voyager
                 );
-        defiant = assetManager.loadModel("Models/defiant.obj");
-        Material defiantMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        defiantMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/defiant.jpg"));
-        defiant.setMaterial(defiantMaterial);
-        defiant.setLocalScale(1.5f);
-
+        
+        // Voyager
+        voyager = assetManager.loadModel("Models/voyager.j3o");
+        Material voyager_material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        voyager_material.setTexture("ColorMap", assetManager.loadTexture("Textures/voyager.png"));
+        voyager.setMaterial(voyager_material);
+        voyager.setLocalScale(0.5f);
+        
+        
+        // Phaser
         Quad quad = new Quad(0.5f,50);
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         material.setColor("Color", ColorRGBA.White);
@@ -54,7 +62,7 @@ public class Defiant extends AbstractPlayer {
         phaser.setLocalTranslation(-0.25f, -1f, -1f);
         phaser.setMaterial(material);
         
-        spatialNode.attachChild(defiant);
+        spatialNode.attachChild(voyager);
         
         audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
         audioNode.setPositional(true);

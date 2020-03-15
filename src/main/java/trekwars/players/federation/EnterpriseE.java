@@ -1,4 +1,4 @@
-package trekwars.players;
+package trekwars.players.federation;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
@@ -11,19 +11,23 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
+import trekwars.players.AbstractPlayer;
+import trekwars.players.IPlayerController;
+import trekwars.players.PlayerFactoryType;
+import trekwars.players.PlayerType;
 
 import java.util.ArrayList;
 
-public class Prometheus extends AbstractPlayer {
-
-    private final Spatial prometheus;
+public class EnterpriseE extends AbstractPlayer {
+    
+    private final Spatial enterpriseE;
     private final Spatial phaser;
     private final AudioNode audioNode;
     private boolean isFiring = false;
-
-    public Prometheus(
+    
+    public EnterpriseE(
             AssetManager assetManager, 
-            PlayerType playerType, 
+            PlayerType playerType,
             IPlayerController playerController,
             ArrayList<Texture> explosionTextures,
             Camera camera,
@@ -32,19 +36,21 @@ public class Prometheus extends AbstractPlayer {
                 playerType, 
                 playerController, 
                 new ColorRGBA(0, 0, 1, 0.5f), 
-                new Vector3f(3f, 2f, 5f),
+                new Vector3f(3f, 2f, 6f),
                 new Vector3f(0, 0f, 0),
                 assetManager,
                 explosionTextures,
                 camera,
                 explosionNode,
-                PlayerFactoryType.Prometheus
+                PlayerFactoryType.EnterpriseE
                 );
-        prometheus = assetManager.loadModel("Models/prometheus.obj");
-        Material prometheusMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        prometheusMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/prometheus.jpg"));
-        prometheus.setMaterial(prometheusMaterial);
-        prometheus.setLocalScale(0.5f);
+        log.info("About to load enterprise e model");
+        enterpriseE = assetManager.loadModel("Models/enterprise-e.obj");
+        Material enterpriseMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        enterpriseMaterial.setTexture("ColorMap", assetManager.loadTexture("Models/enterprise-e.jpg"));
+        enterpriseE.setMaterial(enterpriseMaterial);
+        log.info("Finished loading enterprise e model");
+        enterpriseE.setLocalScale(0.75f);
 
         Quad quad = new Quad(0.5f,50);
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -54,7 +60,7 @@ public class Prometheus extends AbstractPlayer {
         phaser.setLocalTranslation(-0.25f, -1f, -1f);
         phaser.setMaterial(material);
         
-        spatialNode.attachChild(prometheus);
+        spatialNode.attachChild(enterpriseE);
         
         audioNode = new AudioNode(assetManager, "Sounds/federation-phaser.wav", false);
         audioNode.setPositional(true);

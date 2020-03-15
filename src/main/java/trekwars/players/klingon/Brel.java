@@ -1,4 +1,4 @@
-package trekwars.players;
+package trekwars.players.klingon;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
@@ -8,6 +8,8 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import trekwars.players.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,7 +26,7 @@ public class Brel extends AbstractPlayer {
     
     public Brel(
             AssetManager assetManager, 
-            PlayerType playerType, 
+            PlayerType playerType,
             IPlayerController playerController,
             ArrayList<Texture> explosionTextures,
             Camera camera,
