@@ -4,6 +4,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.renderer.Camera;
 import com.jme3.texture.Texture;
+import trekwars.players.borg.Cube;
 import trekwars.players.federation.Defiant;
 import trekwars.players.federation.EnterpriseE;
 import trekwars.players.federation.Prometheus;
@@ -68,6 +69,14 @@ public class PlayerFactory {
                         explosionNode);
             case Prometheus:
                 return new Prometheus(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode);
+            case BorgCube:
+                return new Cube(
                         assetManager,
                         playerType,
                         playerController,
