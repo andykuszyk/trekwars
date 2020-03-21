@@ -11,6 +11,7 @@ import trekwars.players.federation.Defiant;
 import trekwars.players.federation.EnterpriseE;
 import trekwars.players.federation.Prometheus;
 import trekwars.players.federation.Voyager;
+import trekwars.players.imperial.StarDestroyer;
 import trekwars.players.klingon.Brel;
 
 import java.util.ArrayList;
@@ -101,6 +102,15 @@ public class PlayerFactory {
                         explosionTextures,
                         camera,
                         explosionNode);
+            case StarDestroyer:
+                return new StarDestroyer(
+                        assetManager,
+                        playerType,
+                        playerController,
+                        explosionTextures,
+                        camera,
+                        explosionNode
+                );
             default:
                 return null;
         }
