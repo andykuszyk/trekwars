@@ -36,7 +36,7 @@ public class StarDestroyer extends AbstractPlayer {
                 playerType, 
                 playerController, 
                 new ColorRGBA(0, 0, 1, 0.5f), 
-                new Vector3f(3f, 2f, 4f),
+                new Vector3f(5f, 5f, 5f),
                 new Vector3f(0, 0f, 0),
                 assetManager,
                 explosionTextures,
@@ -45,8 +45,6 @@ public class StarDestroyer extends AbstractPlayer {
                 PlayerFactoryType.StarDestroyer
                 );
         starDestroyer = assetManager.loadModel("Models/star-destroyer.obj");
-        Material starDestroyerMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        starDestroyer.setMaterial(starDestroyerMaterial);
         starDestroyer.setLocalScale(1.5f);
 
         Quad quad = new Quad(0.5f,50);
