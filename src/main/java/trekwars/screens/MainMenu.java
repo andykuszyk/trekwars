@@ -28,14 +28,14 @@ public class MainMenu extends AbstractStarfield {
     private final Quaternion playersAngle;
     private final float radiusSize = 20f;
     private final Node enemyRacesNode = new Node();
-    private final Node playerRacesNode = new Node();
     private final float verticalOffset = 40f;
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
+    private final GuiElement mainMenuShips;
+    private final GuiElement mainMenuEnemy;
     private Camera camera;
     private ArrayList<AbstractPlayer> ships = new ArrayList<AbstractPlayer>();
-    private ArrayList<Spatial> playerRaces = new ArrayList<Spatial>();
     private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
     private LocalDateTime lastKeyPress;
     private IScreen nextScreen;
@@ -54,11 +54,9 @@ public class MainMenu extends AbstractStarfield {
         this.inputManager = inputManager;
         rootNode.attachChild(playersNode);
         rootNode.attachChild(enemyRacesNode);
-        rootNode.attachChild(playerRacesNode);
 
-        playerRacesNode.setLocalTranslation(0f, 0, 0f);
-        playersNode.setLocalTranslation(0f, -verticalOffset, 0f);
-        enemyRacesNode.setLocalTranslation(0f, -verticalOffset * 2, 0f);
+        playersNode.setLocalTranslation(0f, 0f, 0f);
+        enemyRacesNode.setLocalTranslation(0f, -verticalOffset, 0f);
 
         camera.setLocation(new Vector3f(0, (float)(radiusSize * 0.25), radiusSize * 2));
         camera.lookAt(new Vector3f(0, 0, radiusSize), Vector3f.UNIT_Y);
@@ -85,22 +83,24 @@ public class MainMenu extends AbstractStarfield {
             logosRadius = logosAngle.mult(logosRadius);
         }
 
-        guiNode.attachChild(new GuiElement(
+        mainMenuShips = new GuiElement(
+            "main-menu",
+            assetManager,
+            new Vector2f(0f, 0f),
+            new Vector2f(1f, 1f),
+            screenSize,
+            "Interface/main-menu-choose-ship.png");
+        mainMenuEnemy = new GuiElement(
                 "main-menu",
                 assetManager,
                 new Vector2f(0f, 0f),
                 new Vector2f(1f, 1f),
                 screenSize,
-                "Interface/main-menu.png").getPicture()
-        );
+                "Interface/main-menu-choose-enemy.png");
+        guiNode.attachChild(mainMenuShips.getPicture());
     }
 
     private void initialiseLogo(Vector3f logosRadius, float logoSize, String logo) {
-        Spatial playerLogoSpatial = makeLogoSpatial(logo, logoSize);
-        playerRaces.add(playerLogoSpatial);
-        playerRacesNode.attachChild(playerLogoSpatial);
-        playerLogoSpatial.setLocalTranslation(logosRadius);
-
         Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
         enemyRaces.add(enemyLogoSpatial);
         enemyRacesNode.attachChild(enemyLogoSpatial);
@@ -125,7 +125,7 @@ public class MainMenu extends AbstractStarfield {
     }
 
     private enum MenuTrack {
-        PlayerRaces, Players, EnemyRaces
+        Players, EnemyRaces
     }
 
     @Override
@@ -140,29 +140,19 @@ public class MainMenu extends AbstractStarfield {
 
         float playersStepRotate = (float)(Math.PI * 2 / ships.size());
         float enemyRacesStepRotate = (float)(Math.PI * 2 / enemyRaces.size());
-        float playerRacesStepRotate = (float)(Math.PI * 2 / playerRaces.size());
 
         if(name.equals(InputMappings.left)) {
-            rotateMenuTrack(currentMenuTrack, playersStepRotate, enemyRacesStepRotate, playerRacesStepRotate);
+            rotateMenuTrack(currentMenuTrack, playersStepRotate, enemyRacesStepRotate);
         } else if (name.equals(InputMappings.right)) {
-            rotateMenuTrack(currentMenuTrack, -playersStepRotate, -enemyRacesStepRotate, -playerRacesStepRotate);
-        } else if(name.equals(InputMappings.up)) {
-            switch (currentMenuTrack) {
-                case PlayerRaces:
-                    return;
-                default:
-                    camera.setLocation(cameraLocation.add(new Vector3f(0, verticalOffset, 0f)));
-                    break;
-            }
-        } else if(name.equals(InputMappings.down)) {
-            switch (currentMenuTrack) {
-                case EnemyRaces:
-                    return;
-                default:
-                    camera.setLocation(cameraLocation.add(new Vector3f(0, -verticalOffset, 0f)));
-                    break;
-
-            }
+            rotateMenuTrack(currentMenuTrack, -playersStepRotate, -enemyRacesStepRotate);
+        } else if(name.equals(InputMappings.up) && currentMenuTrack == MenuTrack.EnemyRaces) {
+            camera.setLocation(cameraLocation.add(new Vector3f(0, verticalOffset, 0f)));
+            guiNode.detachChild(mainMenuEnemy.getPicture());
+            guiNode.attachChild(mainMenuShips.getPicture());
+        } else if(name.equals(InputMappings.down) && currentMenuTrack == MenuTrack.Players) {
+            camera.setLocation(cameraLocation.add(new Vector3f(0, -verticalOffset, 0f)));
+            guiNode.detachChild(mainMenuShips.getPicture());
+            guiNode.attachChild(mainMenuEnemy.getPicture());
         } else if(name.equals(InputMappings.select)) {
             PlayerFactoryType playerFactoryType = PlayerFactoryType.Defiant;
             boolean playerSet = false;
@@ -182,13 +172,10 @@ public class MainMenu extends AbstractStarfield {
         }
     }
 
-    private void rotateMenuTrack(MenuTrack currentMenuTrack, float playersStepRotate, float enemyRacesStepRotate, float playerRacesStepRotate) {
+    private void rotateMenuTrack(MenuTrack currentMenuTrack, float playersStepRotate, float enemyRacesStepRotate) {
         switch(currentMenuTrack) {
             case Players:
                 playersNode.rotate(0, playersStepRotate, 0);
-                break;
-            case PlayerRaces:
-                playerRacesNode.rotate(0, playerRacesStepRotate, 0);
                 break;
             case EnemyRaces:
                 enemyRacesNode.rotate(0, enemyRacesStepRotate, 0);
@@ -198,11 +185,9 @@ public class MainMenu extends AbstractStarfield {
 
     private MenuTrack getMenuTrack(Vector3f cameraLocation) {
         if(cameraLocation.y > 0f) {
-            return MenuTrack.PlayerRaces;
-        } else if(cameraLocation.y < -verticalOffset){
-            return MenuTrack.EnemyRaces;
-        } else {
             return MenuTrack.Players;
+        } else {
+            return MenuTrack.EnemyRaces;
         }
     }
 
@@ -223,10 +208,6 @@ public class MainMenu extends AbstractStarfield {
 
         for(Spatial enemy : enemyRaces) {
             enemy.rotate(0, tpf * 0.5f, 0);
-        }
-
-        for(Spatial player : playerRaces) {
-            player.rotate(0, tpf * 0.5f, 0);
         }
     }
 }
