@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import com.jme3.scene.Spatial;
@@ -25,10 +26,9 @@ import trekwars.players.*;
 
 public class MainMenu extends AbstractStarfield {
     private final Node playersNode = new Node();
-    private final Quaternion playersAngle;
-    private final float radiusSize = 20f;
-    private final Node enemyRacesNode = new Node();
+    private final Node enemiesNode = new Node();
     private final float verticalOffset = 40f;
+    private final float horizontalOffset = 15f;
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
@@ -40,6 +40,9 @@ public class MainMenu extends AbstractStarfield {
     private LocalDateTime lastKeyPress;
     private IScreen nextScreen;
     private Logger log = Logger.getGlobal();
+    private AbstractPlayer currentPlayer;
+    private float lastEnemyHorizontalOffset;
+    private float lastPlayerHorizontalOffset;
 
     public MainMenu(
             AssetManager assetManager,
@@ -52,35 +55,37 @@ public class MainMenu extends AbstractStarfield {
         this.screenSize = screenSize;
         this.playerFactory = playerFactory;
         this.inputManager = inputManager;
+
         rootNode.attachChild(playersNode);
-        rootNode.attachChild(enemyRacesNode);
-
+        rootNode.attachChild(enemiesNode);
         playersNode.setLocalTranslation(0f, 0f, 0f);
-        enemyRacesNode.setLocalTranslation(0f, -verticalOffset, 0f);
+        enemiesNode.setLocalTranslation(0f, -verticalOffset, 0f);
 
-        camera.setLocation(new Vector3f(0, (float)(radiusSize * 0.25), radiusSize * 2));
-        camera.lookAt(new Vector3f(0, 0, radiusSize), Vector3f.UNIT_Y);
+        camera.setLocation(new Vector3f(0, 2.5f, 10f));
+        camera.lookAt(new Vector3f(0, 0, 0), Vector3f.UNIT_Y);
 
         for(PlayerFactoryType type : PlayerFactoryType.values()) {
             ships.add(playerFactory.create(type, PlayerType.Enemy));
         }
+        currentPlayer = ships.get(0);
 
-        playersAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / ships.size()), Vector3f.UNIT_Y);
-        Vector3f playersRadius = new Vector3f(0, 0, radiusSize);
+        int shipCount = 0;
         for(IPlayer ship : ships) {
             playersNode.attachChild(ship.getRootNode());
-            ship.getRootNode().setLocalTranslation(playersRadius);
-            playersRadius = playersAngle.mult(playersRadius);
+            ship.getRootNode().setLocalTranslation(shipCount * horizontalOffset, 0f, 0f);
+            shipCount++;
         }
 
         List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "rebels-logo.gif");
         Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
-        Vector3f logosRadius = new Vector3f(0, 0, radiusSize);
         float logoSize = 5f;
-
+        int enemyCount = 0;
         for(String logo : logos) {
-            initialiseLogo(logosRadius, logoSize, logo);
-            logosRadius = logosAngle.mult(logosRadius);
+            Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
+            enemyRaces.add(enemyLogoSpatial);
+            enemiesNode.attachChild(enemyLogoSpatial);
+            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 0f, 0f);
+            enemyCount++;
         }
 
         mainMenuShips = new GuiElement(
@@ -98,13 +103,6 @@ public class MainMenu extends AbstractStarfield {
                 screenSize,
                 "Interface/main-menu-choose-enemy.png");
         guiNode.attachChild(mainMenuShips.getPicture());
-    }
-
-    private void initialiseLogo(Vector3f logosRadius, float logoSize, String logo) {
-        Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
-        enemyRaces.add(enemyLogoSpatial);
-        enemyRacesNode.attachChild(enemyLogoSpatial);
-        enemyLogoSpatial.setLocalTranslation(logosRadius);
     }
 
     private Spatial makeLogoSpatial(String logo, float logoSize) {
@@ -138,48 +136,29 @@ public class MainMenu extends AbstractStarfield {
         Vector3f cameraLocation = camera.getLocation();
         MenuTrack currentMenuTrack = getMenuTrack(cameraLocation);
 
-        float playersStepRotate = (float)(Math.PI * 2 / ships.size());
-        float enemyRacesStepRotate = (float)(Math.PI * 2 / enemyRaces.size());
-
         if(name.equals(InputMappings.left)) {
-            rotateMenuTrack(currentMenuTrack, playersStepRotate, enemyRacesStepRotate);
+            camera.setLocation(new Vector3f(cameraLocation.getX() - horizontalOffset, cameraLocation.getY(), cameraLocation.getZ()));
         } else if (name.equals(InputMappings.right)) {
-            rotateMenuTrack(currentMenuTrack, -playersStepRotate, -enemyRacesStepRotate);
+            camera.setLocation(new Vector3f(cameraLocation.getX() + horizontalOffset, cameraLocation.getY(), cameraLocation.getZ()));
         } else if(name.equals(InputMappings.up) && currentMenuTrack == MenuTrack.EnemyRaces) {
-            camera.setLocation(cameraLocation.add(new Vector3f(0, verticalOffset, 0f)));
+            camera.setLocation(new Vector3f(lastPlayerHorizontalOffset, cameraLocation.getY() + verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuEnemy.getPicture());
             guiNode.attachChild(mainMenuShips.getPicture());
+            lastEnemyHorizontalOffset = cameraLocation.getX();
+            log.info(String.format("last enemy offset: %s", lastEnemyHorizontalOffset));
         } else if(name.equals(InputMappings.down) && currentMenuTrack == MenuTrack.Players) {
-            camera.setLocation(cameraLocation.add(new Vector3f(0, -verticalOffset, 0f)));
+            camera.setLocation(new Vector3f(lastEnemyHorizontalOffset, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuShips.getPicture());
             guiNode.attachChild(mainMenuEnemy.getPicture());
+            float playerIndex = cameraLocation.getX() / horizontalOffset;
+            if (playerIndex >=0 && playerIndex < this.ships.size()) {
+                currentPlayer = this.ships.get((int)playerIndex);
+            }
+            lastPlayerHorizontalOffset = cameraLocation.getX();
+            log.info(String.format("last player offset: %s", lastPlayerHorizontalOffset));
         } else if(name.equals(InputMappings.select)) {
-            PlayerFactoryType playerFactoryType = PlayerFactoryType.Defiant;
-            boolean playerSet = false;
-            for(AbstractPlayer player : this.ships) {
-                log.info(String.format("player %s at z %f", player.getPlayerFactoryType(), player.getRootNode().getWorldTranslation().z));
-                if(player.getRootNode().getWorldTranslation().z >= radiusSize * 0.9f) {
-                    playerFactoryType = player.getPlayerFactoryType();
-                    playerSet = true;
-                    break;
-                }
-            }
-            if(!playerSet) {
-                log.warning("Player not set!");
-            }
-            GameOptions gameOptions = new GameOptions(playerFactoryType, RaceType.Federation, RaceType.Klingon);
+            GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
             nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield, gameOptions);
-        }
-    }
-
-    private void rotateMenuTrack(MenuTrack currentMenuTrack, float playersStepRotate, float enemyRacesStepRotate) {
-        switch(currentMenuTrack) {
-            case Players:
-                playersNode.rotate(0, playersStepRotate, 0);
-                break;
-            case EnemyRaces:
-                enemyRacesNode.rotate(0, enemyRacesStepRotate, 0);
-                break;
         }
     }
 
@@ -199,11 +178,7 @@ public class MainMenu extends AbstractStarfield {
     @Override
     public void onUpdate(float tpf) {
         for(IPlayer ship : ships) {
-            if(ship.getRootNode().getWorldTranslation().getZ() > radiusSize * 0.9f) {
-                ship.getRootNode().rotate(0, tpf * 0.2f, 0);
-            } else {
-                ship.getRootNode().setLocalRotation(new Quaternion());
-            }
+            ship.getRootNode().rotate(0, tpf * 0.2f, 0);
         }
 
         for(Spatial enemy : enemyRaces) {
