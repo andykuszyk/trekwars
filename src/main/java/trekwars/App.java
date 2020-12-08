@@ -17,6 +17,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -37,6 +39,10 @@ public class App extends SimpleApplication implements TouchListener {
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(30);
+        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        settings.setWidth((int)screenWidth);
+        settings.setHeight((int)screenHeight);
         app.setSettings(settings);
         app.start();
     }
@@ -46,9 +52,11 @@ public class App extends SimpleApplication implements TouchListener {
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
         this.setDisplayFps(true);
-        Vector2f screenSize = new Vector2f(this.settings.getWidth(), this.settings.getHeight());
+        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        Vector2f screenSize = new Vector2f((float)screenWidth, (float)screenHeight);
         initialiseInput();
-        
+
         setScreen(new Splash(
                 assetManager, 
                 screenSize, 
