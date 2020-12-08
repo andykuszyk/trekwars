@@ -41,8 +41,6 @@ public class MainMenu extends AbstractStarfield {
     private IScreen nextScreen;
     private Logger log = Logger.getGlobal();
     private AbstractPlayer currentPlayer;
-    private float lastEnemyHorizontalOffset;
-    private float lastPlayerHorizontalOffset;
 
     public MainMenu(
             AssetManager assetManager,
@@ -135,28 +133,30 @@ public class MainMenu extends AbstractStarfield {
 
         Vector3f cameraLocation = camera.getLocation();
         MenuTrack currentMenuTrack = getMenuTrack(cameraLocation);
+        float maxX = ((currentMenuTrack == MenuTrack.Players ? ships.size() : enemyRaces.size()) - 1) * horizontalOffset;
 
-        if(name.equals(InputMappings.left)) {
+        if(name.equals(InputMappings.left) && cameraLocation.getX() > 0) {
+            // Left - move the camera left
             camera.setLocation(new Vector3f(cameraLocation.getX() - horizontalOffset, cameraLocation.getY(), cameraLocation.getZ()));
-        } else if (name.equals(InputMappings.right)) {
+        } else if (name.equals(InputMappings.right) && cameraLocation.getX() < maxX) {
+            // Right - move the camera left
             camera.setLocation(new Vector3f(cameraLocation.getX() + horizontalOffset, cameraLocation.getY(), cameraLocation.getZ()));
-        } else if(name.equals(InputMappings.up) && currentMenuTrack == MenuTrack.EnemyRaces) {
-            camera.setLocation(new Vector3f(lastPlayerHorizontalOffset, cameraLocation.getY() + verticalOffset, cameraLocation.getZ()));
+        } else if(name.equals(InputMappings.cancel) && currentMenuTrack == MenuTrack.EnemyRaces) {
+            // Esc/cancel - if on enemy track, return to player track
+            camera.setLocation(new Vector3f(0f, cameraLocation.getY() + verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuEnemy.getPicture());
             guiNode.attachChild(mainMenuShips.getPicture());
-            lastEnemyHorizontalOffset = cameraLocation.getX();
-            log.info(String.format("last enemy offset: %s", lastEnemyHorizontalOffset));
-        } else if(name.equals(InputMappings.down) && currentMenuTrack == MenuTrack.Players) {
-            camera.setLocation(new Vector3f(lastEnemyHorizontalOffset, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
+        } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.Players) {
+            // Enter/select - if on player track move to enemy track
+            camera.setLocation(new Vector3f(0f, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuShips.getPicture());
             guiNode.attachChild(mainMenuEnemy.getPicture());
             float playerIndex = cameraLocation.getX() / horizontalOffset;
             if (playerIndex >=0 && playerIndex < this.ships.size()) {
                 currentPlayer = this.ships.get((int)playerIndex);
             }
-            lastPlayerHorizontalOffset = cameraLocation.getX();
-            log.info(String.format("last player offset: %s", lastPlayerHorizontalOffset));
-        } else if(name.equals(InputMappings.select)) {
+        } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
+            // Enter/select - if on enemy track then launch game
             GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
             nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield, gameOptions);
         }

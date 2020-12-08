@@ -8,4 +8,5 @@ public class InputMappings {
     public static final String select = "SELECT";
     public static final String down = "STOP";
     public static final String left_click = "LEFT_CLICK";
+    public static final String cancel = "CANCEL";
 }

@@ -73,6 +73,7 @@ public class App extends SimpleApplication implements TouchListener {
     }
     
     private void initialiseInput() {
+        inputManager.deleteMapping(SimpleApplication.INPUT_MAPPING_EXIT);
         inputManager.addMapping("Touch", new TouchTrigger(0));
         inputManager.addMapping(InputMappings.left, new KeyTrigger(KeyInput.KEY_LEFT));
         inputManager.addMapping(InputMappings.right, new KeyTrigger(KeyInput.KEY_RIGHT));
@@ -80,6 +81,7 @@ public class App extends SimpleApplication implements TouchListener {
         inputManager.addMapping(InputMappings.down, new KeyTrigger(KeyInput.KEY_DOWN));
         inputManager.addMapping(InputMappings.select, new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addMapping(InputMappings.fire, new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping(InputMappings.cancel, new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping(InputMappings.left_click, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         
         inputManager.addListener(
@@ -90,7 +92,8 @@ public class App extends SimpleApplication implements TouchListener {
                 InputMappings.down,
                 InputMappings.select,
                 InputMappings.fire,
-                InputMappings.left_click);
+                InputMappings.left_click,
+                InputMappings.cancel);
         
         inputManager.addListener(
                 analogListener, 
@@ -100,11 +103,12 @@ public class App extends SimpleApplication implements TouchListener {
                 InputMappings.down,
                 InputMappings.select,
                 InputMappings.fire,
-                InputMappings.left_click);
+                InputMappings.left_click,
+                InputMappings.cancel);
         
         inputManager.addListener(this, new String[] {"Touch"});
     }
-    
+
     @Override
      public void onTouch(String binding, TouchEvent evt, float tpf) {
          screen.onTouch(evt, tpf, this.settings.getWidth(), this.settings.getHeight());
