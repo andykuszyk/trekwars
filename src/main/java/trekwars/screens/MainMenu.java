@@ -132,6 +132,7 @@ public class MainMenu extends AbstractStarfield {
         lastKeyPress = LocalDateTime.now();
 
         Vector3f cameraLocation = camera.getLocation();
+        log.info(String.format("camera location (xyz): %f, %f, %f", cameraLocation.x, cameraLocation.y, cameraLocation.z));
         MenuTrack currentMenuTrack = getMenuTrack(cameraLocation);
         float maxX = ((currentMenuTrack == MenuTrack.Players ? ships.size() : enemyRaces.size()) - 1) * horizontalOffset;
 
@@ -148,11 +149,12 @@ public class MainMenu extends AbstractStarfield {
             guiNode.attachChild(mainMenuShips.getPicture());
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.Players) {
             // Enter/select - if on player track move to enemy track
+            float playerIndex = cameraLocation.getX() / horizontalOffset;
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuShips.getPicture());
             guiNode.attachChild(mainMenuEnemy.getPicture());
-            float playerIndex = cameraLocation.getX() / horizontalOffset;
             if (playerIndex >=0 && playerIndex < this.ships.size()) {
+                log.info(String.format("current player index is: %s", playerIndex));
                 currentPlayer = this.ships.get((int)playerIndex);
             }
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
