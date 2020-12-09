@@ -1,6 +1,8 @@
 package trekwars.screens;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
@@ -15,7 +17,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import com.jme3.scene.Spatial;
@@ -34,6 +35,7 @@ public class MainMenu extends AbstractStarfield {
     private final InputManager inputManager;
     private final GuiElement mainMenuShips;
     private final GuiElement mainMenuEnemy;
+    private final BitmapText metadataText;
     private Camera camera;
     private ArrayList<AbstractPlayer> ships = new ArrayList<AbstractPlayer>();
     private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
@@ -62,29 +64,8 @@ public class MainMenu extends AbstractStarfield {
         camera.setLocation(new Vector3f(0, 2.5f, 10f));
         camera.lookAt(new Vector3f(0, 0, 0), Vector3f.UNIT_Y);
 
-        for(PlayerFactoryType type : PlayerFactoryType.values()) {
-            ships.add(playerFactory.create(type, PlayerType.Enemy));
-        }
-        currentPlayer = ships.get(0);
-
-        int shipCount = 0;
-        for(IPlayer ship : ships) {
-            playersNode.attachChild(ship.getRootNode());
-            ship.getRootNode().setLocalTranslation(shipCount * horizontalOffset, 0f, 0f);
-            shipCount++;
-        }
-
-        List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "rebels-logo.gif");
-        Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
-        float logoSize = 5f;
-        int enemyCount = 0;
-        for(String logo : logos) {
-            Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
-            enemyRaces.add(enemyLogoSpatial);
-            enemiesNode.attachChild(enemyLogoSpatial);
-            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 0f, 0f);
-            enemyCount++;
-        }
+        initialisePlayers(playerFactory);
+        initialiseEnemies();
 
         mainMenuShips = new GuiElement(
             "main-menu",
@@ -101,6 +82,41 @@ public class MainMenu extends AbstractStarfield {
                 screenSize,
                 "Interface/main-menu-choose-enemy.png");
         guiNode.attachChild(mainMenuShips.getPicture());
+
+        BitmapFont consoleFont = assetManager.loadFont("Interface/Fonts/Console.fnt");
+        metadataText = new BitmapText(consoleFont, false);
+        metadataText.setSize(consoleFont.getCharSet().getRenderedSize() * 3);
+        metadataText.setText("");
+        metadataText.setLocalTranslation(screenSize.getX() / 3, screenSize.getY() / 4, 1);
+        guiNode.attachChild(metadataText);
+    }
+
+    private void initialiseEnemies() {
+        List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "rebels-logo.gif");
+        Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
+        float logoSize = 5f;
+        int enemyCount = 0;
+        for(String logo : logos) {
+            Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
+            enemyRaces.add(enemyLogoSpatial);
+            enemiesNode.attachChild(enemyLogoSpatial);
+            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 0f, 0f);
+            enemyCount++;
+        }
+    }
+
+    private void initialisePlayers(PlayerFactory playerFactory) {
+        for(PlayerFactoryType type : PlayerFactoryType.values()) {
+            ships.add(playerFactory.create(type, PlayerType.Enemy));
+        }
+        currentPlayer = ships.get(0);
+
+        int shipCount = 0;
+        for(IPlayer ship : ships) {
+            playersNode.attachChild(ship.getRootNode());
+            ship.getRootNode().setLocalTranslation(shipCount * horizontalOffset, 0f, 0f);
+            shipCount++;
+        }
     }
 
     private Spatial makeLogoSpatial(String logo, float logoSize) {
@@ -149,18 +165,32 @@ public class MainMenu extends AbstractStarfield {
             guiNode.attachChild(mainMenuShips.getPicture());
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.Players) {
             // Enter/select - if on player track move to enemy track
-            float playerIndex = cameraLocation.getX() / horizontalOffset;
+            setCurrentPlayer(cameraLocation);
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
             guiNode.detachChild(mainMenuShips.getPicture());
             guiNode.attachChild(mainMenuEnemy.getPicture());
-            if (playerIndex >=0 && playerIndex < this.ships.size()) {
-                log.info(String.format("current player index is: %s", playerIndex));
-                currentPlayer = this.ships.get((int)playerIndex);
-            }
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Enter/select - if on enemy track then launch game
             GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
             nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield, gameOptions);
+        }
+    }
+
+    private void setPlayerMetadata(MenuTrack currentMenuTrack) {
+        if(currentMenuTrack != MenuTrack.Players) {
+            metadataText.setText("");
+            return;
+        }
+        setCurrentPlayer(camera.getLocation());
+        PlayerMetadata metadata = PlayerMetadata.fromPlayerFactoryType(currentPlayer.getPlayerFactoryType());
+        metadataText.setText(metadata.getFormattedMetadata());
+    }
+
+    private void setCurrentPlayer(Vector3f cameraLocation) {
+        float playerIndex = cameraLocation.getX() / horizontalOffset;
+        if (playerIndex >=0 && playerIndex < this.ships.size()) {
+            log.info(String.format("current player index is: %s", playerIndex));
+            currentPlayer = this.ships.get((int)playerIndex);
         }
     }
 
@@ -186,5 +216,7 @@ public class MainMenu extends AbstractStarfield {
         for(Spatial enemy : enemyRaces) {
             enemy.rotate(0, tpf * 0.5f, 0);
         }
+
+        setPlayerMetadata(getMenuTrack(camera.getLocation()));
     }
 }
