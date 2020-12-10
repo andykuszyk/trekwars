@@ -39,8 +39,8 @@ public class App extends SimpleApplication implements TouchListener {
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(30);
-        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.9;
+        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.9;
         settings.setWidth((int)screenWidth);
         settings.setHeight((int)screenHeight);
         app.setSettings(settings);
@@ -52,11 +52,8 @@ public class App extends SimpleApplication implements TouchListener {
         flyCam.setEnabled(false);
         this.setDisplayStatView(false);
         this.setDisplayFps(true);
-        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        Vector2f screenSize = new Vector2f((float)screenWidth, (float)screenHeight);
+        Vector2f screenSize = new Vector2f(settings.getWidth(), settings.getHeight());
         initialiseInput();
-
         setScreen(new Splash(
                 assetManager, 
                 screenSize, 

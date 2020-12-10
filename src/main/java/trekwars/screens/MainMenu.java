@@ -5,6 +5,7 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -33,9 +34,8 @@ public class MainMenu extends AbstractStarfield {
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
     private final InputManager inputManager;
-    private final GuiElement mainMenuShips;
-    private final GuiElement mainMenuEnemy;
     private final BitmapText metadataText;
+    private final BitmapText menuText;
     private Camera camera;
     private ArrayList<AbstractPlayer> ships = new ArrayList<AbstractPlayer>();
     private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
@@ -67,28 +67,28 @@ public class MainMenu extends AbstractStarfield {
         initialisePlayers(playerFactory);
         initialiseEnemies();
 
-        mainMenuShips = new GuiElement(
+        guiNode.attachChild(new GuiElement(
             "main-menu",
             assetManager,
             new Vector2f(0f, 0f),
             new Vector2f(1f, 1f),
             screenSize,
-            "Interface/main-menu-choose-ship.png");
-        mainMenuEnemy = new GuiElement(
-                "main-menu",
-                assetManager,
-                new Vector2f(0f, 0f),
-                new Vector2f(1f, 1f),
-                screenSize,
-                "Interface/main-menu-choose-enemy.png");
-        guiNode.attachChild(mainMenuShips.getPicture());
+            "Interface/main-menu.png").getPicture());
 
-        BitmapFont consoleFont = assetManager.loadFont("Interface/Fonts/Console.fnt");
-        metadataText = new BitmapText(consoleFont, false);
-        metadataText.setSize(consoleFont.getCharSet().getRenderedSize() * 3);
+        BitmapFont okudaFont = assetManager.loadFont("Interface/Fonts/Okuda.fnt");
+        ColorRGBA lcarsColour = new ColorRGBA(180f/255f, 120f/255f, 50f/255f, 1f);
+        metadataText = new BitmapText(okudaFont, false);
+        metadataText.setSize(okudaFont.getCharSet().getRenderedSize() * 1);
         metadataText.setText("");
-        metadataText.setLocalTranslation(screenSize.getX() / 3, screenSize.getY() / 4, 1);
+        metadataText.setLocalTranslation(screenSize.getX() * 0.67f, screenSize.getY() * 0.205f, 1);
+        metadataText.setColor(lcarsColour);
+        menuText = new BitmapText(okudaFont, false);
+        menuText.setSize(okudaFont.getCharSet().getRenderedSize() * 2);
+        menuText.setText("CHOOSE YOUR SHIP");
+        menuText.setColor(lcarsColour);
+        menuText.setLocalTranslation(screenSize.getX() * 0.35f, screenSize.getY(), 1);
         guiNode.attachChild(metadataText);
+        guiNode.attachChild(menuText);
     }
 
     private void initialiseEnemies() {
@@ -161,14 +161,12 @@ public class MainMenu extends AbstractStarfield {
         } else if(name.equals(InputMappings.cancel) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Esc/cancel - if on enemy track, return to player track
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() + verticalOffset, cameraLocation.getZ()));
-            guiNode.detachChild(mainMenuEnemy.getPicture());
-            guiNode.attachChild(mainMenuShips.getPicture());
+            menuText.setText("CHOOSE YOUR SHIP");
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.Players) {
             // Enter/select - if on player track move to enemy track
             setCurrentPlayer(cameraLocation);
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
-            guiNode.detachChild(mainMenuShips.getPicture());
-            guiNode.attachChild(mainMenuEnemy.getPicture());
+            menuText.setText("CHOOSE YOUR ENEMY");
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Enter/select - if on enemy track then launch game
             GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);

@@ -26,7 +26,7 @@ public class PlayerMetadata {
     }
 
     public String getFormattedMetadata() {
-        return String.format("Name     : %s\nRace     : %s\nUniverse : %s", name, race, universe);
+        return String.format("Name     : %s\nRace      : %s\nUniverse : %s", name, race, universe);
     }
 
     public static PlayerMetadata fromPlayerFactoryType(PlayerFactoryType playerFactoryType) {
