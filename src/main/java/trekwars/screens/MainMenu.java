@@ -92,15 +92,15 @@ public class MainMenu extends AbstractStarfield {
     }
 
     private void initialiseEnemies() {
-        List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "rebels-logo.gif");
+        List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "republic-logo.png");
         Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
-        float logoSize = 5f;
+        float logoSize = 3.5f;
         int enemyCount = 0;
         for(String logo : logos) {
             Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
             enemyRaces.add(enemyLogoSpatial);
             enemiesNode.attachChild(enemyLogoSpatial);
-            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 0f, 0f);
+            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 1.4f, 0f);
             enemyCount++;
         }
     }
@@ -124,7 +124,7 @@ public class MainMenu extends AbstractStarfield {
         Texture texture = assetManager.loadTexture("Interface/" + logo);
         texture.setWrap(Texture.WrapMode.Repeat);
         material.setTexture("ColorMap", texture);
-        Geometry front = new Geometry(logo, new Quad(logoSize, logoSize));
+        Geometry front = new Geometry(logo, new Quad(logoSize, logoSize * 1.4f));
         front.setMaterial(material);
         Geometry back = front.clone();
         Node node = new Node();
@@ -162,11 +162,13 @@ public class MainMenu extends AbstractStarfield {
             // Esc/cancel - if on enemy track, return to player track
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() + verticalOffset, cameraLocation.getZ()));
             menuText.setText("CHOOSE YOUR SHIP");
+            camera.lookAt(new Vector3f(0, 0, 0), Vector3f.UNIT_Y);
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.Players) {
             // Enter/select - if on player track move to enemy track
             setCurrentPlayer(cameraLocation);
             camera.setLocation(new Vector3f(0f, cameraLocation.getY() - verticalOffset, cameraLocation.getZ()));
             menuText.setText("CHOOSE YOUR ENEMY");
+            camera.lookAt(new Vector3f(0, camera.getLocation().getY(), 0), Vector3f.UNIT_Y);
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Enter/select - if on enemy track then launch game
             GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
@@ -209,10 +211,6 @@ public class MainMenu extends AbstractStarfield {
     public void onUpdate(float tpf) {
         for(IPlayer ship : ships) {
             ship.getRootNode().rotate(0, tpf * 0.2f, 0);
-        }
-
-        for(Spatial enemy : enemyRaces) {
-            enemy.rotate(0, tpf * 0.5f, 0);
         }
 
         setPlayerMetadata(getMenuTrack(camera.getLocation()));
