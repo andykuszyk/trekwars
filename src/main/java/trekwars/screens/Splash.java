@@ -21,6 +21,7 @@ import trekwars.players.IPlayer;
 import trekwars.players.PlayerFactory;
 import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
+import trekwars.races.RaceFactory;
 
 public class Splash implements Callable<IScreen>, IScreen {
     private final Node guiNode;
@@ -28,6 +29,7 @@ public class Splash implements Callable<IScreen>, IScreen {
     private final AssetManager assetManager;
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
+    private final RaceFactory raceFactory;
     private final InputManager inputManager;
     private final Camera camera;
     private final GameOptions gameOptions;
@@ -47,13 +49,15 @@ public class Splash implements Callable<IScreen>, IScreen {
             InputManager inputManager,
             Camera camera,
             NextScreen nextScreen,
-            GameOptions gameOptions) {
+            GameOptions gameOptions,
+            RaceFactory raceFactory) {
         this.assetManager = assetManager;
         this.screenSize = screenSize;
         this.playerFactory = playerFactory;
         this.camera = camera;
         this.inputManager = inputManager;
         this.gameOptions = gameOptions;
+        this.raceFactory = raceFactory;
         nextScreenSelection = nextScreen;
         guiNode = new Node();
         rootNode = new Node();
@@ -139,7 +143,7 @@ public class Splash implements Callable<IScreen>, IScreen {
                         inputManager,
                         screenSize);
             } else if (nextScreenSelection == NextScreen.MainMenu) {
-                return new MainMenu(assetManager, null, camera, playerFactory, screenSize, inputManager);
+                return new MainMenu(assetManager, null, camera, playerFactory, screenSize, inputManager, raceFactory);
             } else {
                 return null;
             }

@@ -28,6 +28,7 @@ import trekwars.players.PlayerFactory;
 import trekwars.screens.IScreen;
 import trekwars.screens.Splash;
 import trekwars.core.InputMappings;
+import trekwars.races.RaceFactory;
 
 public class App extends SimpleApplication implements TouchListener {
 
@@ -61,8 +62,8 @@ public class App extends SimpleApplication implements TouchListener {
                 inputManager, 
                 cam,
                 Splash.NextScreen.MainMenu,
-                null
-                ));
+                null,
+                new RaceFactory(assetManager)));
     }
     
     public PlayerFactory getPlayerFactory() {

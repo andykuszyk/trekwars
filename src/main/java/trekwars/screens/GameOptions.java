@@ -1,6 +1,7 @@
 package trekwars.screens;
 
 import trekwars.players.PlayerFactoryType;
+import trekwars.races.RaceType;
 
 public class GameOptions {
     private final PlayerFactoryType playerFactoryType;

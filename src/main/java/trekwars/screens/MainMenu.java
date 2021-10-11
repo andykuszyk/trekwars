@@ -25,6 +25,9 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import trekwars.core.InputMappings;
 import trekwars.players.*;
+import trekwars.races.RaceType;
+import trekwars.races.RaceFactory;
+import trekwars.races.IRace;
 
 public class MainMenu extends AbstractStarfield {
     private final Node playersNode = new Node();
@@ -33,12 +36,13 @@ public class MainMenu extends AbstractStarfield {
     private final float horizontalOffset = 15f;
     private final Vector2f screenSize;
     private final PlayerFactory playerFactory;
+    private final RaceFactory raceFactory;
     private final InputManager inputManager;
     private final BitmapText metadataText;
     private final BitmapText menuText;
     private Camera camera;
     private ArrayList<AbstractPlayer> ships = new ArrayList<AbstractPlayer>();
-    private ArrayList<Spatial> enemyRaces = new ArrayList<Spatial>();
+    private ArrayList<IRace> enemyRaces = new ArrayList<IRace>();
     private LocalDateTime lastKeyPress;
     private IScreen nextScreen;
     private Logger log = Logger.getGlobal();
@@ -49,12 +53,15 @@ public class MainMenu extends AbstractStarfield {
             IPlayer player,
             Camera camera,
             PlayerFactory playerFactory,
-            Vector2f screenSize, InputManager inputManager) {
+            Vector2f screenSize,
+            InputManager inputManager,
+            RaceFactory raceFactory) {
         super(assetManager, player, camera);
         this.camera = camera;
         this.screenSize = screenSize;
         this.playerFactory = playerFactory;
         this.inputManager = inputManager;
+        this.raceFactory = raceFactory;
 
         rootNode.attachChild(playersNode);
         rootNode.attachChild(enemiesNode);
@@ -92,15 +99,13 @@ public class MainMenu extends AbstractStarfield {
     }
 
     private void initialiseEnemies() {
-        List<String> logos = Arrays.asList("empire-logo.png", "federation-logo.jpg", "klingon-logo.png", "republic-logo.png");
-        Quaternion logosAngle = new Quaternion().fromAngleAxis((float)(Math.PI * 2 / logos.size()), Vector3f.UNIT_Y);
-        float logoSize = 3.5f;
         int enemyCount = 0;
-        for(String logo : logos) {
-            Spatial enemyLogoSpatial = makeLogoSpatial(logo, logoSize);
-            enemyRaces.add(enemyLogoSpatial);
-            enemiesNode.attachChild(enemyLogoSpatial);
-            enemyLogoSpatial.setLocalTranslation(enemyCount * horizontalOffset, 1.4f, 0f);
+        for(RaceType raceType : RaceType.values()) {
+            IRace race = raceFactory.create(raceType);
+            enemyRaces.add(race);
+            Spatial raceLogo = race.buildLogo();
+            enemiesNode.attachChild(raceLogo);
+            raceLogo.setLocalTranslation(enemyCount * horizontalOffset, 1.4f, 0f);
             enemyCount++;
         }
     }
@@ -117,24 +122,7 @@ public class MainMenu extends AbstractStarfield {
             ship.getRootNode().setLocalTranslation(shipCount * horizontalOffset, 0f, 0f);
             shipCount++;
         }
-    }
-
-    private Spatial makeLogoSpatial(String logo, float logoSize) {
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture texture = assetManager.loadTexture("Interface/" + logo);
-        texture.setWrap(Texture.WrapMode.Repeat);
-        material.setTexture("ColorMap", texture);
-        Geometry front = new Geometry(logo, new Quad(logoSize, logoSize * 1.4f));
-        front.setMaterial(material);
-        Geometry back = front.clone();
-        Node node = new Node();
-        node.attachChild(front);
-        node.attachChild(back);
-        front.setLocalTranslation(-logoSize / 2, -logoSize / 2, 0f);
-        back.rotate(0, (float)Math.PI, 0);
-        back.setLocalTranslation(logoSize / 2, -logoSize / 2, 0f);
-        return node;
-    }
+    } 
 
     private enum MenuTrack {
         Players, EnemyRaces
@@ -172,7 +160,15 @@ public class MainMenu extends AbstractStarfield {
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Enter/select - if on enemy track then launch game
             GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
-            nextScreen = new Splash(assetManager, screenSize, playerFactory, inputManager, camera, Splash.NextScreen.BasicStarfield, gameOptions);
+            nextScreen = new Splash(
+                    assetManager,
+                    screenSize,
+                    playerFactory,
+                    inputManager,
+                    camera,
+                    Splash.NextScreen.BasicStarfield,
+                    gameOptions,
+                    raceFactory);
         }
     }
 
