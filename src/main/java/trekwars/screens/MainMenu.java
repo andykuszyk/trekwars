@@ -47,6 +47,7 @@ public class MainMenu extends AbstractStarfield {
     private IScreen nextScreen;
     private Logger log = Logger.getGlobal();
     private AbstractPlayer currentPlayer;
+    private IRace currentRace;
 
     public MainMenu(
             AssetManager assetManager,
@@ -172,14 +173,22 @@ public class MainMenu extends AbstractStarfield {
         }
     }
 
-    private void setPlayerMetadata(MenuTrack currentMenuTrack) {
-        if(currentMenuTrack != MenuTrack.Players) {
-            metadataText.setText("");
-            return;
+    private void setMetadata(MenuTrack currentMenuTrack) {
+        if(currentMenuTrack == MenuTrack.Players) {
+            setCurrentPlayer(camera.getLocation());
+            PlayerMetadata metadata = PlayerMetadata.fromPlayerFactoryType(currentPlayer.getPlayerFactoryType());
+            metadataText.setText(metadata.getFormattedMetadata());
+        } else if (currentMenuTrack == MenuTrack.EnemyRaces) {
+            setCurrentRace();
+            metadataText.setText(currentRace.getFormattedMetadata());
         }
-        setCurrentPlayer(camera.getLocation());
-        PlayerMetadata metadata = PlayerMetadata.fromPlayerFactoryType(currentPlayer.getPlayerFactoryType());
-        metadataText.setText(metadata.getFormattedMetadata());
+    }
+
+    private void setCurrentRace() {
+        float raceIndex = camera.getLocation().getX() / horizontalOffset;
+        if (raceIndex >= 0 && raceIndex < this.enemyRaces.size()) {
+            currentRace = this.enemyRaces.get((int)raceIndex);
+        }
     }
 
     private void setCurrentPlayer(Vector3f cameraLocation) {
@@ -209,6 +218,6 @@ public class MainMenu extends AbstractStarfield {
             ship.getRootNode().rotate(0, tpf * 0.2f, 0);
         }
 
-        setPlayerMetadata(getMenuTrack(camera.getLocation()));
+        setMetadata(getMenuTrack(camera.getLocation()));
     }
 }

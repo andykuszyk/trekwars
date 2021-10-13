@@ -16,6 +16,12 @@ public abstract class AbstractRace implements IRace {
     } 
 
     protected abstract String getLogo();
+    protected abstract String getName();
+    protected abstract String getUniverse();
+
+    public String getFormattedMetadata() {
+        return String.format("Race      : %s\nUniverse : %s", getName(), getUniverse());
+    }
 
     public Spatial buildLogo() {
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");

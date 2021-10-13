@@ -3,8 +3,8 @@ package trekwars.players;
 public class PlayerMetadata {
     private final String name;
     private final String universe;
-    private static final String STARTREK = "Star Trek";
-    private static final String STARWARS = "Star Wars";
+    public static final String STARTREK = "Star Trek";
+    public static final String STARWARS = "Star Wars";
     private final String race;
 
     private PlayerMetadata(String name, String race, String universe) {
