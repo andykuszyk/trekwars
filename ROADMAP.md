@@ -1,6 +1,7 @@
 ## Menu
-- [ ] Add metadata to race cards that displays when they are selected.
-- [ ] Pass race selection through to level screen so that the right enemy is
+- [x] Add metadata to race cards that displays when they are selected.
+- [x] Pass race selection through to level screen so that the right enemy is
+- [ ] Delegate construction of level environments to the selected race so that each race can build a different environment.
   loaded.
 
 ## Enemy races
