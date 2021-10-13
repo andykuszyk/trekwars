@@ -8,6 +8,10 @@ public class Republic extends AbstractRace {
         super(assetManager);
     }
 
+    public RaceType getRaceType() {
+        return RaceType.Republic;
+    }
+
     protected String getLogo() {
         return "republic-logo.png";
     }

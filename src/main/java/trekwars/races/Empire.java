@@ -8,6 +8,10 @@ public class Empire extends AbstractRace {
         super(assetManager);
     }
 
+    public RaceType getRaceType() {
+        return RaceType.Empire;
+    }
+
     protected String getLogo() {
         return "empire-logo.png";
     }

@@ -160,7 +160,7 @@ public class MainMenu extends AbstractStarfield {
             camera.lookAt(new Vector3f(0, camera.getLocation().getY(), 0), Vector3f.UNIT_Y);
         } else if(name.equals(InputMappings.select) && currentMenuTrack == MenuTrack.EnemyRaces) {
             // Enter/select - if on enemy track then launch game
-            GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, RaceType.Klingon);
+            GameOptions gameOptions = new GameOptions(currentPlayer.getPlayerFactoryType(), RaceType.Federation, currentRace.getRaceType());
             nextScreen = new Splash(
                     assetManager,
                     screenSize,

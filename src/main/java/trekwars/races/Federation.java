@@ -8,6 +8,10 @@ public class Federation extends AbstractRace {
         super(assetManager);
     }
 
+    public RaceType getRaceType() {
+        return RaceType.Federation;
+    }
+
     protected String getLogo() {
         return "federation-logo.jpg";
     }

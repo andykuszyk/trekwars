@@ -8,6 +8,10 @@ public class Klingon extends AbstractRace {
         super(assetManager);
     }
 
+    public RaceType getRaceType() {
+        return RaceType.Klingon;
+    }
+
     protected String getLogo() {
         return "klingon-logo.png";
     }

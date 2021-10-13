@@ -23,6 +23,8 @@ public abstract class AbstractRace implements IRace {
         return String.format("Race      : %s\nUniverse : %s", getName(), getUniverse());
     }
 
+    public abstract RaceType getRaceType();
+
     public Spatial buildLogo() {
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture texture = assetManager.loadTexture("Interface/" + getLogo());
