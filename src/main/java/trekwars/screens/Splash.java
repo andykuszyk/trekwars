@@ -22,6 +22,7 @@ import trekwars.players.PlayerFactory;
 import trekwars.players.PlayerFactoryType;
 import trekwars.players.PlayerType;
 import trekwars.races.RaceFactory;
+import trekwars.races.IRace;
 
 public class Splash implements Callable<IScreen>, IScreen {
     private final Node guiNode;
@@ -121,27 +122,10 @@ public class Splash implements Callable<IScreen>, IScreen {
             log.info("About to load next screen: " + nextScreenSelection.toString());
             if (nextScreenSelection == NextScreen.BasicStarfield) {
                 AbstractPlayer player = playerFactory.create(gameOptions.getPlayerFactoryType(), PlayerType.Player);
-                ArrayList<IPlayer> waveOne = new ArrayList<IPlayer>();
-                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveOne.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                ArrayList<IPlayer> waveTwo = new ArrayList<IPlayer>();
-                waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                waveTwo.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                ArrayList<IPlayer> waveThree = new ArrayList<IPlayer>();
-                waveThree.add(playerFactory.create(PlayerFactoryType.Brel, PlayerType.Enemy));
-                log.info("Loaded the screen, waiting for 2 seconds");
-                Thread.sleep(2000);
-                log.info("Ready to load new screen");
-                return new BasicStarfield(
-                        player,
-                        waveOne,
-                        waveTwo,
-                        waveThree,
-                        assetManager,
-                        camera,
-                        inputManager,
-                        screenSize);
+                IRace enemyRace = raceFactory.create(gameOptions.getEnemyRace());
+                log.info("Loaded the screen, waiting for 1 seconds");
+                Thread.sleep(1000);
+                return enemyRace.buildEnvironment(player, playerFactory, camera, inputManager, screenSize);
             } else if (nextScreenSelection == NextScreen.MainMenu) {
                 return new MainMenu(assetManager, null, camera, playerFactory, screenSize, inputManager, raceFactory);
             } else {
