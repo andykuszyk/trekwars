@@ -1,5 +1,18 @@
 package trekwars.players;
 
 public enum PlayerFactoryType {
-    Voyager, Brel, Defiant, EnterpriseE, Prometheus, BorgTacticalCube, CardassianGalor, StarDestroyer, BorgCube
+    // Federation
+    Voyager,
+    Defiant,
+    EnterpriseE,
+    Prometheus,
+    // Klingon
+    Brel,
+    // Borg
+    BorgTacticalCube,
+    BorgCube,
+    // Dominion
+    CardassianGalor,
+    // Imperial
+    StarDestroyer,
 }
