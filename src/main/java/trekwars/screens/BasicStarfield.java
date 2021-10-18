@@ -19,8 +19,8 @@ public class BasicStarfield extends AbstractStarfield {
     private final ArrayList<IPlayer> enemyWaveOne;
     private final ArrayList<IPlayer> enemyWaveTwo;
     private final ArrayList<IPlayer> enemyWaveThree;
-    private final float cameraZDistance = 10f;
-    private final float cameraYDistance = 3f;
+    private final float cameraZDistance = 15f;
+    private final float cameraYDistance = 15f;
     private final float enemyWaveOneZ = -50f;
     private final float enemyWaveTwoZ = -75f;
     private final float enemyWaveThreeZ = -100f;
@@ -236,13 +236,12 @@ public class BasicStarfield extends AbstractStarfield {
     }
     
     private void positionCamera(){
-        float playerYRadians = player.getRootNode().getWorldRotation().toAngles(null)[1];
         Vector3f playerWorldTranslation = player.getRootNode().getWorldTranslation();
-        double cameraZ = playerWorldTranslation.getZ() + (cameraZDistance * Math.cos(playerYRadians));
-        double cameraX = playerWorldTranslation.getX() + (cameraZDistance * Math.sin(playerYRadians));
+
+        double cameraZ = playerWorldTranslation.getZ() + cameraZDistance;
         
-        camera.setLocation(new Vector3f((float)cameraX, (float)cameraYDistance, (float)cameraZ));
-        camera.lookAt(playerWorldTranslation, Vector3f.UNIT_Y);
+        camera.setLocation(new Vector3f(0, cameraYDistance, (float)cameraZ));
+        camera.lookAt(playerWorldTranslation.add(0f, 0f, -10f), Vector3f.UNIT_Y);
     }
     
     private void updatePlayers(Iterable<IPlayer> players, float tpf){
