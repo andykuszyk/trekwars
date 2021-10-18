@@ -19,7 +19,7 @@ import trekwars.screens.BasicStarfield;
 import trekwars.screens.IScreen;
 
 public abstract class AbstractRace implements IRace {
-    private final AssetManager assetManager;
+    protected final AssetManager assetManager;
     private final float logoSize = 3.5f;
 
     public AbstractRace(AssetManager assetManager) {
