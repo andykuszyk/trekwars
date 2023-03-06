@@ -4,8 +4,60 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Babylon.js sample code</title>
 	<script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>
+    <link rel="stylesheet" href="lcars/css/lcars.css">
+      <style>
+      p, h1, h2, h3 {
+	margin-top: 1em;
+      }
+
+      pre {
+	display: inline;
+	white-space: pre-line;
+	word-wrap: break-word;
+      }
+
+      table.localCustomFunWithCaptions caption {
+	margin-left: -.5em;
+	margin-bottom: .5em;
+	text-align: right;
+	border-right: .8em solid;
+	border-left: 32rem solid;
+	border-radius: .5em;
+	padding-right: .33em;
+	padding-bottom: -.15em;
+      }
+      #audio_class_summary {
+	      font-size:.9rem;
+      }
+      </style>
+
     </head>
     <body>
-	<babylon model="http://localhost:80/enterprise-e.glb"></babylon>
+	<div class="lcars-app-container">
+	  <div id="header" class="lcars-row header">
+	    <div class="lcars-elbow left-bottom lcars-golden-tanoi-bg"></div>
+	    <div class="lcars-bar horizontal">
+	      <div class="lcars-title right">TREKWARS</div>
+	    </div>
+	    <div class="lcars-bar horizontal right-end decorated"></div>
+	  </div>
+
+	  <div id="left-menu" class="lcars-column start-space lcars-u-1" style="text-transform: uppercase;">
+	    <a href="#container"><div class="lcars-element button lcars-chestnut-rose-bg">ENTERPRISE-E</div></a>
+	    <div class="lcars-bar lcars-u-1"></div>
+	  </div>
+
+	  <div id="footer" class="lcars-row ">
+	    <div class="lcars-elbow left-top lcars-golden-tanoi-bg"></div>
+	    <div class="lcars-bar horizontal both-divider bottom"></div>
+	    <div class="lcars-bar horizontal right-end left-divider bottom"></div>
+	  </div>
+
+	  <div id="container">
+	    <div class="lcars-column lcars-u-5">
+	      <babylon model="http://localhost:80/enterprise-e.glb"></babylon>
+	    </div>
+	  </div>
+	</div>
     </body>
 </html>
